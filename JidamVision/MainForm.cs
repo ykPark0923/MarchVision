@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JidamVision.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,6 +30,8 @@ namespace JidamVision
             _dockPanel.Theme = new VS2015BlueTheme();
 
             LoadDockingWindows();
+
+            Global.Inst.Initialize();
         }
 
         private void LoadDockingWindows()

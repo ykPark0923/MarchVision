@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
+using JidamVision.Core;
 
 namespace JidamVision
 {
@@ -29,6 +30,20 @@ namespace JidamVision
             //_dockPanel.Theme = new VS2015BlueTheme();
 
             //LoadDockingWindows();
+        }
+
+        private void btnGrab_Click(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.Grab(0);
+        }
+
+        public void UpdateDisplay()
+        {
+            var bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
+            if (bitmap == null)
+                return;
+
+            picMainView.Image = bitmap;
         }
 
         //private void LoadDockingWindows()
