@@ -363,5 +363,9 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Jidam
-/ExternalLib
 /.svn
+/Build
+/Install
+/vcpkg
+*.bak
+

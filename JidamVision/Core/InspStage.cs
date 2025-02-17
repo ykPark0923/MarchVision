@@ -14,13 +14,14 @@ namespace JidamVision.Core
     {
         public static readonly int MAX_GRAB_BUF = 5;
 
-        private HikRobotCam _hikRobotCam = null;
         private ImageSpace _imageSpace = null;
+        private GrabModel _grabManager = null;
+        private CameraType _camType = CameraType.WebCam;
 
-        public HikRobotCam MultiGrab
-        {
-            get => _hikRobotCam;
-        }
+        //public GrabModel MultiGrab
+        //{
+        //    get => _GrabManager;
+        //}
 
         public ImageSpace ImageSpace
         {
@@ -33,10 +34,28 @@ namespace JidamVision.Core
         {
             _imageSpace = new ImageSpace();
 
-            _hikRobotCam = new HikRobotCam();
-            if (_hikRobotCam.InitGrab() == true)
+            switch (_camType)
             {
-                _hikRobotCam.TransferCompleted += _multiGrab_TransferCompleted;
+                case CameraType.WebCam:
+                    {
+                        _grabManager = new WebCam();
+                        break;
+                    }
+                case CameraType.HikRobotCam:
+                    {
+                        _grabManager = new HikRobotCam();
+                        break;
+                    }
+                default:
+                    {
+                        Console.WriteLine("Not supported camera type!");
+                        return false;
+                    }
+            }
+
+            if (_grabManager.InitGrab() == true)
+            {
+                _grabManager.TransferCompleted += _multiGrab_TransferCompleted;
 
                 InitModelGrab(MAX_GRAB_BUF);
             }
@@ -47,17 +66,17 @@ namespace JidamVision.Core
 
         public void InitModelGrab(int bufferCount)
         {
-            if (_hikRobotCam == null)
+            if (_grabManager == null)
                 return;
 
             int pixelBpp = 8;
-            _hikRobotCam.GetPixelBpp(out pixelBpp);
+            _grabManager.GetPixelBpp(out pixelBpp);
 
             int inspectionWidth;
             int inspectionHeight;
             int inspectionStride;
-            _hikRobotCam.GetResolution(out inspectionWidth, out inspectionHeight, out inspectionStride);
-            
+            _grabManager.GetResolution(out inspectionWidth, out inspectionHeight, out inspectionStride);
+
             if (_imageSpace != null)
             {
                 _imageSpace.SetImageInfo(pixelBpp, inspectionWidth, inspectionHeight, inspectionStride);
@@ -65,22 +84,24 @@ namespace JidamVision.Core
 
             SetBuffer(bufferCount);
 
+            //_grabManager.SetExposureTime(25000);
+
         }
 
         public void SetBuffer(int bufferCount)
         {
-            if (_hikRobotCam == null)
+            if (_grabManager == null)
                 return;
 
             if (_imageSpace.BufferCount == bufferCount)
                 return;
 
             _imageSpace.InitImageSpace(bufferCount);
-            _hikRobotCam.InitBuffer(bufferCount);
+            _grabManager.InitBuffer(bufferCount);
 
             for (int i = 0; i < bufferCount; i++)
             {
-                _hikRobotCam.SetBuffer(
+                _grabManager.SetBuffer(
                     _imageSpace.GetInspectionBuffer(i),
                     _imageSpace.GetnspectionBufferPtr(i),
                     _imageSpace.GetInspectionBufferHandle(i),
@@ -90,10 +111,10 @@ namespace JidamVision.Core
 
         public void Grab(int bufferIndex)
         {
-            if (_hikRobotCam == null)
+            if (_grabManager == null)
                 return;
 
-            _hikRobotCam.Grab(bufferIndex, true);
+            _grabManager.Grab(bufferIndex, true);
         }
 
         private void _multiGrab_TransferCompleted(object sender, object e)
@@ -102,7 +123,7 @@ namespace JidamVision.Core
             Console.WriteLine($"_multiGrab_TransferCompleted {bufferIndex}");
 
             _imageSpace.Split(bufferIndex);
-                        
+
             DisplayGrabImage(bufferIndex);
         }
 

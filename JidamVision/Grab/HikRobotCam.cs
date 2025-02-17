@@ -12,81 +12,30 @@ using static MvCamCtrl.NET.MyCamera;
 
 namespace JidamVision.Grab
 {
-    struct GrabUserBuffer
+
+    internal class HikRobotCam : GrabModel
     {
-        private byte[] _imageBuffer;
-        private IntPtr _imageBufferPtr;
-        private GCHandle _imageHandle;
-
-        public byte[] ImageBuffer
-        {
-            get
-            {
-                return _imageBuffer;
-            }
-            set
-            {
-                _imageBuffer = value;
-            }
-        }
-        public IntPtr ImageBufferPtr
-        {
-            get
-            {
-                return _imageBufferPtr;
-            }
-            set
-            {
-                _imageBufferPtr = value;
-            }
-        }
-        public GCHandle ImageHandle
-        {
-            get
-            {
-                return _imageHandle;
-            }
-            set
-            {
-                _imageHandle = value;
-            }
-        }
-    }
-
-    public class HikRobotCam
-    {
-        public delegate void GrabEventHandler<T>(object sender, T obj = null) where T : class;
-
-        public event GrabEventHandler<object> GrabCompleted = delegate { };
-        public event GrabEventHandler<object> TransferCompleted = delegate { };
-
-        private GrabUserBuffer[] _userImageBuffer = null;
-        public int BufferIndex { get; set; } = 0;
-
-        internal bool HardwareTrigger { get; set; } = false;
-        internal bool IncreaseBufferIndex { get; set; } = false;
-
-        private MyCamera.cbOutputExdelegate ImageCallback;
+        private cbOutputExdelegate ImageCallback;
 
         private MyCamera _camera = null;
 
-        private void ImageCallbackFunc(IntPtr pData, ref MyCamera.MV_FRAME_OUT_INFO_EX pFrameInfo, IntPtr pUser)
+        private void ImageCallbackFunc(IntPtr pData, ref MV_FRAME_OUT_INFO_EX pFrameInfo, IntPtr pUser)
         {
             Console.WriteLine("Get one frame: Width[" + Convert.ToString(pFrameInfo.nWidth) + "] , Height[" + Convert.ToString(pFrameInfo.nHeight)
                                 + "] , FrameNum[" + Convert.ToString(pFrameInfo.nFrameNum) + "]");
 
-            GrabCompleted(this);
+            OnGrabCompleted(BufferIndex);
 
             if (_userImageBuffer[BufferIndex].ImageBuffer != null)
             {
-                if (pFrameInfo.enPixelType == MyCamera.MvGvspPixelType.PixelType_Gvsp_Mono8)
+                if (pFrameInfo.enPixelType == MvGvspPixelType.PixelType_Gvsp_Mono8)
                 {
                     if (_userImageBuffer[BufferIndex].ImageBuffer != null)
                         Marshal.Copy(pData, _userImageBuffer[BufferIndex].ImageBuffer, 0, (int)pFrameInfo.nFrameLen);
                 }
                 else
                 {
-                    MyCamera.MV_PIXEL_CONVERT_PARAM _pixelConvertParam = new MyCamera.MV_PIXEL_CONVERT_PARAM();
+                    MV_PIXEL_CONVERT_PARAM _pixelConvertParam = new MyCamera.MV_PIXEL_CONVERT_PARAM();
                     _pixelConvertParam.nWidth = pFrameInfo.nWidth;
                     _pixelConvertParam.nHeight = pFrameInfo.nHeight;
                     _pixelConvertParam.pSrcData = pData;
@@ -105,7 +54,7 @@ namespace JidamVision.Grab
                 }
             }
 
-            TransferCompleted(this, BufferIndex);
+            OnTransferCompleted(BufferIndex);
 
             //IO 트리거 촬상시 최대 버퍼를 넘으면 첫번째 버퍼로 변경
             if (IncreaseBufferIndex)
@@ -125,7 +74,7 @@ namespace JidamVision.Grab
 
         #region Method
 
-        internal bool Create(string strIpAddr = null)
+        internal override bool Create(string strIpAddr = null)
         {
             Environment.SetEnvironmentVariable("PYLON_GIGE_HEARTBEAT", "5000" /*ms*/);
 
@@ -214,17 +163,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        private void GrabCallback(object sender, object obj = null)
-        {
-            GrabCompleted(sender, obj);
-        }
-
-        private void TransCallback(object sender, object obj)
-        {
-            TransferCompleted(sender, obj);
-        }
-
-        internal bool Grab(int bufferIndex, bool waitDone)
+        internal override bool Grab(int bufferIndex, bool waitDone)
         {
             if (_camera == null)
                 return false;
@@ -251,7 +190,7 @@ namespace JidamVision.Grab
             return err;
         }
 
-        internal bool Close()
+        internal override bool Close()
         {
             if (_camera != null)
             {
@@ -262,7 +201,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool Open()
+        internal override bool Open()
         {
             try
             {
@@ -328,7 +267,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool Reconnect()
+        internal override bool Reconnect()
         {
             if (_camera is null)
             {
@@ -339,7 +278,7 @@ namespace JidamVision.Grab
             return Open();
         }
 
-        internal bool GetPixelBpp(out int pixelBpp)
+        internal override bool GetPixelBpp(out int pixelBpp)
         {
             pixelBpp = 8;
             if (_camera == null)
@@ -366,7 +305,7 @@ namespace JidamVision.Grab
         #endregion
 
         #region Parameter Setting
-        internal bool SetExposureTime(long exposure)
+        internal override bool SetExposureTime(long exposure)
         {
             if (_camera == null)
                 return false;
@@ -383,7 +322,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool GetExposureTime(out long exposure)
+        internal override bool GetExposureTime(out long exposure)
         {
             exposure = 0;
             if (_camera == null)
@@ -398,7 +337,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool SetGain(long gain)
+        internal override bool SetGain(long gain)
         {
             if (_camera == null)
                 return false;
@@ -415,7 +354,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool GetGain(out long gain)
+        internal override bool GetGain(out long gain)
         {
             gain = 0;
             if (_camera == null)
@@ -430,7 +369,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool GetResolution(out int width, out int height, out int stride)
+        internal override bool GetResolution(out int width, out int height, out int stride)
         {
             width = 0;
             height = 0;
@@ -472,7 +411,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool SetTriggerMode(bool hardwareTrigger)
+        internal override bool SetTriggerMode(bool hardwareTrigger)
         {
             if (_camera is null)
                 return false;
@@ -491,7 +430,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool InitGrab()
+        internal override bool InitGrab()
         {
             if (!Create())
                 return false;
@@ -502,7 +441,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool InitBuffer(int bufferCount = 1)
+        internal override bool InitBuffer(int bufferCount = 1)
         {
             if (bufferCount < 1)
                 return false;
@@ -511,7 +450,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal bool SetBuffer(byte[] buffer, IntPtr bufferPtr, GCHandle bufferHandle, int bufferIndex = 0)
+        internal override bool SetBuffer(byte[] buffer, IntPtr bufferPtr, GCHandle bufferHandle, int bufferIndex = 0)
         {
             _userImageBuffer[bufferIndex].ImageBuffer = buffer;
             _userImageBuffer[bufferIndex].ImageBufferPtr = bufferPtr;
@@ -522,7 +461,7 @@ namespace JidamVision.Grab
         #endregion
 
         #region Dispose
-        internal void Dispose()
+        internal override void Dispose()
         {
             Dispose(disposing: true);
         }

@@ -35,15 +35,15 @@
             // 
             // picMainView
             // 
-            this.picMainView.Location = new System.Drawing.Point(13, 23);
+            this.picMainView.Location = new System.Drawing.Point(13, 41);
             this.picMainView.Name = "picMainView";
-            this.picMainView.Size = new System.Drawing.Size(455, 241);
+            this.picMainView.Size = new System.Drawing.Size(467, 251);
             this.picMainView.TabIndex = 0;
             this.picMainView.TabStop = false;
             // 
             // btnGrab
             // 
-            this.btnGrab.Location = new System.Drawing.Point(13, 270);
+            this.btnGrab.Location = new System.Drawing.Point(13, 12);
             this.btnGrab.Name = "btnGrab";
             this.btnGrab.Size = new System.Drawing.Size(75, 23);
             this.btnGrab.TabIndex = 1;
