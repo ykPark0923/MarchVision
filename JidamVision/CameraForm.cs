@@ -43,7 +43,20 @@ namespace JidamVision
             if (bitmap == null)
                 return;
 
-            picMainView.Image = bitmap;
+            imageViewer.LoadBitmap(bitmap);
+        }
+
+        private void CameraForm_Resize(object sender, EventArgs e)
+        {
+            int margin = 10;
+
+            btnGrab.Location = new Point(Location.X + this.Width - btnGrab.Width - margin, margin);
+
+            imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
+            imageViewer.Height = this.Height - margin * 2;
+
+            imageViewer.Location = new Point(margin, margin);
+
         }
 
         //private void LoadDockingWindows()
