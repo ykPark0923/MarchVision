@@ -14,22 +14,9 @@ namespace JidamVision
 {
     public partial class CameraForm : DockContent
     {
-        //private DockPanel _dockPanel;
-
         public CameraForm()
         {
             InitializeComponent();
-
-            //_dockPanel = new DockPanel
-            //{
-            //    Dock = DockStyle.Fill
-            //};
-            //Controls.Add(_dockPanel);
-
-            //// Visual Studio 2015 테마 적용
-            //_dockPanel.Theme = new VS2015BlueTheme();
-
-            //LoadDockingWindows();
         }
 
         public void UpdateDisplay(Bitmap bitmap = null)
@@ -46,36 +33,11 @@ namespace JidamVision
 
         private void CameraForm_Resize(object sender, EventArgs e)
         {
-            int margin = 10;
-
-            int xPos = Location.X + this.Width - btnGrab.Width - margin;
-
-            btnGrab.Location = new Point(xPos, btnGrab.Location.Y);
-            btnLive.Location = new Point(xPos, btnLive.Location.Y);
-
-            imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
-            imageViewer.Height = this.Height - margin * 2;
-
-            imageViewer.Location = new Point(margin, margin);
         }
 
         private void btnGrab_Click(object sender, EventArgs e)
         {
             Global.Inst.InspStage.Grab(0);
         }
-
-        private void btnLive_Click(object sender, EventArgs e)
-        {
-            Global.Inst.InspStage.LiveMode = !Global.Inst.InspStage.LiveMode;
-
-            if (Global.Inst.InspStage.LiveMode)
-                Global.Inst.InspStage.Grab(0);
-        }
-
-        //private void LoadDockingWindows()
-        //{
-        //    var resultWindow = new ResultForm();
-        //    resultWindow.Show(_dockPanel, DockState.DockBottom);
-        //}
     }
 }
