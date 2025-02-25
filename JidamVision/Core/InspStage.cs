@@ -18,14 +18,8 @@ namespace JidamVision.Core
         public static readonly int MAX_GRAB_BUF = 5;
 
         private ImageSpace _imageSpace = null;
-        private GrabModel _grabManager = null;
-        private CameraType _camType = CameraType.WebCam;
+        private HikRobotCam _grabManager = null;
         private PreviewImage _previewImage = null;
-
-        //public GrabModel MultiGrab
-        //{
-        //    get => _GrabManager;
-        //}
 
         public ImageSpace ImageSpace
         {
@@ -45,25 +39,7 @@ namespace JidamVision.Core
         {
             _imageSpace = new ImageSpace();
             _previewImage = new PreviewImage();
-
-            switch (_camType)
-            {
-                case CameraType.WebCam:
-                    {
-                        _grabManager = new WebCam();
-                        break;
-                    }
-                case CameraType.HikRobotCam:
-                    {
-                        _grabManager = new HikRobotCam();
-                        break;
-                    }
-                default:
-                    {
-                        Console.WriteLine("Not supported camera type!");
-                        return false;
-                    }
-            }
+            _grabManager = new HikRobotCam();
 
             if (_grabManager.InitGrab() == true)
             {
