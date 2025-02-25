@@ -14,7 +14,7 @@ namespace JidamVision.Core
     {
         private Mat _orinalImage = null;
         private Mat _previewImage = null;
-        private Mat _tempImage = null;
+        //private Mat _tempImage = null;
 
         public void SetImage(Mat image)
         {

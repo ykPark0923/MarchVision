@@ -30,6 +30,7 @@
         {
             this.btnGrab = new System.Windows.Forms.Button();
             this.imageViewer = new JidamVision.ImageViewCCtrl();
+            this.btnLive = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnGrab
@@ -44,13 +45,20 @@
             // 
             // imageViewer
             // 
-            this.imageViewer.AutoSize = true;
-            this.imageViewer.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.imageViewer.Location = new System.Drawing.Point(12, 12);
             this.imageViewer.Name = "imageViewer";
             this.imageViewer.Size = new System.Drawing.Size(332, 272);
             this.imageViewer.TabIndex = 2;
+            // 
+            // btnLive
+            // 
+            this.btnLive.Location = new System.Drawing.Point(350, 41);
+            this.btnLive.Name = "btnLive";
+            this.btnLive.Size = new System.Drawing.Size(75, 23);
+            this.btnLive.TabIndex = 1;
+            this.btnLive.Text = "Live";
+            this.btnLive.UseVisualStyleBackColor = true;
+            this.btnLive.Click += new System.EventHandler(this.btnLive_Click);
             // 
             // CameraForm
             // 
@@ -58,17 +66,18 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(432, 296);
             this.Controls.Add(this.imageViewer);
+            this.Controls.Add(this.btnLive);
             this.Controls.Add(this.btnGrab);
             this.Name = "CameraForm";
             this.Text = "CameraForm";
             this.Resize += new System.EventHandler(this.CameraForm_Resize);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.Button btnGrab;
         private ImageViewCCtrl imageViewer;
+        private System.Windows.Forms.Button btnLive;
     }
 }
