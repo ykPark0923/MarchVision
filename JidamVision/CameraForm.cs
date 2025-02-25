@@ -32,11 +32,6 @@ namespace JidamVision
             //LoadDockingWindows();
         }
 
-        private void btnGrab_Click(object sender, EventArgs e)
-        {
-            Global.Inst.InspStage.Grab(0);
-        }
-
         public void UpdateDisplay()
         {
             var bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
@@ -50,13 +45,28 @@ namespace JidamVision
         {
             int margin = 10;
 
-            btnGrab.Location = new Point(Location.X + this.Width - btnGrab.Width - margin, margin);
+            int xPos = Location.X + this.Width - btnGrab.Width - margin;
+
+            btnGrab.Location = new Point(xPos, btnGrab.Location.Y);
+            btnLive.Location = new Point(xPos, btnLive.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
             imageViewer.Height = this.Height - margin * 2;
 
             imageViewer.Location = new Point(margin, margin);
+        }
 
+        private void btnGrab_Click(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.Grab(0);
+        }
+
+        private void btnLive_Click(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.LiveMode = !Global.Inst.InspStage.LiveMode;
+
+            if (Global.Inst.InspStage.LiveMode)
+                Global.Inst.InspStage.Grab(0);
         }
 
         //private void LoadDockingWindows()

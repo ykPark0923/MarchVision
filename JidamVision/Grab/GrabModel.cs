@@ -72,7 +72,7 @@ namespace JidamVision.Grab
 
         internal abstract bool Create(string strIpAddr = null);
 
-        internal abstract bool Grab(int bufferIndex, bool waitDone);
+        internal abstract bool Grab(int bufferIndex, bool waitDone = true);
 
         internal abstract bool Close();
 

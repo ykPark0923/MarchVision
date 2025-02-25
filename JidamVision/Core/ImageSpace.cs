@@ -210,7 +210,7 @@ namespace JidamVision.Core
 
                 imageInfo.Stride = imageInfo.Width * bpp;
                 imageInfo.PixelResolution = _inspectionImage.PixelResolution;
-                imageInfo.ImageData = new byte[_inspectionImage.Stride * _inspectionImage.Height];
+                imageInfo.ImageData = new byte[imageInfo.Stride * imageInfo.Height];
 
                 GCHandle Handle = GCHandle.Alloc(imageInfo.ImageData, GCHandleType.Pinned);
                 imageInfo.Buffer = Handle.AddrOfPinnedObject();
@@ -367,7 +367,7 @@ namespace JidamVision.Core
             return _imageInfo[index].Handle;
         }
 
-        public Bitmap GetBitmap(int index = 0, eImageChannel channel = eImageChannel.Gray)
+        public Bitmap GetBitmap(int index = 0, eImageChannel channel = eImageChannel.Color)
         {
             if (index < 0 || _imageInfo.Count <= index)
                 return null;

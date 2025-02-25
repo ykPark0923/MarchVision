@@ -87,6 +87,13 @@ namespace JidamVision.Grab
             //    return false;
             //}
 
+            // BGR 포맷을 강제 설정 (산업용 카메라나 특정 드라이버에 따라 가능)
+
+            // BGR24 포맷 (컬러)
+            int fourccBGR3 = VideoWriter.FourCC('B', 'G', 'R', '3');
+            _capture.Set(VideoCaptureProperties.CodecPixelFormat, fourccBGR3);
+
+
             return true;
         }
 

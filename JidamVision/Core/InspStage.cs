@@ -28,6 +28,8 @@ namespace JidamVision.Core
             get => _imageSpace;
         }
 
+        public bool LiveMode { get; set; } = false;
+
         public InspStage() { }
 
         public bool Initialize()
@@ -125,6 +127,15 @@ namespace JidamVision.Core
             _imageSpace.Split(bufferIndex);
 
             DisplayGrabImage(bufferIndex);
+
+            if (LiveMode == true)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    System.Threading.Thread.Sleep(100);
+                    _grabManager.Grab(bufferIndex, true);
+                });
+            }
         }
 
         private void DisplayGrabImage(int bufferIndex)
