@@ -55,6 +55,8 @@ namespace JidamVision
             var statisticWindow = new StatisticForm();
             statisticWindow.Show(_dockPanel, DockState.DockRight);
 
+            propWindow.Activate();
+
             //로그창 50% 비율로 추가
             var logWindow = new LogForm();
             logWindow.Show(propWindow.Pane, DockAlignment.Bottom, 0.5);

@@ -1,4 +1,7 @@
-﻿using JidamVision.Grab;
+﻿using DevExpress.Drawing.Internal.Fonts.Interop;
+using JidamVision.Grab;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,6 +20,7 @@ namespace JidamVision.Core
         private ImageSpace _imageSpace = null;
         private GrabModel _grabManager = null;
         private CameraType _camType = CameraType.WebCam;
+        private PreviewImage _previewImage = null;
 
         //public GrabModel MultiGrab
         //{
@@ -28,6 +32,11 @@ namespace JidamVision.Core
             get => _imageSpace;
         }
 
+        public PreviewImage PreView
+        {
+            get => _previewImage;
+        }
+
         public bool LiveMode { get; set; } = false;
 
         public InspStage() { }
@@ -35,6 +44,7 @@ namespace JidamVision.Core
         public bool Initialize()
         {
             _imageSpace = new ImageSpace();
+            _previewImage = new PreviewImage();
 
             switch (_camType)
             {
@@ -127,6 +137,12 @@ namespace JidamVision.Core
             _imageSpace.Split(bufferIndex);
 
             DisplayGrabImage(bufferIndex);
+
+            if(_previewImage != null)
+            {
+                Bitmap bitmap = ImageSpace.GetBitmap(0);
+                _previewImage.SetImage( BitmapConverter.ToMat(bitmap));
+            }
 
             if (LiveMode == true)
             {

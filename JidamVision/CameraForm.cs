@@ -32,11 +32,14 @@ namespace JidamVision
             //LoadDockingWindows();
         }
 
-        public void UpdateDisplay()
+        public void UpdateDisplay(Bitmap bitmap = null)
         {
-            var bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
             if (bitmap == null)
-                return;
+            {
+                bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
+                if (bitmap == null)
+                    return;
+            }
 
             imageViewer.LoadBitmap(bitmap);
         }
