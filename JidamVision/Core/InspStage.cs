@@ -19,7 +19,7 @@ namespace JidamVision.Core
 
         private ImageSpace _imageSpace = null;
         private GrabModel _grabManager = null;
-        private CameraType _camType = CameraType.WebCam;
+        private CameraType _camType = CameraType.HikRobotCam;
         private PreviewImage _previewImage = null;
 
         public ImageSpace ImageSpace
