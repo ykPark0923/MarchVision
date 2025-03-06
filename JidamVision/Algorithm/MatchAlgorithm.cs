@@ -7,15 +7,21 @@ using System.Threading.Tasks;
 
 namespace JidamVision.Algorithm
 {
+    //#MATCH PROP#2 MatchAlgorithm 클래스 추가, InspAlgorithm상속 받기
+    //템플릿 매칭에 사용될 속성과 함수 정의
     public class MatchAlgorithm : InspAlgorithm
     {
+        //템플릿 매칭용 이미지(찾을 이미지)
         private Mat _templateImage;
 
-
+        //찾을 이미지의 매칭율
         public int MatchScore { get; set; } = 60;
+        //입력된 이미지에서 실제로 검색할 영역 설정, 속도 향상을 위해,
+        //입력된 ROI 기준으로 ExtSize만큼 확장하여, 그 영역에서 찾음
         public Size ExtSize { get; set; } = new Size(100,100);
-
+        //매칭이 설공했을때, 결과 매칭율
         public int OutScore { get; set; } = 0;
+        //찾은 위치
         public Point OutPoint { get; set; } = new Point(0, 0);
 
         //템플릿 매칭으로 찾고 싶은 갯수

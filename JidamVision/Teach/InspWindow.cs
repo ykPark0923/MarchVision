@@ -12,6 +12,9 @@ using System.IO;
 
 namespace JidamVision.Teach
 {
+    //#MATCH PROP#3 InspWindow 클래스 추가, ROI 관리 및 검사를 처리하는 클래스
+    //검사 알고리즘를 관리하는 클래스
+
     public class InspWindow
     {
         //템플릿 매칭할 윈도우 크기
@@ -39,7 +42,7 @@ namespace JidamVision.Teach
             return true;
         }
 
-        //템플릿 매칭 이미지 로딩
+        //#MATCH PROP#4 템플릿 매칭 이미지 로딩
         public bool PatternLearn()
         {
             if (_matchAlgorithm == null)
@@ -57,7 +60,7 @@ namespace JidamVision.Teach
             return true;
         }
 
-        //검사
+        //#MATCH PROP#5 템플릿 매칭 검사
         public bool DoInpsect()
         {
             if (_teachingImage is null)
@@ -86,6 +89,7 @@ namespace JidamVision.Teach
             return true;
         }
 
+        //#MATCH PROP#6 템플릿 매칭 검사 결과 위치를 Rectangle 리스트로 반환
         public int GetMatchRect(out List<Rectangle> rectangles)
         {
             rectangles = new List<Rectangle> ();

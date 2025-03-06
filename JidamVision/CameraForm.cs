@@ -19,6 +19,7 @@ namespace JidamVision
 {
     public partial class CameraForm : DockContent
     {
+        //# SAVE ROI#1 현재 선택된 이미지 채널 저장을 위한 변수
         eImageChannel _currentImageChannel = eImageChannel.Color;
 
         public CameraForm()
@@ -26,6 +27,7 @@ namespace JidamVision
             InitializeComponent();
         }
 
+        //# SAVE ROI#2 GUI상에서 선택된 채널 라디오 버튼에 따른 채널 정보를 반환
         private eImageChannel GetCurrentChannel()
         {
             if (rbtnRedChannel.Checked)
@@ -52,6 +54,8 @@ namespace JidamVision
         {
             if (bitmap == null)
             {
+                //# SAVE ROI#3 채널 정보 변수에 저장
+                //참고 프로젝트에서 _currentImageChannel를 모두 찾아서, 수정할것
                 _currentImageChannel = GetCurrentChannel();
                 bitmap = Global.Inst.InspStage.GetBitmap(0, _currentImageChannel);
                 if (bitmap == null)
@@ -97,12 +101,6 @@ namespace JidamVision
                 Global.Inst.InspStage.Grab(0);
         }
 
-        private void btnSetRoi_Click(object sender, EventArgs e)
-        {
-            imageViewer.RoiMode = !imageViewer.RoiMode;
-            imageViewer.Invalidate();
-        }
-
         private void CameraForm_Load(object sender, EventArgs e)
         {
 
@@ -128,20 +126,40 @@ namespace JidamVision
             UpdateDisplay();
         }
 
+        /*
+         #SETROI# - <<<ROI 설정 개발>>> 
+        이미지 상에서 ROI(Region of Interest)를 설정하는 기능
+         */
+        private void btnSetRoi_Click(object sender, EventArgs e)
+        {
+            //#SETROI#2 ROI 모드 토글 설정
+            imageViewer.RoiMode = !imageViewer.RoiMode;
+            imageViewer.Invalidate();
+        }
+
+        /*
+         #SAVE ROI# - <<<ROI 영역 이미지 파일 저장>>> 
+        이미지 상에서 ROI 영역을 파일로 저장하여, 템플릿 매칭에서 사용
+        */
         private void btnSave_Click(object sender, EventArgs e)
         {
+            //# SAVE ROI#5 현재 채널 이미지에서, 설정된 ROI 영역을 파일로 저장
             OpenCvSharp.Mat currentImage = Global.Inst.InspStage.GetMat(0, _currentImageChannel);
             if(currentImage != null )
             {
+                //현재 설정된 ROI 영역을 가져옴
                 Rectangle roiRect = imageViewer.GetRoiRect();
+                //전체 이미지에서 ROI 영역만을 roiImage에 저장
                 Mat roiImage = new Mat(currentImage, new Rect(roiRect.X, roiRect.Y, roiRect.Width, roiRect.Height));
 
-                //Global.Inst.InspStage.InspWindow.SetTeachingImage(currentImage, imageViewer.GetRoiRect());
+                //현재 실행파일이 있는 경로에, 저장할 경로 만들기
                 string savePath = Path.Combine(Directory.GetCurrentDirectory(), Define.ROI_IMAGE_NAME);
+                //이미지 저장
                 Cv2.ImWrite(savePath, roiImage);
             }
         }
 
+        //#MATCH PROP#14 템플릿 매칭 위치 입력 받는 함수
         public void AddRect(List<Rectangle> rectangles)
         {
             imageViewer.AddRect(rectangles);

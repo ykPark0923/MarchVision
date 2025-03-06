@@ -62,8 +62,10 @@ namespace JidamVision
         private float InitialWidth;    // 초기 이미지 너비
         private float InitialHeight;   // 초기 이미지 높이
 
+        //#MATCH PROP#11 템플릿 매칭 결과 출력을 위해 Rectangle 리스트 변수 설정
         private List<Rectangle> _rectangles = new List<Rectangle>();
 
+        //#SETROI#1 ROI 그리기 모드
         public bool RoiMode { get; set; } = false;
 
         public ImageViewCCtrl()
@@ -143,7 +145,6 @@ namespace JidamVision
 
             // 변경된 화면을 다시 그리도록 요청
             Invalidate();
-
         }
 
         public void LoadImage(string path)
@@ -157,7 +158,6 @@ namespace JidamVision
 
             // 새로운 이미지 로드
             Bitmap = (Bitmap)Image.FromFile(path);
-
 
             // UserControl 크기에 맞춰 이미지 비율 유지하여 크기 조정
             float WidthRatio = (float)Width / Bitmap.Width;  //UserControl1 Width/Bitmap.Width
@@ -174,7 +174,6 @@ namespace JidamVision
                 NewWidth,
                 NewHeight
             );
-
 
             // 줌 초기화
             ZoomFactor = 1.0f;
@@ -242,6 +241,7 @@ namespace JidamVision
                      * HighQualityBilinear	Bilinear보다 품질이 높고 Bicubic보다 빠름
                      ****************************************************************/
 
+                    //#MATCH PROP#12 템플릿 매칭 위치 그리기
                     float scaleX = ImageRect.Width / Bitmap.Width;
                     float scaleY = ImageRect.Height / Bitmap.Height;
 
@@ -263,15 +263,10 @@ namespace JidamVision
                         }
                     }
 
-                    // ROI 사각형 그리기
+                    //#SETROI#3 ROI 그리기
                     if (RoiMode && !_roiRect.IsEmpty)
                     {
                         Rectangle rect = _roiRect;
-                        //rect.X = (int)(rect.X * scaleX + ImageRect.X);
-                        //rect.Y = (int)(rect.Y * scaleY + ImageRect.Y);
-                        //rect.Width = (int)(rect.Width * scaleX);
-                        //rect.Height = (int)(rect.Height * scaleY);
-
                         using (Pen pen = new Pen(Color.LightGreen, 2))
                         {
                             g.DrawRectangle(pen, rect);
@@ -296,14 +291,17 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
         {
+            //#SETROI#3 ROI 모드에서 ROI 그리기 시작 또는 ROI 크기 이동/변경 모드 설정
             if (RoiMode && e.Button == MouseButtons.Left)
             {
+                //마우스 클릭 위치가 ROI 크기 변경을 하기 위한 위치(모서리,엣지)인지 여부 판단
                 _resizeDirection = GetResizeHandleIndex(e.Location);
                 if (_resizeDirection != -1)
                 {
                     _isResizingRoi = true;
                     _resizeStart = e.Location;
                 }
+                //ROI 크기 변경 이외에 이동을 위해, 입력좌표가 ROI 안에 있는지 여부 판단
                 else if (_roiRect.Contains(e.Location))
                 {
                     _isMovingRoi = true;
@@ -311,6 +309,7 @@ namespace JidamVision
                 }
                 else
                 {
+                    //새로운 ROI 그리기 시작 위치 설저어
                     _roiStart = e.Location;
                     _isSelectingRoi = true;
                 }
@@ -328,8 +327,10 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseMove(object sender, MouseEventArgs e)
         {
-            if(RoiMode)
+            //#SETROI#4 ROI 크기 변경 또는 이동 진행
+            if (RoiMode)
             {
+                //최초 ROI 생성하여 그리기
                 if (_isSelectingRoi && e.Button == MouseButtons.Left)
                 {
                     int x = Math.Min(_roiStart.X, e.X);
@@ -339,12 +340,14 @@ namespace JidamVision
                     _roiRect = new Rectangle(x, y, width, height);
                     Invalidate();
                 }
+                //기존 ROI 크기 변경
                 else if (_isResizingRoi && e.Button == MouseButtons.Left)
                 {
                     ResizeROI(e.Location);
                     _resizeStart = e.Location;
                     Invalidate();
                 }
+                //ROI 위치 이동
                 else if (_isMovingRoi && e.Button == MouseButtons.Left)
                 {
                     int dx = e.X - _moveStart.X;
@@ -354,6 +357,7 @@ namespace JidamVision
                     _moveStart = e.Location;
                     Invalidate();
                 }
+                //마우스 클릭없이, 위치만 이동시에, 커서의 위치가 크기변경또는 이동 위치일때, 커서 변경
                 else
                 {
                     int index = GetResizeHandleIndex(e.Location);
@@ -390,7 +394,8 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseUp(object sender, MouseEventArgs e)
         {
-            if(e.Button == MouseButtons.Left)
+            //#SETROI#5 ROI 크기 변경 또는 이동 완료
+            if (e.Button == MouseButtons.Left)
             {
                 if (_isSelectingRoi)
                 {
@@ -413,6 +418,7 @@ namespace JidamVision
             }
         }
 
+        //마우스 위치가 ROI 크기 변경을 위한 여부를 확인하기 위해, 4개 모서리와 사각형 라인의 중간 위치 반환
         private Point[] GetResizeHandles(Rectangle rect)
         {
             return new Point[]
@@ -428,6 +434,7 @@ namespace JidamVision
             };
         }
 
+        //마우스 위치가 크기 변경 위치에 해당하는 지를, 위치 인덱스로 반환
         private int GetResizeHandleIndex(Point mousePos)
         {
             Point[] handles = GetResizeHandles(_roiRect);
@@ -439,6 +446,7 @@ namespace JidamVision
             return -1;
         }
 
+        //사각 모서리와 중간 지점을 인덱스로 설정하여, 해당 위치에 따른 커서 타입 반환
         private Cursor GetCursorForHandle(int handleIndex)
         {
             switch (handleIndex)
@@ -451,6 +459,7 @@ namespace JidamVision
             }
         }
 
+        //ROI 크기 변경시, 마우스 위치를 입력받아, ROI 크기 변경
         private void ResizeROI(Point mousePos)
         {
             switch (_resizeDirection)
@@ -582,6 +591,8 @@ namespace JidamVision
             Rectangle roi = new Rectangle(roiX, roiY, roiWidth, roiHeight);
             return roi;
         }
+
+        //#MATCH PROP#13 템플릿 매칭 위치 입력 받는 함수
         public void AddRect(List<Rectangle> rectangles)
         {
             _rectangles = rectangles;
