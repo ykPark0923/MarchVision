@@ -1,5 +1,4 @@
-﻿using DevExpress.Drawing.Internal.Fonts.Interop;
-using JidamVision.Grab;
+﻿using JidamVision.Grab;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 using System;
