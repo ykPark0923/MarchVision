@@ -12,6 +12,8 @@ using JidamVision.Core;
 using OpenCvSharp.Extensions;
 using System.Web;
 using JidamVision.Teach;
+using System.IO;
+using OpenCvSharp;
 
 namespace JidamVision
 {
@@ -70,16 +72,16 @@ namespace JidamVision
 
             int xPos = Location.X + this.Width - btnGrab.Width - margin;
 
-            btnGrab.Location = new Point(xPos, btnGrab.Location.Y);
-            btnLive.Location = new Point(xPos, btnLive.Location.Y);
-            btnSetRoi.Location = new Point(xPos, btnSetRoi.Location.Y);
-            btnSave.Location = new Point(xPos, btnSave.Location.Y);
-            groupBox1.Location = new Point(xPos, groupBox1.Location.Y);
+            btnGrab.Location = new System.Drawing.Point(xPos, btnGrab.Location.Y);
+            btnLive.Location = new System.Drawing.Point(xPos, btnLive.Location.Y);
+            btnSetRoi.Location = new System.Drawing.Point(xPos, btnSetRoi.Location.Y);
+            btnSave.Location = new System.Drawing.Point(xPos, btnSave.Location.Y);
+            groupBox1.Location = new System.Drawing.Point(xPos, groupBox1.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
             imageViewer.Height = this.Height - margin * 2;
 
-            imageViewer.Location = new Point(margin, margin);
+            imageViewer.Location = new System.Drawing.Point(margin, margin);
         }
 
         private void btnGrab_Click(object sender, EventArgs e)
@@ -131,7 +133,12 @@ namespace JidamVision
             OpenCvSharp.Mat currentImage = Global.Inst.InspStage.GetMat(0, _currentImageChannel);
             if(currentImage != null )
             {
-                Global.Inst.InspStage.InspWindow.SetTeachingImage(currentImage, imageViewer.GetRoiRect());
+                Rectangle roiRect = imageViewer.GetRoiRect();
+                Mat roiImage = new Mat(currentImage, new Rect(roiRect.X, roiRect.Y, roiRect.Width, roiRect.Height));
+
+                //Global.Inst.InspStage.InspWindow.SetTeachingImage(currentImage, imageViewer.GetRoiRect());
+                string savePath = Path.Combine(Directory.GetCurrentDirectory(), Define.ROI_IMAGE_NAME);
+                Cv2.ImWrite(savePath, roiImage);
             }
         }
 

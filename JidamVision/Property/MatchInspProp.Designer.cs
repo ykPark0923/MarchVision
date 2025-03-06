@@ -29,18 +29,24 @@
         private void InitializeComponent()
         {
             this.grpMatch = new System.Windows.Forms.GroupBox();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.lbScore = new System.Windows.Forms.Label();
             this.txtExtendY = new System.Windows.Forms.TextBox();
             this.txtScore = new System.Windows.Forms.TextBox();
             this.txtExtendX = new System.Windows.Forms.TextBox();
             this.lbX = new System.Windows.Forms.Label();
             this.lbExtent = new System.Windows.Forms.Label();
-            this.btnSearch = new System.Windows.Forms.Button();
+            this.lbMatchCount = new System.Windows.Forms.Label();
+            this.txtMatchCount = new System.Windows.Forms.TextBox();
+            this.btnTeach = new System.Windows.Forms.Button();
             this.grpMatch.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpMatch
             // 
+            this.grpMatch.Controls.Add(this.btnTeach);
+            this.grpMatch.Controls.Add(this.txtMatchCount);
+            this.grpMatch.Controls.Add(this.lbMatchCount);
             this.grpMatch.Controls.Add(this.btnSearch);
             this.grpMatch.Controls.Add(this.lbScore);
             this.grpMatch.Controls.Add(this.txtExtendY);
@@ -54,6 +60,16 @@
             this.grpMatch.TabIndex = 0;
             this.grpMatch.TabStop = false;
             this.grpMatch.Text = "패턴매칭";
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(87, 97);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(124, 29);
+            this.btnSearch.TabIndex = 3;
+            this.btnSearch.Text = "찾기";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // lbScore
             // 
@@ -103,15 +119,31 @@
             this.lbExtent.TabIndex = 0;
             this.lbExtent.Text = "확장영역";
             // 
-            // btnSearch
+            // lbMatchCount
             // 
-            this.btnSearch.Location = new System.Drawing.Point(87, 94);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(124, 29);
-            this.btnSearch.TabIndex = 3;
-            this.btnSearch.Text = "찾기";
-            this.btnSearch.UseVisualStyleBackColor = true;
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            this.lbMatchCount.AutoSize = true;
+            this.lbMatchCount.Location = new System.Drawing.Point(9, 73);
+            this.lbMatchCount.Name = "lbMatchCount";
+            this.lbMatchCount.Size = new System.Drawing.Size(57, 12);
+            this.lbMatchCount.TabIndex = 4;
+            this.lbMatchCount.Text = "매칭 갯수";
+            // 
+            // txtMatchCount
+            // 
+            this.txtMatchCount.Location = new System.Drawing.Point(87, 70);
+            this.txtMatchCount.Name = "txtMatchCount";
+            this.txtMatchCount.Size = new System.Drawing.Size(50, 21);
+            this.txtMatchCount.TabIndex = 5;
+            // 
+            // btnTeach
+            // 
+            this.btnTeach.Location = new System.Drawing.Point(9, 99);
+            this.btnTeach.Name = "btnTeach";
+            this.btnTeach.Size = new System.Drawing.Size(66, 25);
+            this.btnTeach.TabIndex = 6;
+            this.btnTeach.Text = "티칭";
+            this.btnTeach.UseVisualStyleBackColor = true;
+            this.btnTeach.Click += new System.EventHandler(this.btnTeach_Click);
             // 
             // MatchInspProp
             // 
@@ -136,5 +168,8 @@
         private System.Windows.Forms.Label lbScore;
         private System.Windows.Forms.TextBox txtScore;
         private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.TextBox txtMatchCount;
+        private System.Windows.Forms.Label lbMatchCount;
+        private System.Windows.Forms.Button btnTeach;
     }
 }

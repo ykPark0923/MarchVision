@@ -8,16 +8,22 @@ using OpenCvSharp;
 using JidamVision.Core;
 using System.Security.Policy;
 using System.Drawing;
+using System.IO;
 
 namespace JidamVision.Teach
 {
     public class InspWindow
     {
-        System.Drawing.Rectangle _rect;
-        Mat _teachingImage;
+        //템플릿 매칭할 윈도우 크기
+        private System.Drawing.Rectangle _rect;
+        //템플릿 매칭 이미지
+        private Mat _teachingImage;
 
-        MatchAlgorithm _matchAlgorithm;
-        List<OpenCvSharp.Point> _matchpoints;
+        //템플릿 매칭 클래스
+        private MatchAlgorithm _matchAlgorithm;
+       
+        //템플릿 매칭으로 찾은 위치 리스트
+        private List<OpenCvSharp.Point> _outPoints;
 
         public MatchAlgorithm MatchAlgorithm => _matchAlgorithm;
 
@@ -33,6 +39,25 @@ namespace JidamVision.Teach
             return true;
         }
 
+        //템플릿 매칭 이미지 로딩
+        public bool PatternLearn()
+        {
+            if (_matchAlgorithm == null)
+                return false;
+
+            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), Define.ROI_IMAGE_NAME);
+            if (File.Exists(templatePath))
+            {
+                _teachingImage = Cv2.ImRead(templatePath);
+                
+                if(_teachingImage != null)
+                    _matchAlgorithm.SetTemplateImage(_teachingImage);
+            }
+
+            return true;
+        }
+
+        //검사
         public bool DoInpsect()
         {
             if (_teachingImage is null)
@@ -42,14 +67,21 @@ namespace JidamVision.Teach
                 _matchAlgorithm = new MatchAlgorithm();
 
             Mat srcImage = Global.Inst.InspStage.GetMat();
-            
-            //Cv2.ImWrite("d:\\temp\\abc.jpg", _teachingImage);
 
-            _matchAlgorithm.SetTemplateImage(_teachingImage);
+            if (_matchAlgorithm.MatchCount == 1)
+            {
+                if(_matchAlgorithm.MatchTemplateSingle(srcImage) == false)
+                    return false;
 
-            int matchCount = _matchAlgorithm.MatchTemplateMultiple(srcImage, out _matchpoints);
-            if (matchCount <= 0)
-                return false;
+                _outPoints = new List<OpenCvSharp.Point>();
+                _outPoints.Add(_matchAlgorithm.OutPoint);
+            }
+            else
+            {
+                int matchCount = _matchAlgorithm.MatchTemplateMultiple(srcImage, out _outPoints);
+                if (matchCount <= 0)
+                    return false;
+            }
 
             return true;
         }
@@ -61,9 +93,9 @@ namespace JidamVision.Teach
             int halfWidth = _teachingImage.Width;
             int halfHeight = _teachingImage.Height;
 
-            foreach (var point in _matchpoints)
+            foreach (var point in _outPoints)
             {
-                Console.WriteLine($"매칭된 위치: {_matchpoints}");
+                Console.WriteLine($"매칭된 위치: {_outPoints}");
                 rectangles.Add(new Rectangle(point.X - halfWidth, point.Y - halfHeight, _teachingImage.Width, _teachingImage.Height));
             }
 

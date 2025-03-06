@@ -9,19 +9,22 @@ namespace JidamVision.Algorithm
 {
     public class MatchAlgorithm : InspAlgorithm
     {
-        Mat _templateImage;
+        private Mat _templateImage;
 
-        int _outScore;
-        Point2f _outPoint;
 
         public int MatchScore { get; set; } = 60;
         public Size ExtSize { get; set; } = new Size(100,100);
+
+        public int OutScore { get; set; } = 0;
+        public Point OutPoint { get; set; } = new Point(0, 0);
+
+        //템플릿 매칭으로 찾고 싶은 갯수
+        public int MatchCount { get; set; } = 1;
 
         private int _scanStep = 8; // 검색 간격 (SCAN 값)
 
         public MatchAlgorithm()
         {
-            _outPoint = new Point2f();
         }
 
         public void SetTemplateImage(Mat templateImage)
@@ -32,11 +35,8 @@ namespace JidamVision.Algorithm
         /// <summary>
         /// 하나의 최적 매칭 위치만 찾기
         /// </summary>
-        public bool MatchTemplateSingle(Mat image, out Point outPos, out int outScore)
+        public bool MatchTemplateSingle(Mat image)
         {
-            outPos.X = outPos.Y = 0;
-            outScore = 0;
-
             if (_templateImage is null)
                 return false;
 
@@ -48,18 +48,12 @@ namespace JidamVision.Algorithm
             // 가장 높은 점수 위치 찾기
             Cv2.MinMaxLoc(result, out _, out double maxVal, out _, out Point maxLoc);
 
-            _outScore = (int)(maxVal * 100);
+            OutScore = (int)(maxVal * 100);
 
             Console.WriteLine($"최적 매칭 위치: {maxLoc}, 신뢰도: {maxVal:F2}");
 
-            // 매칭된 위치에 사각형 표시
-            //Cv2.Rectangle(image, new Rect(maxLoc, template.Size()), Scalar.Red, 2);
-            //Cv2.ImShow("Best Match", image);
-            //Cv2.WaitKey(0);
-
-            outPos = maxLoc;
-            outScore = _outScore;
-
+            OutPoint = new Point(maxLoc.X + _templateImage.Width, maxLoc.Y + _templateImage.Height);
+            
             return true;
         }
 

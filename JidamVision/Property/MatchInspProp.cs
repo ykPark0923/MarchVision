@@ -31,10 +31,12 @@ namespace JidamVision.Property
 
             OpenCvSharp.Size extendSize = inspWindow.MatchAlgorithm.ExtSize;
             int matchScore = inspWindow.MatchAlgorithm.MatchScore;
+            int matchCount = inspWindow.MatchAlgorithm.MatchCount;
 
             txtExtendX.Text = extendSize.Width.ToString();
             txtExtendY.Text = extendSize.Height.ToString();
             txtScore.Text = matchScore.ToString();
+            txtMatchCount.Text = matchCount.ToString();
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -43,15 +45,17 @@ namespace JidamVision.Property
             extendSize.Width = int.Parse(txtExtendX.Text);
             extendSize.Height = int.Parse(txtExtendY.Text);
             int matchScore = int.Parse(txtScore.Text);
+            int matchCount = int.Parse(txtMatchCount.Text);
 
             InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
             inspWindow.MatchAlgorithm.ExtSize = extendSize;
             inspWindow.MatchAlgorithm.MatchScore = matchScore;
-            if(inspWindow.DoInpsect())
+            inspWindow.MatchAlgorithm.MatchCount = matchCount;
+            if (inspWindow.DoInpsect())
             {
                 List<Rectangle> rectangles;
-                int matchCount = inspWindow.GetMatchRect(out rectangles);
-                if (matchCount > 0)
+                int findCount = inspWindow.GetMatchRect(out rectangles);
+                if (findCount > 0)
                 {
                     var cameraForm = MainForm.GetDockForm<CameraForm>();
                     if (cameraForm != null)
@@ -60,7 +64,15 @@ namespace JidamVision.Property
                     }
                 }
             }
+        }
 
+        private void btnTeach_Click(object sender, EventArgs e)
+        {
+            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
+            if (inspWindow.PatternLearn())
+                MessageBox.Show("티칭 성공");
+            else
+                MessageBox.Show("티칭 실패");
         }
     }
 }
