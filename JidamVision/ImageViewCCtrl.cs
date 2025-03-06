@@ -64,6 +64,9 @@ namespace JidamVision
 
         public bool RoiMode { get; set; } = false;
 
+        // 설정된 ROI 크기
+        public Rectangle RoiRect { get; set; } = new Rectangle(0, 0, 0, 0);
+
         public ImageViewCCtrl()
         {
             InitializeComponent();
@@ -375,6 +378,7 @@ namespace JidamVision
                 {
                     _isMovingRoi = false;
                 }
+                RoiRect = _roiRect;
             }
 
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리

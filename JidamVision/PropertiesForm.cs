@@ -26,7 +26,7 @@ namespace JidamVision
         {
             InitializeComponent();
             //속성창 설정
-            SetInspType(InspPropType.InspBinary);
+            //SetInspType(InspPropType.InspMatch);
         }
 
         public void SetInspType(InspPropType inspPropType)

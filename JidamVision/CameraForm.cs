@@ -11,6 +11,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using JidamVision.Core;
 using OpenCvSharp.Extensions;
 using System.Web;
+using JidamVision.Teach;
 
 namespace JidamVision
 {
@@ -50,7 +51,7 @@ namespace JidamVision
             if (bitmap == null)
             {
                 _currentImageChannel = GetCurrentChannel();
-                bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, _currentImageChannel);
+                bitmap = Global.Inst.InspStage.GetBitmap(0, _currentImageChannel);
                 if (bitmap == null)
                     return;
             }
@@ -72,6 +73,7 @@ namespace JidamVision
             btnGrab.Location = new Point(xPos, btnGrab.Location.Y);
             btnLive.Location = new Point(xPos, btnLive.Location.Y);
             btnSetRoi.Location = new Point(xPos, btnSetRoi.Location.Y);
+            btnSave.Location = new Point(xPos, btnSave.Location.Y);
             groupBox1.Location = new Point(xPos, groupBox1.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
@@ -122,6 +124,15 @@ namespace JidamVision
         private void rbtnGrayChannel_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDisplay();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            OpenCvSharp.Mat currentImage = Global.Inst.InspStage.GetMat(0, _currentImageChannel);
+            if(currentImage != null )
+            {
+                Global.Inst.InspStage.InspWindow.SetTeachingImage(currentImage, imageViewer.RoiRect);
+            }
         }
     }
 }

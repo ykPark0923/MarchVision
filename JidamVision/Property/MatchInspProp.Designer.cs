@@ -29,17 +29,19 @@
         private void InitializeComponent()
         {
             this.grpMatch = new System.Windows.Forms.GroupBox();
-            this.lbExtent = new System.Windows.Forms.Label();
-            this.txtExtendX = new System.Windows.Forms.TextBox();
-            this.txtExtendY = new System.Windows.Forms.TextBox();
-            this.lbX = new System.Windows.Forms.Label();
             this.lbScore = new System.Windows.Forms.Label();
+            this.txtExtendY = new System.Windows.Forms.TextBox();
             this.txtScore = new System.Windows.Forms.TextBox();
+            this.txtExtendX = new System.Windows.Forms.TextBox();
+            this.lbX = new System.Windows.Forms.Label();
+            this.lbExtent = new System.Windows.Forms.Label();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.grpMatch.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpMatch
             // 
+            this.grpMatch.Controls.Add(this.btnSearch);
             this.grpMatch.Controls.Add(this.lbScore);
             this.grpMatch.Controls.Add(this.txtExtendY);
             this.grpMatch.Controls.Add(this.txtScore);
@@ -53,21 +55,14 @@
             this.grpMatch.TabStop = false;
             this.grpMatch.Text = "패턴매칭";
             // 
-            // lbExtent
+            // lbScore
             // 
-            this.lbExtent.AutoSize = true;
-            this.lbExtent.Location = new System.Drawing.Point(7, 21);
-            this.lbExtent.Name = "lbExtent";
-            this.lbExtent.Size = new System.Drawing.Size(53, 12);
-            this.lbExtent.TabIndex = 0;
-            this.lbExtent.Text = "확장영역";
-            // 
-            // txtExtendX
-            // 
-            this.txtExtendX.Location = new System.Drawing.Point(87, 12);
-            this.txtExtendX.Name = "txtExtendX";
-            this.txtExtendX.Size = new System.Drawing.Size(50, 21);
-            this.txtExtendX.TabIndex = 1;
+            this.lbScore.AutoSize = true;
+            this.lbScore.Location = new System.Drawing.Point(7, 45);
+            this.lbScore.Name = "lbScore";
+            this.lbScore.Size = new System.Drawing.Size(65, 12);
+            this.lbScore.TabIndex = 2;
+            this.lbScore.Text = "매칭스코어";
             // 
             // txtExtendY
             // 
@@ -75,6 +70,20 @@
             this.txtExtendY.Name = "txtExtendY";
             this.txtExtendY.Size = new System.Drawing.Size(50, 21);
             this.txtExtendY.TabIndex = 1;
+            // 
+            // txtScore
+            // 
+            this.txtScore.Location = new System.Drawing.Point(87, 42);
+            this.txtScore.Name = "txtScore";
+            this.txtScore.Size = new System.Drawing.Size(50, 21);
+            this.txtScore.TabIndex = 1;
+            // 
+            // txtExtendX
+            // 
+            this.txtExtendX.Location = new System.Drawing.Point(87, 12);
+            this.txtExtendX.Name = "txtExtendX";
+            this.txtExtendX.Size = new System.Drawing.Size(50, 21);
+            this.txtExtendX.TabIndex = 1;
             // 
             // lbX
             // 
@@ -85,21 +94,24 @@
             this.lbX.TabIndex = 0;
             this.lbX.Text = "x";
             // 
-            // lbScore
+            // lbExtent
             // 
-            this.lbScore.AutoSize = true;
-            this.lbScore.Location = new System.Drawing.Point(7, 45);
-            this.lbScore.Name = "lbScore";
-            this.lbScore.Size = new System.Drawing.Size(65, 12);
-            this.lbScore.TabIndex = 2;
-            this.lbScore.Text = "매칭스코어";
+            this.lbExtent.AutoSize = true;
+            this.lbExtent.Location = new System.Drawing.Point(7, 21);
+            this.lbExtent.Name = "lbExtent";
+            this.lbExtent.Size = new System.Drawing.Size(53, 12);
+            this.lbExtent.TabIndex = 0;
+            this.lbExtent.Text = "확장영역";
             // 
-            // txtScore
+            // btnSearch
             // 
-            this.txtScore.Location = new System.Drawing.Point(87, 42);
-            this.txtScore.Name = "txtScore";
-            this.txtScore.Size = new System.Drawing.Size(50, 21);
-            this.txtScore.TabIndex = 1;
+            this.btnSearch.Location = new System.Drawing.Point(87, 94);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(124, 29);
+            this.btnSearch.TabIndex = 3;
+            this.btnSearch.Text = "찾기";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // MatchInspProp
             // 
@@ -123,5 +135,6 @@
         private System.Windows.Forms.Label lbExtent;
         private System.Windows.Forms.Label lbScore;
         private System.Windows.Forms.TextBox txtScore;
+        private System.Windows.Forms.Button btnSearch;
     }
 }
