@@ -10,46 +10,57 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using JidamVision.Core;
 using OpenCvSharp.Extensions;
+using System.Web;
 
 namespace JidamVision
 {
     public partial class CameraForm : DockContent
     {
+        eImageChannel _currentImageChannel = eImageChannel.Color;
+
         public CameraForm()
         {
             InitializeComponent();
+        }
+
+        private eImageChannel GetCurrentChannel()
+        {
+            if (rbtnRedChannel.Checked)
+            {
+                return eImageChannel.Red;
+            }
+            else if (rbtnBlueChannel.Checked)
+            {
+                return eImageChannel.Blue;
+            }
+            else if (rbtnGreenChannel.Checked)
+            {
+                return eImageChannel.Green;
+            }
+            else if (rbtnGrayChannel.Checked)
+            {
+                return eImageChannel.Gray;
+            }
+
+            return eImageChannel.Color;
         }
 
         public void UpdateDisplay(Bitmap bitmap = null)
         {
             if (bitmap == null)
             {
-                if (rbtnRedChannel.Checked)
-                {
-                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Red);
-                }
-                else if (rbtnBlueChannel.Checked)
-                {
-                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Blue);
-                }
-                else if (rbtnGreenChannel.Checked)
-                {
-                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Green);
-                }
-                else if (rbtnGrayChannel.Checked)
-                {
-                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Gray);
-                }
-                else
-                {
-                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
-                }
-
+                _currentImageChannel = GetCurrentChannel();
+                bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, _currentImageChannel);
                 if (bitmap == null)
                     return;
             }
 
             imageViewer.LoadBitmap(bitmap);
+        }
+
+        public OpenCvSharp.Mat GetDisplayImage()
+        {
+            return Global.Inst.InspStage.ImageSpace.GetMat(0, _currentImageChannel);
         }
 
         private void CameraForm_Resize(object sender, EventArgs e)
@@ -84,12 +95,33 @@ namespace JidamVision
 
         private void btnSetRoi_Click(object sender, EventArgs e)
         {
-            imageViewer.SetROIMode(true);
+            imageViewer.RoiMode = !imageViewer.RoiMode;
+            imageViewer.Invalidate();
         }
 
         private void CameraForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void rbtnRedChannel_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
+
+        private void rbtnBlueChannel_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
+
+        private void rbtnGreenChannel_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
+
+        private void rbtnGrayChannel_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
         }
     }
 }

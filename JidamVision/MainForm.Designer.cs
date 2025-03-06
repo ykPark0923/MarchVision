@@ -30,9 +30,9 @@
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageLoadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageFilterToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -51,17 +51,25 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem});
+            this.imageLoadToolStripMenuItem,
+            this.imageSaveToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // loadToolStripMenuItem
+            // imageLoadToolStripMenuItem
             // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.loadToolStripMenuItem.Text = "Load";
+            this.imageLoadToolStripMenuItem.Name = "imageLoadToolStripMenuItem";
+            this.imageLoadToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageLoadToolStripMenuItem.Text = "Image Load";
+            this.imageLoadToolStripMenuItem.Click += new System.EventHandler(this.imageLoadToolStripMenuItem_Click);
+            // 
+            // imageSaveToolStripMenuItem
+            // 
+            this.imageSaveToolStripMenuItem.Name = "imageSaveToolStripMenuItem";
+            this.imageSaveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.imageSaveToolStripMenuItem.Text = "Image Save";
+            this.imageSaveToolStripMenuItem.Click += new System.EventHandler(this.imageSaveToolStripMenuItem_Click);
             // 
             // imageFilterToolStripMenuItem
             // 
@@ -71,16 +79,10 @@
             this.imageFilterToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
             this.imageFilterToolStripMenuItem.Text = "ImageFilter";
             // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            // 
             // imageFilterToolStripMenuItem1
             // 
             this.imageFilterToolStripMenuItem1.Name = "imageFilterToolStripMenuItem1";
-            this.imageFilterToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.imageFilterToolStripMenuItem1.Size = new System.Drawing.Size(137, 22);
             this.imageFilterToolStripMenuItem1.Text = "Image Filter";
             // 
             // MainForm
@@ -103,9 +105,9 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageLoadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageFilterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem imageSaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem imageFilterToolStripMenuItem1;
     }
 }

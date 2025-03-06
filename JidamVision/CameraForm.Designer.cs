@@ -66,8 +66,9 @@
             this.imageViewer.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.imageViewer.Location = new System.Drawing.Point(12, 12);
-            this.imageViewer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.imageViewer.Margin = new System.Windows.Forms.Padding(4);
             this.imageViewer.Name = "imageViewer";
+            this.imageViewer.RoiMode = false;
             this.imageViewer.Size = new System.Drawing.Size(332, 272);
             this.imageViewer.TabIndex = 2;
             // 
@@ -78,9 +79,9 @@
             this.groupBox1.Controls.Add(this.rbtnBlueChannel);
             this.groupBox1.Controls.Add(this.rbtnRedChannel);
             this.groupBox1.Location = new System.Drawing.Point(350, 117);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(74, 103);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
@@ -90,49 +91,53 @@
             // 
             this.rbtnGrayChannel.AutoSize = true;
             this.rbtnGrayChannel.Location = new System.Drawing.Point(4, 81);
-            this.rbtnGrayChannel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rbtnGrayChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnGrayChannel.Name = "rbtnGrayChannel";
             this.rbtnGrayChannel.Size = new System.Drawing.Size(50, 16);
             this.rbtnGrayChannel.TabIndex = 3;
             this.rbtnGrayChannel.TabStop = true;
             this.rbtnGrayChannel.Text = "Gray";
             this.rbtnGrayChannel.UseVisualStyleBackColor = true;
+            this.rbtnGrayChannel.CheckedChanged += new System.EventHandler(this.rbtnGrayChannel_CheckedChanged);
             // 
             // rbtnGreenChannel
             // 
             this.rbtnGreenChannel.AutoSize = true;
             this.rbtnGreenChannel.Location = new System.Drawing.Point(4, 63);
-            this.rbtnGreenChannel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rbtnGreenChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnGreenChannel.Name = "rbtnGreenChannel";
             this.rbtnGreenChannel.Size = new System.Drawing.Size(57, 16);
             this.rbtnGreenChannel.TabIndex = 2;
             this.rbtnGreenChannel.TabStop = true;
             this.rbtnGreenChannel.Text = "Green";
             this.rbtnGreenChannel.UseVisualStyleBackColor = true;
+            this.rbtnGreenChannel.CheckedChanged += new System.EventHandler(this.rbtnGreenChannel_CheckedChanged);
             // 
             // rbtnBlueChannel
             // 
             this.rbtnBlueChannel.AutoSize = true;
             this.rbtnBlueChannel.Location = new System.Drawing.Point(4, 44);
-            this.rbtnBlueChannel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rbtnBlueChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnBlueChannel.Name = "rbtnBlueChannel";
             this.rbtnBlueChannel.Size = new System.Drawing.Size(48, 16);
             this.rbtnBlueChannel.TabIndex = 1;
             this.rbtnBlueChannel.TabStop = true;
             this.rbtnBlueChannel.Text = "Blue";
             this.rbtnBlueChannel.UseVisualStyleBackColor = true;
+            this.rbtnBlueChannel.CheckedChanged += new System.EventHandler(this.rbtnBlueChannel_CheckedChanged);
             // 
             // rbtnRedChannel
             // 
             this.rbtnRedChannel.AutoSize = true;
             this.rbtnRedChannel.Location = new System.Drawing.Point(4, 25);
-            this.rbtnRedChannel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rbtnRedChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnRedChannel.Name = "rbtnRedChannel";
             this.rbtnRedChannel.Size = new System.Drawing.Size(45, 16);
             this.rbtnRedChannel.TabIndex = 0;
             this.rbtnRedChannel.TabStop = true;
             this.rbtnRedChannel.Text = "Red";
             this.rbtnRedChannel.UseVisualStyleBackColor = true;
+            this.rbtnRedChannel.CheckedChanged += new System.EventHandler(this.rbtnRedChannel_CheckedChanged);
             // 
             // btnSetRoi
             // 

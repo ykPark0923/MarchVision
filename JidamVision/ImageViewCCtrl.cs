@@ -14,12 +14,15 @@ namespace JidamVision
 {
     public partial class ImageViewCCtrl : UserControl
     {
-        private Point roiStart = Point.Empty;
-        private Rectangle roiRect = Rectangle.Empty;
-        private bool isSelectingRoi = false;
-        private bool isResizingRoi = false;
-        private Point resizeStart = Point.Empty;
-        private const int ResizeHandleSize = 10;
+        private Point _roiStart = Point.Empty;
+        private Rectangle _roiRect = Rectangle.Empty;
+        private bool _isSelectingRoi = false;
+        private bool _isResizingRoi = false;
+        private bool _isMovingRoi = false;
+        private Point _resizeStart = Point.Empty;
+        private Point _moveStart = Point.Empty;
+        private int _resizeDirection = -1;
+        private const int _ResizeHandleSize = 10;
 
         // 마우스 클릭 위치 저장
         private Point RightClick = Point.Empty;
@@ -59,7 +62,7 @@ namespace JidamVision
         private float InitialWidth;    // 초기 이미지 너비
         private float InitialHeight;   // 초기 이미지 높이
 
-
+        public bool RoiMode { get; set; } = false;
 
         public ImageViewCCtrl()
         {
@@ -184,35 +187,30 @@ namespace JidamVision
 
         public Bitmap GetRoiImage()
         {
-            if (Bitmap == null || roiRect.IsEmpty)
+            if (Bitmap == null || _roiRect.IsEmpty)
                 return null;
 
             // 원본 이미지에서 ROI 크롭
-            Bitmap roiBitmap = new Bitmap(roiRect.Width, roiRect.Height);
+            Bitmap roiBitmap = new Bitmap(_roiRect.Width, _roiRect.Height);
             using (Graphics g = Graphics.FromImage(roiBitmap))
             {
-                g.DrawImage(Bitmap, new Rectangle(0, 0, roiRect.Width, roiRect.Height), roiRect, GraphicsUnit.Pixel);
+                g.DrawImage(Bitmap, new Rectangle(0, 0, _roiRect.Width, _roiRect.Height), _roiRect, GraphicsUnit.Pixel);
             }
 
             return roiBitmap;
         }
 
-        public void SetROIMode(bool mode)
-        {
-            isSelectingRoi = mode;
-        }
-
         public void SaveROI(string savePath)
         {
-            if (Bitmap == null || roiRect.IsEmpty)
+            if (Bitmap == null || _roiRect.IsEmpty)
                 return;
 
             // 원본 이미지에서 ROI 크롭
-            using (Bitmap roiBitmap = new Bitmap(roiRect.Width, roiRect.Height))
+            using (Bitmap roiBitmap = new Bitmap(_roiRect.Width, _roiRect.Height))
             {
                 using (Graphics g = Graphics.FromImage(roiBitmap))
                 {
-                    g.DrawImage(Bitmap, new Rectangle(0, 0, roiRect.Width, roiRect.Height), roiRect, GraphicsUnit.Pixel);
+                    g.DrawImage(Bitmap, new Rectangle(0, 0, _roiRect.Width, _roiRect.Height), _roiRect, GraphicsUnit.Pixel);
                 }
                 roiBitmap.Save(savePath, ImageFormat.Png);
             }
@@ -243,17 +241,21 @@ namespace JidamVision
                      ****************************************************************/
 
                     // ROI 사각형 그리기
-                    if (!roiRect.IsEmpty)
+                    if (RoiMode && !_roiRect.IsEmpty)
                     {
-                        using (Pen pen = new Pen(Color.Red, 2))
+                        using (Pen pen = new Pen(Color.LightGreen, 2))
                         {
-                            g.DrawRectangle(pen, roiRect);
+                            g.DrawRectangle(pen, _roiRect);
                         }
-
-                        // 리사이즈 핸들 그리기
-                        using (Brush brush = new SolidBrush(Color.Blue))
+                        
+                        // 리사이즈 핸들 그리기 (8개 포인트: 4 모서리 + 4 변 중간)
+                        using (Brush brush = new SolidBrush(Color.LightBlue))
                         {
-                            g.FillRectangle(brush, roiRect.Right - ResizeHandleSize, roiRect.Bottom - ResizeHandleSize, ResizeHandleSize, ResizeHandleSize);
+                            Point[] resizeHandles = GetResizeHandles();
+                            foreach (Point handle in resizeHandles)
+                            {
+                                g.FillRectangle(brush, handle.X - _ResizeHandleSize / 2, handle.Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
+                            }
                         }
                     }
                 }
@@ -265,17 +267,23 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
         {
-            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            if (RoiMode && e.Button == MouseButtons.Left)
             {
-                if (IsMouseOnResizeHandle(e.Location))
+                _resizeDirection = GetResizeHandleIndex(e.Location);
+                if (_resizeDirection != -1)
                 {
-                    isResizingRoi = true;
-                    resizeStart = e.Location;
+                    _isResizingRoi = true;
+                    _resizeStart = e.Location;
+                }
+                else if (_roiRect.Contains(e.Location))
+                {
+                    _isMovingRoi = true;
+                    _moveStart = e.Location;
                 }
                 else
                 {
-                    roiStart = e.Location;
-                    isSelectingRoi = true;
+                    _roiStart = e.Location;
+                    _isSelectingRoi = true;
                 }
             }
 
@@ -291,29 +299,48 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            if(RoiMode)
             {
-                int x = Math.Min(roiStart.X, e.X);
-                int y = Math.Min(roiStart.Y, e.Y);
-                int width = Math.Abs(e.X - roiStart.X);
-                int height = Math.Abs(e.Y - roiStart.Y);
-                roiRect = new Rectangle(x, y, width, height);
-                Invalidate();
-            }
-            else if (isResizingRoi && e.Button == MouseButtons.Left)
-            {
-                roiRect.Width = Math.Max(ResizeHandleSize, roiRect.Width + (e.X - resizeStart.X));
-                roiRect.Height = Math.Max(ResizeHandleSize, roiRect.Height + (e.Y - resizeStart.Y));
-                resizeStart = e.Location;
-                Invalidate();
-            }
-            else if (IsMouseOnResizeHandle(e.Location))
-            {
-                Cursor = Cursors.SizeNWSE;
-            }
-            else
-            {
-                Cursor = Cursors.Default;
+                if (_isSelectingRoi && e.Button == MouseButtons.Left)
+                {
+                    int x = Math.Min(_roiStart.X, e.X);
+                    int y = Math.Min(_roiStart.Y, e.Y);
+                    int width = Math.Abs(e.X - _roiStart.X);
+                    int height = Math.Abs(e.Y - _roiStart.Y);
+                    _roiRect = new Rectangle(x, y, width, height);
+                    Invalidate();
+                }
+                else if (_isResizingRoi && e.Button == MouseButtons.Left)
+                {
+                    ResizeROI(e.Location);
+                    _resizeStart = e.Location;
+                    Invalidate();
+                }
+                else if (_isMovingRoi && e.Button == MouseButtons.Left)
+                {
+                    int dx = e.X - _moveStart.X;
+                    int dy = e.Y - _moveStart.Y;
+                    _roiRect.X += dx;
+                    _roiRect.Y += dy;
+                    _moveStart = e.Location;
+                    Invalidate();
+                }
+                else
+                {
+                    int index = GetResizeHandleIndex(e.Location);
+                    if (index != -1)
+                    {
+                        Cursor = GetCursorForHandle(index);
+                    }
+                    else if (_roiRect.Contains(e.Location))
+                    {
+                        Cursor = Cursors.SizeAll; // ROI 내부 이동
+                    }
+                    else
+                    {
+                        Cursor = Cursors.Default;
+                    }
+                }
             }
 
             // 마우스 오른쪽 버튼이 눌린 상태에서만 이동 처리
@@ -334,13 +361,20 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseUp(object sender, MouseEventArgs e)
         {
-            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            if(e.Button == MouseButtons.Left)
             {
-                isSelectingRoi = false;
-            }
-            else if (isResizingRoi && e.Button == MouseButtons.Left)
-            {
-                isResizingRoi = false;
+                if (_isSelectingRoi)
+                {
+                    _isSelectingRoi = false;
+                }
+                else if (_isResizingRoi)
+                {
+                    _isResizingRoi = false;
+                }
+                else if (_isMovingRoi)
+                {
+                    _isMovingRoi = false;
+                }
             }
 
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리
@@ -350,9 +384,57 @@ namespace JidamVision
             }
         }
 
-        private bool IsMouseOnResizeHandle(Point mousePos)
+        private Point[] GetResizeHandles()
         {
-            return new Rectangle(roiRect.Right - ResizeHandleSize, roiRect.Bottom - ResizeHandleSize, ResizeHandleSize, ResizeHandleSize).Contains(mousePos);
+            return new Point[]
+            {
+                new Point(_roiRect.Left, _roiRect.Top), // 좌상
+                new Point(_roiRect.Right, _roiRect.Top), // 우상
+                new Point(_roiRect.Left, _roiRect.Bottom), // 좌하
+                new Point(_roiRect.Right, _roiRect.Bottom), // 우하
+                new Point(_roiRect.Left + _roiRect.Width / 2, _roiRect.Top), // 상 중간
+                new Point(_roiRect.Left + _roiRect.Width / 2, _roiRect.Bottom), // 하 중간
+                new Point(_roiRect.Left, _roiRect.Top + _roiRect.Height / 2), // 좌 중간
+                new Point(_roiRect.Right, _roiRect.Top + _roiRect.Height / 2) // 우 중간
+            };
+        }
+
+        private int GetResizeHandleIndex(Point mousePos)
+        {
+            Point[] handles = GetResizeHandles();
+            for (int i = 0; i < handles.Length; i++)
+            {
+                Rectangle handleRect = new Rectangle(handles[i].X - _ResizeHandleSize / 2, handles[i].Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
+                if (handleRect.Contains(mousePos)) return i;
+            }
+            return -1;
+        }
+
+        private Cursor GetCursorForHandle(int handleIndex)
+        {
+            switch (handleIndex)
+            {
+                case 0: case 3: return Cursors.SizeNWSE;
+                case 1: case 2: return Cursors.SizeNESW;
+                case 4: case 5: return Cursors.SizeNS;
+                case 6: case 7: return Cursors.SizeWE;
+                default: return Cursors.Default;
+            }
+        }
+
+        private void ResizeROI(Point mousePos)
+        {
+            switch (_resizeDirection)
+            {
+                case 0: _roiRect.X = mousePos.X; _roiRect.Y = mousePos.Y; _roiRect.Width -= (mousePos.X - _resizeStart.X); _roiRect.Height -= (mousePos.Y - _resizeStart.Y); break;
+                case 1: _roiRect.Width = mousePos.X - _roiRect.X; _roiRect.Y = mousePos.Y; _roiRect.Height -= (mousePos.Y - _resizeStart.Y); break;
+                case 2: _roiRect.X = mousePos.X; _roiRect.Width -= (mousePos.X - _resizeStart.X); _roiRect.Height = mousePos.Y - _roiRect.Y; break;
+                case 3: _roiRect.Width = mousePos.X - _roiRect.X; _roiRect.Height = mousePos.Y - _roiRect.Y; break;
+                case 4: _roiRect.Y = mousePos.Y; _roiRect.Height -= (mousePos.Y - _resizeStart.Y); break;
+                case 5: _roiRect.Height = mousePos.Y - _roiRect.Y; break;
+                case 6: _roiRect.X = mousePos.X; _roiRect.Width -= (mousePos.X - _resizeStart.X); break;
+                case 7: _roiRect.Width = mousePos.X - _roiRect.X; break;
+            }
         }
 
         private void ImageViewCCtrl_MouseWheel(object sender, MouseEventArgs e)
