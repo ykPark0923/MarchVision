@@ -24,7 +24,27 @@ namespace JidamVision
         {
             if (bitmap == null)
             {
-                bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
+                if (rbtnRedChannel.Checked)
+                {
+                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Red);
+                }
+                else if (rbtnBlueChannel.Checked)
+                {
+                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Blue);
+                }
+                else if (rbtnGreenChannel.Checked)
+                {
+                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Green);
+                }
+                else if (rbtnGrayChannel.Checked)
+                {
+                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0, eImageChannel.Gray);
+                }
+                else
+                {
+                    bitmap = Global.Inst.InspStage.ImageSpace.GetBitmap(0);
+                }
+
                 if (bitmap == null)
                     return;
             }

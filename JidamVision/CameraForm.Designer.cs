@@ -31,7 +31,12 @@
             this.btnGrab = new System.Windows.Forms.Button();
             this.btnLive = new System.Windows.Forms.Button();
             this.imageViewer = new JidamVision.ImageViewCCtrl();
-            this.btnSetROI = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.rbtnRedChannel = new System.Windows.Forms.RadioButton();
+            this.rbtnBlueChannel = new System.Windows.Forms.RadioButton();
+            this.rbtnGreenChannel = new System.Windows.Forms.RadioButton();
+            this.rbtnGrayChannel = new System.Windows.Forms.RadioButton();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnGrab
@@ -73,6 +78,53 @@
             this.btnSetROI.Text = "ROI 설정";
             this.btnSetROI.UseVisualStyleBackColor = true;
             this.btnSetROI.Click += new System.EventHandler(this.btnSetROI_Click);
+this.groupBox1.TabIndex = 4;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Channel";
+            // 
+            // rbtnRedChannel
+            // 
+            this.rbtnRedChannel.AutoSize = true;
+            this.rbtnRedChannel.Location = new System.Drawing.Point(6, 38);
+            this.rbtnRedChannel.Name = "rbtnRedChannel";
+            this.rbtnRedChannel.Size = new System.Drawing.Size(64, 22);
+            this.rbtnRedChannel.TabIndex = 0;
+            this.rbtnRedChannel.TabStop = true;
+            this.rbtnRedChannel.Text = "Red";
+            this.rbtnRedChannel.UseVisualStyleBackColor = true;
+            // 
+            // rbtnBlueChannel
+            // 
+            this.rbtnBlueChannel.AutoSize = true;
+            this.rbtnBlueChannel.Location = new System.Drawing.Point(6, 66);
+            this.rbtnBlueChannel.Name = "rbtnBlueChannel";
+            this.rbtnBlueChannel.Size = new System.Drawing.Size(67, 22);
+            this.rbtnBlueChannel.TabIndex = 1;
+            this.rbtnBlueChannel.TabStop = true;
+            this.rbtnBlueChannel.Text = "Blue";
+            this.rbtnBlueChannel.UseVisualStyleBackColor = true;
+            // 
+            // rbtnGreenChannel
+            // 
+            this.rbtnGreenChannel.AutoSize = true;
+            this.rbtnGreenChannel.Location = new System.Drawing.Point(6, 94);
+            this.rbtnGreenChannel.Name = "rbtnGreenChannel";
+            this.rbtnGreenChannel.Size = new System.Drawing.Size(81, 22);
+            this.rbtnGreenChannel.TabIndex = 2;
+            this.rbtnGreenChannel.TabStop = true;
+            this.rbtnGreenChannel.Text = "Green";
+            this.rbtnGreenChannel.UseVisualStyleBackColor = true;
+            // 
+            // rbtnGrayChannel
+            // 
+            this.rbtnGrayChannel.AutoSize = true;
+            this.rbtnGrayChannel.Location = new System.Drawing.Point(6, 122);
+            this.rbtnGrayChannel.Name = "rbtnGrayChannel";
+            this.rbtnGrayChannel.Size = new System.Drawing.Size(71, 22);
+            this.rbtnGrayChannel.TabIndex = 3;
+            this.rbtnGrayChannel.TabStop = true;
+            this.rbtnGrayChannel.Text = "Gray";
+            this.rbtnGrayChannel.UseVisualStyleBackColor = true;
             // 
             // CameraForm
             // 
@@ -96,5 +148,9 @@
         private ImageViewCCtrl imageViewer;
         private System.Windows.Forms.Button btnLive;
         private System.Windows.Forms.Button btnSetROI;
+		private System.Windows.Forms.RadioButton rbtnRedChannel;
+        private System.Windows.Forms.RadioButton rbtnGrayChannel;
+        private System.Windows.Forms.RadioButton rbtnGreenChannel;
+        private System.Windows.Forms.RadioButton rbtnBlueChannel;
     }
 }
