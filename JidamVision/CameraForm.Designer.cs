@@ -41,9 +41,10 @@
             // 
             // btnGrab
             // 
-            this.btnGrab.Location = new System.Drawing.Point(350, 12);
+            this.btnGrab.Location = new System.Drawing.Point(500, 18);
+            this.btnGrab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnGrab.Name = "btnGrab";
-            this.btnGrab.Size = new System.Drawing.Size(75, 23);
+            this.btnGrab.Size = new System.Drawing.Size(107, 34);
             this.btnGrab.TabIndex = 1;
             this.btnGrab.Text = "Grab";
             this.btnGrab.UseVisualStyleBackColor = true;
@@ -51,10 +52,11 @@
             // 
             // btnLive
             // 
-            this.btnLive.Location = new System.Drawing.Point(350, 41);
+            this.btnLive.Location = new System.Drawing.Point(500, 79);
+            this.btnLive.Margin = new System.Windows.Forms.Padding(4);
             this.btnLive.Name = "btnLive";
-            this.btnLive.Size = new System.Drawing.Size(75, 23);
-            this.btnLive.TabIndex = 1;
+            this.btnLive.Size = new System.Drawing.Size(107, 34);
+            this.btnLive.TabIndex = 3;
             this.btnLive.Text = "Live";
             this.btnLive.UseVisualStyleBackColor = true;
             this.btnLive.Click += new System.EventHandler(this.btnLive_Click);
@@ -64,21 +66,22 @@
             this.imageViewer.AutoSize = true;
             this.imageViewer.BackColor = System.Drawing.SystemColors.AppWorkspace;
             this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.imageViewer.Location = new System.Drawing.Point(12, 12);
+            this.imageViewer.Location = new System.Drawing.Point(17, 18);
+            this.imageViewer.Margin = new System.Windows.Forms.Padding(6);
             this.imageViewer.Name = "imageViewer";
-            this.imageViewer.Size = new System.Drawing.Size(332, 272);
+            this.imageViewer.Size = new System.Drawing.Size(473, 406);
             this.imageViewer.TabIndex = 2;
             // 
-            // btnSetROI
+            // groupBox1
             // 
-            this.btnSetROI.Location = new System.Drawing.Point(353, 99);
-            this.btnSetROI.Name = "btnSetROI";
-            this.btnSetROI.Size = new System.Drawing.Size(71, 25);
-            this.btnSetROI.TabIndex = 3;
-            this.btnSetROI.Text = "ROI 설정";
-            this.btnSetROI.UseVisualStyleBackColor = true;
-            this.btnSetROI.Click += new System.EventHandler(this.btnSetROI_Click);
-this.groupBox1.TabIndex = 4;
+            this.groupBox1.Controls.Add(this.rbtnGrayChannel);
+            this.groupBox1.Controls.Add(this.rbtnGreenChannel);
+            this.groupBox1.Controls.Add(this.rbtnBlueChannel);
+            this.groupBox1.Controls.Add(this.rbtnRedChannel);
+            this.groupBox1.Location = new System.Drawing.Point(500, 137);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(105, 154);
+            this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Channel";
             // 
@@ -128,16 +131,19 @@ this.groupBox1.TabIndex = 4;
             // 
             // CameraForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(432, 296);
-            this.Controls.Add(this.btnSetROI);
-            this.Controls.Add(this.imageViewer);
+            this.ClientSize = new System.Drawing.Size(617, 444);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnLive);
+            this.Controls.Add(this.imageViewer);
             this.Controls.Add(this.btnGrab);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "CameraForm";
             this.Text = "CameraForm";
             this.Resize += new System.EventHandler(this.CameraForm_Resize);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -147,8 +153,8 @@ this.groupBox1.TabIndex = 4;
         private System.Windows.Forms.Button btnGrab;
         private ImageViewCCtrl imageViewer;
         private System.Windows.Forms.Button btnLive;
-        private System.Windows.Forms.Button btnSetROI;
-		private System.Windows.Forms.RadioButton rbtnRedChannel;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton rbtnRedChannel;
         private System.Windows.Forms.RadioButton rbtnGrayChannel;
         private System.Windows.Forms.RadioButton rbtnGreenChannel;
         private System.Windows.Forms.RadioButton rbtnBlueChannel;
