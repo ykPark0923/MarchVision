@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,10 @@ namespace JidamVision
 {
     public partial class ImageViewCCtrl : UserControl
     {
+        private Point roiStart = Point.Empty;
+        private Rectangle roiRect = Rectangle.Empty;
+        private bool isSelectingRoi = false;
+
         // 마우스 클릭 위치 저장
         private Point RightClick = Point.Empty;
 
@@ -161,14 +166,48 @@ namespace JidamVision
             ZoomFactor = 1.0f;
 
             // 이미지 이동을 위한 오프셋 값 초기화
-            Offset = new Point((int)ImageRect.X, (int)ImageRect.Y);  //이미지 왼쪽상단(Top-Left)의 시작 좌표
+            Offset = new System.Drawing.Point((int)ImageRect.X, (int)ImageRect.Y);  //이미지 왼쪽상단(Top-Left)의 시작 좌표
             LastOffset = Offset;
 
             // 변경된 화면을 다시 그리도록 요청
             Invalidate();
-
         }
 
+        public Bitmap GetRoiImage()
+        {
+            if (Bitmap == null || roiRect.IsEmpty)
+                return null;
+
+            // 원본 이미지에서 ROI 크롭
+            Bitmap roiBitmap = new Bitmap(roiRect.Width, roiRect.Height);
+            using (Graphics g = Graphics.FromImage(roiBitmap))
+            {
+                g.DrawImage(Bitmap, new Rectangle(0, 0, roiRect.Width, roiRect.Height), roiRect, GraphicsUnit.Pixel);
+            }
+
+            return roiBitmap;
+        }
+
+        public void SetROIMode(bool mode)
+        {
+            isSelectingRoi = mode;
+        }
+
+        public void SaveROI(string savePath)
+        {
+            if (Bitmap == null || roiRect.IsEmpty)
+                return;
+
+            // 원본 이미지에서 ROI 크롭
+            using (Bitmap roiBitmap = new Bitmap(roiRect.Width, roiRect.Height))
+            {
+                using (Graphics g = Graphics.FromImage(roiBitmap))
+                {
+                    g.DrawImage(Bitmap, new Rectangle(0, 0, roiRect.Width, roiRect.Height), roiRect, GraphicsUnit.Pixel);
+                }
+                roiBitmap.Save(savePath, ImageFormat.Png);
+            }
+        }
 
         // Windows Forms에서 컨트롤이 다시 그려질 때 자동으로 호출되는 메서드
         // 화면새로고침(Invalidate()), 창 크기변경, 컨트롤이 숨겨졌다가 나타날때 실행
@@ -193,6 +232,15 @@ namespace JidamVision
                      * HighQualityBicubic	가장 부드럽고 고품질, 그러나 가장 느림
                      * HighQualityBilinear	Bilinear보다 품질이 높고 Bicubic보다 빠름
                      ****************************************************************/
+
+                    // ROI 사각형 그리기
+                    if (!roiRect.IsEmpty)
+                    {
+                        using (Pen pen = new Pen(Color.FromArgb(110,230,45), 2))
+                        {
+                            Graphics.DrawRectangle(pen, roiRect);
+                        }
+                    }
                 }
 
                 // 캔버스를 UserControl 화면에 표시
@@ -202,6 +250,16 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseMove(object sender, MouseEventArgs e)
         {
+            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            {
+                int x = Math.Min(roiStart.X, e.X);
+                int y = Math.Min(roiStart.Y, e.Y);
+                int width = Math.Abs(e.X - roiStart.X);
+                int height = Math.Abs(e.Y - roiStart.Y);
+                roiRect = new Rectangle(x, y, width, height);
+                Invalidate();
+            }
+
             // 마우스 오른쪽 버튼이 눌린 상태에서만 이동 처리
             if (e.Button == MouseButtons.Right)
             {
@@ -220,6 +278,11 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
         {
+            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            {
+                roiStart = e.Location;
+            }
+
             // 마우스 오른쪽 버튼이 눌렸을 때 클릭 위치 저장
             if (e.Button == MouseButtons.Right)
             {
@@ -232,6 +295,11 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseUp(object sender, MouseEventArgs e)
         {
+            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            {
+                isSelectingRoi = false;
+            }
+
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리
             if (e.Button == MouseButtons.Right)
             {

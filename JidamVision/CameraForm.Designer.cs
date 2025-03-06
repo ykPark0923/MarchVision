@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.btnGrab = new System.Windows.Forms.Button();
-            this.imageViewer = new JidamVision.ImageViewCCtrl();
             this.btnLive = new System.Windows.Forms.Button();
+            this.imageViewer = new JidamVision.ImageViewCCtrl();
+            this.btnSetROI = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnGrab
@@ -43,16 +44,6 @@
             this.btnGrab.UseVisualStyleBackColor = true;
             this.btnGrab.Click += new System.EventHandler(this.btnGrab_Click);
             // 
-            // imageViewer
-            // 
-            this.imageViewer.AutoSize = true;
-            this.imageViewer.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.imageViewer.Location = new System.Drawing.Point(12, 12);
-            this.imageViewer.Name = "imageViewer";
-            this.imageViewer.Size = new System.Drawing.Size(332, 272);
-            this.imageViewer.TabIndex = 2;
-            // 
             // btnLive
             // 
             this.btnLive.Location = new System.Drawing.Point(350, 41);
@@ -63,11 +54,32 @@
             this.btnLive.UseVisualStyleBackColor = true;
             this.btnLive.Click += new System.EventHandler(this.btnLive_Click);
             // 
+            // imageViewer
+            // 
+            this.imageViewer.AutoSize = true;
+            this.imageViewer.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.imageViewer.Location = new System.Drawing.Point(12, 12);
+            this.imageViewer.Name = "imageViewer";
+            this.imageViewer.Size = new System.Drawing.Size(332, 272);
+            this.imageViewer.TabIndex = 2;
+            // 
+            // btnSetROI
+            // 
+            this.btnSetROI.Location = new System.Drawing.Point(353, 99);
+            this.btnSetROI.Name = "btnSetROI";
+            this.btnSetROI.Size = new System.Drawing.Size(71, 25);
+            this.btnSetROI.TabIndex = 3;
+            this.btnSetROI.Text = "ROI 설정";
+            this.btnSetROI.UseVisualStyleBackColor = true;
+            this.btnSetROI.Click += new System.EventHandler(this.btnSetROI_Click);
+            // 
             // CameraForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(432, 296);
+            this.Controls.Add(this.btnSetROI);
             this.Controls.Add(this.imageViewer);
             this.Controls.Add(this.btnLive);
             this.Controls.Add(this.btnGrab);
@@ -83,5 +95,6 @@
         private System.Windows.Forms.Button btnGrab;
         private ImageViewCCtrl imageViewer;
         private System.Windows.Forms.Button btnLive;
+        private System.Windows.Forms.Button btnSetROI;
     }
 }

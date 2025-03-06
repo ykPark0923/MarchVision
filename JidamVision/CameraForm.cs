@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using JidamVision.Core;
+using OpenCvSharp.Extensions;
 
 namespace JidamVision
 {
@@ -39,6 +40,7 @@ namespace JidamVision
 
             btnGrab.Location = new Point(xPos, btnGrab.Location.Y);
             btnLive.Location = new Point(xPos, btnLive.Location.Y);
+            btnSetROI.Location = new Point(xPos, btnSetROI.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
             imageViewer.Height = this.Height - margin * 2;
@@ -57,6 +59,11 @@ namespace JidamVision
 
             if (Global.Inst.InspStage.LiveMode)
                 Global.Inst.InspStage.Grab(0);
+        }
+
+        private void btnSetROI_Click(object sender, EventArgs e)
+        {
+            imageViewer.SetROIMode(true);
         }
     }
 }
