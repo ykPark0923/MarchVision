@@ -47,7 +47,20 @@ namespace JidamVision.Property
             InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
             inspWindow.MatchAlgorithm.ExtSize = extendSize;
             inspWindow.MatchAlgorithm.MatchScore = matchScore;
-            inspWindow.DoInpsect();
+            if(inspWindow.DoInpsect())
+            {
+                List<Rectangle> rectangles;
+                int matchCount = inspWindow.GetMatchRect(out rectangles);
+                if (matchCount > 0)
+                {
+                    var cameraForm = MainForm.GetDockForm<CameraForm>();
+                    if (cameraForm != null)
+                    {
+                        cameraForm.AddRect(rectangles);
+                    }
+                }
+            }
+
         }
     }
 }

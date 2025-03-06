@@ -156,7 +156,6 @@
             this.imageViewer.Margin = new System.Windows.Forms.Padding(4);
             this.imageViewer.Name = "imageViewer";
             this.imageViewer.RoiMode = false;
-            this.imageViewer.RoiRect = new System.Drawing.Rectangle(0, 0, 0, 0);
             this.imageViewer.Size = new System.Drawing.Size(332, 272);
             this.imageViewer.TabIndex = 2;
             // 

@@ -79,6 +79,9 @@ namespace JidamVision.Algorithm
             int templateWidth = _templateImage.Width;
             int templateHeight = _templateImage.Height;
 
+            int halfWidth = templateWidth / 2;
+            int halfHeight = templateHeight / 2;
+
             // 결과 행렬을 스캔 (SCAN 간격 적용)
             for (int y = 0; y < result.Rows; y += _scanStep)
             {
@@ -158,8 +161,9 @@ namespace JidamVision.Algorithm
                         continue;
 
                     // 매칭된 위치 리스트에 추가
-                    matchedPositions.Add(bestPoint);
-                    detectedRegions.Add(new Rect(bestPoint.X, bestPoint.Y, templateWidth, templateHeight));
+                    Point matchPos = new Point(bestPoint.X + templateWidth, bestPoint.Y + templateHeight);
+                    matchedPositions.Add(matchPos);
+                    detectedRegions.Add(new Rect(bestPoint.X - halfWidth, bestPoint.Y - halfHeight, templateWidth, templateHeight));
                 }
             }
 

@@ -62,10 +62,9 @@ namespace JidamVision
         private float InitialWidth;    // 초기 이미지 너비
         private float InitialHeight;   // 초기 이미지 높이
 
-        public bool RoiMode { get; set; } = false;
+        private List<Rectangle> _rectangles = new List<Rectangle>();
 
-        // 설정된 ROI 크기
-        public Rectangle RoiRect { get; set; } = new Rectangle(0, 0, 0, 0);
+        public bool RoiMode { get; set; } = false;
 
         public ImageViewCCtrl()
         {
@@ -243,28 +242,55 @@ namespace JidamVision
                      * HighQualityBilinear	Bilinear보다 품질이 높고 Bicubic보다 빠름
                      ****************************************************************/
 
+                    float scaleX = ImageRect.Width / Bitmap.Width;
+                    float scaleY = ImageRect.Height / Bitmap.Height;
+
+                    // 이미지 좌표 → 화면 좌표 변환 후 사각형 그리기
+                    if (_rectangles != null)
+                    {
+                        using (Pen pen = new Pen(Color.LightCoral, 2))
+                        {
+                            foreach (var rect in _rectangles)
+                            {
+                                // 이미지 좌표를 화면 좌표로 변환
+                                int screenX = (int)(rect.X * scaleX + ImageRect.X);
+                                int screenY = (int)(rect.Y * scaleY + ImageRect.Y);
+                                int screenWidth = (int)(rect.Width * scaleX);
+                                int screenHeight = (int)(rect.Height * scaleY);
+
+                                g.DrawRectangle(pen, screenX, screenY, screenWidth, screenHeight);
+                            }
+                        }
+                    }
+
                     // ROI 사각형 그리기
                     if (RoiMode && !_roiRect.IsEmpty)
                     {
+                        Rectangle rect = _roiRect;
+                        //rect.X = (int)(rect.X * scaleX + ImageRect.X);
+                        //rect.Y = (int)(rect.Y * scaleY + ImageRect.Y);
+                        //rect.Width = (int)(rect.Width * scaleX);
+                        //rect.Height = (int)(rect.Height * scaleY);
+
                         using (Pen pen = new Pen(Color.LightGreen, 2))
                         {
-                            g.DrawRectangle(pen, _roiRect);
+                            g.DrawRectangle(pen, rect);
                         }
                         
                         // 리사이즈 핸들 그리기 (8개 포인트: 4 모서리 + 4 변 중간)
                         using (Brush brush = new SolidBrush(Color.LightBlue))
                         {
-                            Point[] resizeHandles = GetResizeHandles();
+                            Point[] resizeHandles = GetResizeHandles(rect);
                             foreach (Point handle in resizeHandles)
                             {
                                 g.FillRectangle(brush, handle.X - _ResizeHandleSize / 2, handle.Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
                             }
                         }
                     }
-                }
 
-                // 캔버스를 UserControl 화면에 표시
-                e.Graphics.DrawImage(Canvas, 0, 0);
+                    // 캔버스를 UserControl 화면에 표시
+                    e.Graphics.DrawImage(Canvas, 0, 0);
+                }
             }
         }
 
@@ -378,7 +404,6 @@ namespace JidamVision
                 {
                     _isMovingRoi = false;
                 }
-                RoiRect = _roiRect;
             }
 
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리
@@ -388,24 +413,24 @@ namespace JidamVision
             }
         }
 
-        private Point[] GetResizeHandles()
+        private Point[] GetResizeHandles(Rectangle rect)
         {
             return new Point[]
             {
-                new Point(_roiRect.Left, _roiRect.Top), // 좌상
-                new Point(_roiRect.Right, _roiRect.Top), // 우상
-                new Point(_roiRect.Left, _roiRect.Bottom), // 좌하
-                new Point(_roiRect.Right, _roiRect.Bottom), // 우하
-                new Point(_roiRect.Left + _roiRect.Width / 2, _roiRect.Top), // 상 중간
-                new Point(_roiRect.Left + _roiRect.Width / 2, _roiRect.Bottom), // 하 중간
-                new Point(_roiRect.Left, _roiRect.Top + _roiRect.Height / 2), // 좌 중간
-                new Point(_roiRect.Right, _roiRect.Top + _roiRect.Height / 2) // 우 중간
+                new Point(rect.Left, rect.Top), // 좌상
+                new Point(rect.Right, rect.Top), // 우상
+                new Point(rect.Left, rect.Bottom), // 좌하
+                new Point(rect.Right, rect.Bottom), // 우하
+                new Point(rect.Left + rect.Width / 2, rect.Top), // 상 중간
+                new Point(rect.Left + rect.Width / 2, rect.Bottom), // 하 중간
+                new Point(rect.Left, rect.Top + rect.Height / 2), // 좌 중간
+                new Point(rect.Right, rect.Top + rect.Height / 2) // 우 중간
             };
         }
 
         private int GetResizeHandleIndex(Point mousePos)
         {
-            Point[] handles = GetResizeHandles();
+            Point[] handles = GetResizeHandles(_roiRect);
             for (int i = 0; i < handles.Length; i++)
             {
                 Rectangle handleRect = new Rectangle(handles[i].X - _ResizeHandleSize / 2, handles[i].Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
@@ -526,6 +551,40 @@ namespace JidamVision
         private void ImageViewCCtrl_Resize(object sender, EventArgs e)
         {
             ResizeCanas();
+            Invalidate();
+        }
+
+        public Rectangle GetRoiRect()
+        {
+            if (Bitmap == null || _roiRect.IsEmpty)
+                return new Rectangle();
+
+            // UserControl 좌표계에서 원본 이미지 좌표계로 변환하는 비율 계산
+            float scaleX = (float)Bitmap.Width / ImageRect.Width;
+            float scaleY = (float)Bitmap.Height / ImageRect.Height;
+
+            // 변환된 ROI 좌표 계산
+            int roiX = (int)((_roiRect.X - ImageRect.X) * scaleX);
+            int roiY = (int)((_roiRect.Y - ImageRect.Y) * scaleY);
+            int roiWidth = (int)(_roiRect.Width * scaleX);
+            int roiHeight = (int)(_roiRect.Height * scaleY);
+
+            // ROI가 원본 이미지 범위를 초과하지 않도록 조정
+            roiX = Math.Max(0, roiX);
+            roiY = Math.Max(0, roiY);
+            roiWidth = Math.Min(Bitmap.Width - roiX, roiWidth);
+            roiHeight = Math.Min(Bitmap.Height - roiY, roiHeight);
+
+            if (roiWidth <= 0 || roiHeight <= 0)
+                return new Rectangle(); // 유효하지 않은 ROI
+
+            // 원본 이미지에서 ROI 부분을 추출
+            Rectangle roi = new Rectangle(roiX, roiY, roiWidth, roiHeight);
+            return roi;
+        }
+        public void AddRect(List<Rectangle> rectangles)
+        {
+            _rectangles = rectangles;
             Invalidate();
         }
     }

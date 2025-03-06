@@ -131,8 +131,14 @@ namespace JidamVision
             OpenCvSharp.Mat currentImage = Global.Inst.InspStage.GetMat(0, _currentImageChannel);
             if(currentImage != null )
             {
-                Global.Inst.InspStage.InspWindow.SetTeachingImage(currentImage, imageViewer.RoiRect);
+                Global.Inst.InspStage.InspWindow.SetTeachingImage(currentImage, imageViewer.GetRoiRect());
             }
+        }
+
+        public void AddRect(List<Rectangle> rectangles)
+        {
+            imageViewer.AddRect(rectangles);
+            
         }
     }
 }
