@@ -17,6 +17,9 @@ namespace JidamVision
         private Point roiStart = Point.Empty;
         private Rectangle roiRect = Rectangle.Empty;
         private bool isSelectingRoi = false;
+        private bool isResizingRoi = false;
+        private Point resizeStart = Point.Empty;
+        private const int ResizeHandleSize = 10;
 
         // 마우스 클릭 위치 저장
         private Point RightClick = Point.Empty;
@@ -73,6 +76,15 @@ namespace JidamVision
         private void InitializeCanvas()
         {
             // 캔버스를 UserControl 크기만큼 생성
+            ResizeCanas();
+
+            // 화면 깜빡임을 방지하기 위한 더블 버퍼링 설정
+            DoubleBuffered = true;
+        }
+
+        private void ResizeCanas()
+        {
+            // 캔버스를 UserControl 크기만큼 생성
             Canvas = new Bitmap(Width, Height);
             CanvasSize.Width = Width;
             CanvasSize.Height = Height;
@@ -80,10 +92,7 @@ namespace JidamVision
             // 초기 이미지 크기를 UserControl 크기로 설정
             ImageRect = new RectangleF(0, 0, Width, Height);
 
-            // 화면 깜빡임을 방지하기 위한 더블 버퍼링 설정
-            DoubleBuffered = true;
         }
-
 
         public void LoadBitmap(Bitmap bitmap)
         {
@@ -218,13 +227,13 @@ namespace JidamVision
             if (Bitmap != null)
             {
                 // 캔버스를 초기화하고 이미지 그리기
-                using (Graphics Graphics = Graphics.FromImage(Canvas))  // 메모리누수방지
+                using (Graphics g = Graphics.FromImage(Canvas))  // 메모리누수방지
                 {
-                    Graphics.Clear(Color.Transparent); // 배경을 투명하게 설정
+                    g.Clear(Color.Transparent); // 배경을 투명하게 설정
 
                     //이미지 확대or축소때 화질 최적화 방식(Interpolation Mode) 설정                    
-                    Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                    Graphics.DrawImage(Bitmap, ImageRect);
+                    g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                    g.DrawImage(Bitmap, ImageRect);
 
                     /* Interpolation Mode********************************************
                      * NearestNeighbor	빠르지만 품질이 낮음 (픽셀이 깨질 수 있음)
@@ -236,15 +245,47 @@ namespace JidamVision
                     // ROI 사각형 그리기
                     if (!roiRect.IsEmpty)
                     {
-                        using (Pen pen = new Pen(Color.FromArgb(110,230,45), 2))
+                        using (Pen pen = new Pen(Color.Red, 2))
                         {
-                            Graphics.DrawRectangle(pen, roiRect);
+                            g.DrawRectangle(pen, roiRect);
+                        }
+
+                        // 리사이즈 핸들 그리기
+                        using (Brush brush = new SolidBrush(Color.Blue))
+                        {
+                            g.FillRectangle(brush, roiRect.Right - ResizeHandleSize, roiRect.Bottom - ResizeHandleSize, ResizeHandleSize, ResizeHandleSize);
                         }
                     }
                 }
 
                 // 캔버스를 UserControl 화면에 표시
                 e.Graphics.DrawImage(Canvas, 0, 0);
+            }
+        }
+
+        private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (isSelectingRoi && e.Button == MouseButtons.Left)
+            {
+                if (IsMouseOnResizeHandle(e.Location))
+                {
+                    isResizingRoi = true;
+                    resizeStart = e.Location;
+                }
+                else
+                {
+                    roiStart = e.Location;
+                    isSelectingRoi = true;
+                }
+            }
+
+            // 마우스 오른쪽 버튼이 눌렸을 때 클릭 위치 저장
+            if (e.Button == MouseButtons.Right)
+            {
+                RightClick = e.Location;
+
+                // UserControl이 포커스를 받아야 마우스 휠이 정상적으로 동작함
+                Focus();
             }
         }
 
@@ -258,6 +299,21 @@ namespace JidamVision
                 int height = Math.Abs(e.Y - roiStart.Y);
                 roiRect = new Rectangle(x, y, width, height);
                 Invalidate();
+            }
+            else if (isResizingRoi && e.Button == MouseButtons.Left)
+            {
+                roiRect.Width = Math.Max(ResizeHandleSize, roiRect.Width + (e.X - resizeStart.X));
+                roiRect.Height = Math.Max(ResizeHandleSize, roiRect.Height + (e.Y - resizeStart.Y));
+                resizeStart = e.Location;
+                Invalidate();
+            }
+            else if (IsMouseOnResizeHandle(e.Location))
+            {
+                Cursor = Cursors.SizeNWSE;
+            }
+            else
+            {
+                Cursor = Cursors.Default;
             }
 
             // 마우스 오른쪽 버튼이 눌린 상태에서만 이동 처리
@@ -276,28 +332,15 @@ namespace JidamVision
             }
         }
 
-        private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (isSelectingRoi && e.Button == MouseButtons.Left)
-            {
-                roiStart = e.Location;
-            }
-
-            // 마우스 오른쪽 버튼이 눌렸을 때 클릭 위치 저장
-            if (e.Button == MouseButtons.Right)
-            {
-                RightClick = e.Location;
-
-                // UserControl이 포커스를 받아야 마우스 휠이 정상적으로 동작함
-                Focus();
-            }
-        }
-
         private void ImageViewCCtrl_MouseUp(object sender, MouseEventArgs e)
         {
             if (isSelectingRoi && e.Button == MouseButtons.Left)
             {
                 isSelectingRoi = false;
+            }
+            else if (isResizingRoi && e.Button == MouseButtons.Left)
+            {
+                isResizingRoi = false;
             }
 
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리
@@ -305,6 +348,11 @@ namespace JidamVision
             {
                 LastOffset = Offset;
             }
+        }
+
+        private bool IsMouseOnResizeHandle(Point mousePos)
+        {
+            return new Rectangle(roiRect.Right - ResizeHandleSize, roiRect.Bottom - ResizeHandleSize, ResizeHandleSize, ResizeHandleSize).Contains(mousePos);
         }
 
         private void ImageViewCCtrl_MouseWheel(object sender, MouseEventArgs e)
@@ -386,6 +434,12 @@ namespace JidamVision
             LastOffset = Offset;
 
             // 다시 그리기 요청
+            Invalidate();
+        }
+
+        private void ImageViewCCtrl_Resize(object sender, EventArgs e)
+        {
+            ResizeCanas();
             Invalidate();
         }
     }
