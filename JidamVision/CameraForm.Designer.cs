@@ -45,6 +45,9 @@
             // 
             // imageViewer
             // 
+            this.imageViewer.AutoSize = true;
+            this.imageViewer.BackColor = System.Drawing.SystemColors.AppWorkspace;
+            this.imageViewer.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.imageViewer.Location = new System.Drawing.Point(12, 12);
             this.imageViewer.Name = "imageViewer";
             this.imageViewer.Size = new System.Drawing.Size(332, 272);
@@ -72,6 +75,7 @@
             this.Text = "CameraForm";
             this.Resize += new System.EventHandler(this.CameraForm_Resize);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

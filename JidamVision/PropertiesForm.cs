@@ -25,6 +25,7 @@ namespace JidamVision
         public PropertiesForm()
         {
             InitializeComponent();
+            //속성창 설정
             SetInspType(InspPropType.InspBinary);
         }
 
@@ -33,6 +34,7 @@ namespace JidamVision
             LoadOptionControl(inspPropType);
         }
 
+        //옵션창에서 입력된 타입의 속성창 생성
         private void LoadOptionControl(InspPropType inspPropType)
         {
             // Panel 초기화

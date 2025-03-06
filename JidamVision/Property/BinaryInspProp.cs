@@ -14,6 +14,15 @@ namespace JidamVision.Property
     {
         public event EventHandler<RangeChangedEventArgs> RangeChanged;
 
+
+        /* NOTE
+        public int LowerValue
+        {
+            get { return trackBarLower.Value; }
+        }
+        C# 6부터는 위 코드를 더 간결하게 람다(=>) 문법을 사용하여 표현
+        */
+
         // 속성값을 이용하여 이진화 임계값 설정
         public int LowerValue => trackBarLower.Value;
         public int UpperValue => trackBarUpper.Value;

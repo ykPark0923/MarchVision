@@ -124,7 +124,12 @@ namespace JidamVision.Core
             _grabManager.Grab(bufferIndex, true);
         }
 
-        private void _multiGrab_TransferCompleted(object sender, object e)
+        // NOTE
+        // async / await란?
+        // async / await는 비동기 프로그래밍(Asynchronous Programming)을 쉽게 구현할 수 있도록 도와주는 키워드입니다.
+        //기본 개념은 작업(Task)이 끝날 때까지 기다리지 않고 다른 작업을 진행할 수 있도록 하는 것입니다.
+        //이를 통해 UI가 멈추지 않으며(프리징 방지), 응답성이 높은 프로그램을 만들 수 있습니다.
+        private async void _multiGrab_TransferCompleted(object sender, object e)
         {
             int bufferIndex = (int)e;
             Console.WriteLine($"_multiGrab_TransferCompleted {bufferIndex}");
@@ -139,13 +144,10 @@ namespace JidamVision.Core
                 _previewImage.SetImage( BitmapConverter.ToMat(bitmap));
             }
 
-            if (LiveMode == true)
+            if (LiveMode)
             {
-                Task.Factory.StartNew(() =>
-                {
-                    System.Threading.Thread.Sleep(100);
-                    _grabManager.Grab(bufferIndex, true);
-                });
+                await Task.Delay(100);  // 비동기 대기
+                _grabManager.Grab(bufferIndex, true);  // 다음 촬영 시작
             }
         }
 
@@ -157,6 +159,5 @@ namespace JidamVision.Core
                 cameraForm.UpdateDisplay();
             }
         }
-
     }
 }
