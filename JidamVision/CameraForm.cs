@@ -60,6 +60,7 @@ namespace JidamVision
 
             btnGrab.Location = new Point(xPos, btnGrab.Location.Y);
             btnLive.Location = new Point(xPos, btnLive.Location.Y);
+            groupBox1.Location = new Point(xPos, btnLive.Location.Y);
             //btnSetROI.Location = new Point(xPos, btnSetROI.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
