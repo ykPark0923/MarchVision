@@ -263,7 +263,7 @@ namespace JidamVision
                         }
                     }
 
-                    //#SETROI#3 ROI 그리기
+                    //#SETROI#6 ROI 그리기
                     if (RoiMode && !_roiRect.IsEmpty)
                     {
                         Rectangle rect = _roiRect;
