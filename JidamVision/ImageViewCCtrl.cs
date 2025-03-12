@@ -59,6 +59,8 @@ namespace JidamVision
         //줌아웃위하 초기값
         private float InitialCenterX;  // 초기 이미지 중심 X
         private float InitialCenterY;  // 초기 이미지 중심 Y
+        private float InitialStartX;    //resize 위한 초기 X값 저장
+        private float InitialStartY;    //resize 위한 초기 Y값 저장
         private float InitialWidth;    // 초기 이미지 너비
         private float InitialHeight;   // 초기 이미지 높이
 
@@ -96,9 +98,40 @@ namespace JidamVision
             CanvasSize.Width = Width;
             CanvasSize.Height = Height;
 
-            // 초기 이미지 크기를 UserControl 크기로 설정
-            ImageRect = new RectangleF(0, 0, Width, Height);
+            if (Bitmap == null) return;
 
+            // UserControl 크기에 맞춰 이미지 비율 유지하여 크기 조정
+            float WidthRatio = (float)Width / Bitmap.Width;  //UserControl1 Width/Bitmap.Width
+            float HeightRatio = (float)Height / Bitmap.Height;
+            float Scale = Math.Min(WidthRatio, HeightRatio); // 더 작은 값을 선택하여 비율 유지
+
+            float NewWidth = Bitmap.Width * Scale;
+            float NewHeight = Bitmap.Height * Scale;
+
+            if (InitialStartX == 0 || InitialStartY == 0)
+            {
+                InitialStartX = ImageRect.X;
+                InitialStartY = ImageRect.Y;
+            }
+
+            // 이미지가 UserControl 중앙에 배치되도록 정렬
+            ImageRect = new RectangleF(
+                (Width - NewWidth) / 2, // UserControl 너비에서 이미지 너비를 뺀 후, 절반을 왼쪽 여백으로 설정하여 중앙 정렬
+                (Height - NewHeight) / 2,
+                NewWidth,
+                NewHeight
+            );
+
+            UpdateROI();
+
+            //줌아웃위한 초기값 저장
+            InitialCenterX = ImageRect.X + (ImageRect.Width / 2);
+            InitialCenterY = ImageRect.Y + (ImageRect.Height / 2);
+
+            InitialStartX = ImageRect.X;
+            InitialStartY = ImageRect.Y;
+            InitialWidth = NewWidth;
+            InitialHeight = NewHeight;
         }
 
         public void LoadBitmap(Bitmap bitmap)
@@ -561,6 +594,31 @@ namespace JidamVision
         {
             ResizeCanas();
             Invalidate();
+        }
+
+        // 창 resize ROI 업데이트
+        private void UpdateROI()
+        {
+            if (Bitmap == null || _roiRect.IsEmpty || InitialWidth == 0 || InitialHeight == 0)
+                return;
+
+            // 기존 ROI 좌표를 원본 ImageRect 기준으로 변환 (비율)
+            float roiX_ratio = (_roiRect.X - InitialStartX) / InitialWidth;
+            float roiY_ratio = (_roiRect.Y - InitialStartY) / InitialHeight;
+            float roiW_ratio = _roiRect.Width / InitialWidth;
+            float roiH_ratio = _roiRect.Height / InitialHeight;
+
+            // 새로운 ImageRect 크기에 맞춰 ROI 조정
+            _roiRect.X = (int)(ImageRect.X + roiX_ratio * ImageRect.Width);
+            _roiRect.Y = (int)(ImageRect.Y + roiY_ratio * ImageRect.Height);
+            _roiRect.Width = (int)(roiW_ratio * ImageRect.Width);
+            _roiRect.Height = (int)(roiH_ratio * ImageRect.Height);
+
+            // 새로운 초기 크기 갱신
+            InitialStartX = ImageRect.X;
+            InitialStartY = ImageRect.Y;
+            InitialWidth = ImageRect.Width;
+            InitialHeight = ImageRect.Height;
         }
 
         public Rectangle GetRoiRect()

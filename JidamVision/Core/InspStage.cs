@@ -123,7 +123,11 @@ namespace JidamVision.Core
 
             imageWidth = (matImage.Width + 3) / 4 * 4;
             imageHeight = matImage.Height;
-            //imageStride = (int)matImage.Step();
+            
+            // 4바이트 정렬된 새로운 Mat 생성
+            Mat alignedMat = new Mat();
+            Cv2.CopyMakeBorder(matImage, alignedMat, 0, 0, 0, imageWidth - matImage.Width, BorderTypes.Constant, Scalar.Black);
+
             imageStride = imageWidth * matImage.ElemSize();
 
             if (_imageSpace != null)
@@ -136,8 +140,8 @@ namespace JidamVision.Core
             int bufferIndex = 0;
 
             // Mat의 데이터를 byte 배열로 복사
-            int bufSize = (int)(matImage.Total() * matImage.ElemSize());
-            Marshal.Copy(matImage.Data, ImageSpace.GetInspectionBuffer(bufferIndex), 0, bufSize);
+            int bufSize = (int)(alignedMat.Total() * alignedMat.ElemSize());
+            Marshal.Copy(alignedMat.Data, ImageSpace.GetInspectionBuffer(bufferIndex), 0, bufSize);
 
             _imageSpace.Split(bufferIndex);
 
