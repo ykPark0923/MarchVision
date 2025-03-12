@@ -32,7 +32,7 @@ namespace JidamVision.Property
         }
 
         //#MATCH PROP#7 템플릿 매칭 속성값을 GUI에 설정
-        private void LoadInspParam()
+        public void LoadInspParam()
         {
             InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
             if (inspWindow is null)
@@ -66,15 +66,17 @@ namespace JidamVision.Property
             //템플릿 매칭 실행
             if (inspWindow.DoInpsect())
             {
-                List<Rectangle> rectangles;
-                int findCount = inspWindow.GetMatchRect(out rectangles);
+                //#BINARY FILTER#17 Rect타입으로 통일, Rectangle -> Rect 변경할것
+
+                List<Rect> rects;
+                int findCount = inspWindow.GetMatchRect(out rects);
                 if (findCount > 0)
                 {
                     //찾은 위치를 이미지상에서 표시
                     var cameraForm = MainForm.GetDockForm<CameraForm>();
                     if (cameraForm != null)
                     {
-                        cameraForm.AddRect(rectangles);
+                        cameraForm.AddRect(rects);
                     }
                 }
             }

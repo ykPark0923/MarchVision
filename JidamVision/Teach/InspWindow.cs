@@ -24,15 +24,25 @@ namespace JidamVision.Teach
 
         //템플릿 매칭 클래스
         private MatchAlgorithm _matchAlgorithm;
-       
+
         //템플릿 매칭으로 찾은 위치 리스트
         private List<OpenCvSharp.Point> _outPoints;
 
         public MatchAlgorithm MatchAlgorithm => _matchAlgorithm;
 
+
+        //#BINARY FILTER#5 이진화 알고리즘 추가
+        //이진화 검사 클래스
+        private BlobAlgorithm _blobAlgorithm;
+
+        public BlobAlgorithm BlobAlgorithm => _blobAlgorithm;
+
         public InspWindow()
         {
             _matchAlgorithm = new MatchAlgorithm();
+
+            //#BINARY FILTER#6 이진화 알고리즘 인스턴스 생성
+            _blobAlgorithm = new BlobAlgorithm();
         }
 
         public bool SetTeachingImage(Mat image, System.Drawing.Rectangle rect)
@@ -63,11 +73,8 @@ namespace JidamVision.Teach
         //#MATCH PROP#5 템플릿 매칭 검사
         public bool DoInpsect()
         {
-            if (_teachingImage is null)
+            if (_teachingImage is null || _matchAlgorithm is null)
                 return false;
-
-            if (_matchAlgorithm is null)
-                _matchAlgorithm = new MatchAlgorithm();
 
             Mat srcImage = Global.Inst.InspStage.GetMat();
 
@@ -90,9 +97,9 @@ namespace JidamVision.Teach
         }
 
         //#MATCH PROP#6 템플릿 매칭 검사 결과 위치를 Rectangle 리스트로 반환
-        public int GetMatchRect(out List<Rectangle> rectangles)
+        public int GetMatchRect(out List<Rect> rects)
         {
-            rectangles = new List<Rectangle> ();
+            rects = new List<Rect> ();
 
             int halfWidth = _teachingImage.Width;
             int halfHeight = _teachingImage.Height;
@@ -100,11 +107,10 @@ namespace JidamVision.Teach
             foreach (var point in _outPoints)
             {
                 Console.WriteLine($"매칭된 위치: {_outPoints}");
-                rectangles.Add(new Rectangle(point.X - halfWidth, point.Y - halfHeight, _teachingImage.Width, _teachingImage.Height));
+                rects.Add(new Rect(point.X - halfWidth, point.Y - halfHeight, _teachingImage.Width, _teachingImage.Height));
             }
 
-            return rectangles.Count;
+            return rects.Count;
         }
-
     }
 }
