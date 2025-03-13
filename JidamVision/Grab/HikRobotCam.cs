@@ -216,6 +216,7 @@ namespace JidamVision.Grab
                     {
                         _camera.MV_CC_DestroyDevice_NET();
                         Console.WriteLine("Device open fail!", nRet);
+                        MessageBox.Show($"Device open fail! {nRet:X8}");
                         return false;
                     }
 
@@ -338,7 +339,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal override bool SetGain(long gain)
+        internal override bool SetGain(float gain)
         {
             if (_camera == null)
                 return false;
@@ -355,7 +356,7 @@ namespace JidamVision.Grab
             return true;
         }
 
-        internal override bool GetGain(out long gain)
+        internal override bool GetGain(out float gain)
         {
             gain = 0;
             if (_camera == null)
@@ -431,6 +432,57 @@ namespace JidamVision.Grab
             return true;
         }
 
+        internal override bool SetWhiteBalance(bool auto, float redGain = 1.0f, float blueGain = 1.0f)
+        {
+            if (_camera == null)
+                return false;
+
+            if (auto)
+            {
+                // 자동 화이트 밸런스 설정
+                int nRet = _camera.MV_CC_SetEnumValue_NET("BalanceWhiteAuto",
+                    (uint)MyCamera.MV_CAM_BALANCEWHITE_AUTO.MV_BALANCEWHITE_AUTO_ONCE);
+
+                if (MyCamera.MV_OK != nRet)
+                {
+                    Console.WriteLine("Failed to enable auto white balance!");
+                    return false;
+                }
+
+                // **화이트 밸런스 적용을 위한 추가 트리거**
+                _camera.MV_CC_SetCommandValue_NET("TriggerSoftware");
+            }
+            else
+            {
+                // 수동 모드로 설정
+                int nRet = _camera.MV_CC_SetEnumValue_NET("BalanceWhiteAuto",
+                    (uint)MyCamera.MV_CAM_BALANCEWHITE_AUTO.MV_BALANCEWHITE_AUTO_OFF);
+
+                if (MyCamera.MV_OK != nRet)
+                {
+                    Console.WriteLine("Failed to disable auto white balance!");
+                    return false;
+                }
+
+                // 수동 모드에서 Red 및 Blue 게인 설정
+                nRet = _camera.MV_CC_SetFloatValue_NET("BalanceRatioRed", redGain);
+                if (MyCamera.MV_OK != nRet)
+                {
+                    Console.WriteLine("Failed to set Red gain!");
+                    return false;
+                }
+
+                nRet = _camera.MV_CC_SetFloatValue_NET("BalanceRatioBlue", blueGain);
+                if (MyCamera.MV_OK != nRet)
+                {
+                    Console.WriteLine("Failed to set Blue gain!");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Dispose
@@ -446,7 +498,7 @@ namespace JidamVision.Grab
 
             if (disposing)
             {
-                _camera.MV_CC_CloseDevice_NET();
+                Close();
                 _camera.MV_CC_DestroyDevice_NET();
             }
             _disposed = true;
@@ -454,7 +506,7 @@ namespace JidamVision.Grab
 
         ~HikRobotCam()
         {
-            Dispose(disposing: false);
+            Dispose(disposing: true);
         }
         #endregion
     }
