@@ -22,7 +22,7 @@ namespace JidamVision.Core
 
         private ImageSpace _imageSpace = null;
         private GrabModel _grabManager = null;
-        private CameraType _camType = CameraType.HikRobotCam;
+        private CameraType _camType = CameraType.WebCam;
         private PreviewImage _previewImage = null;
 
         private InspWindow _inspWindow = null;
@@ -269,6 +269,7 @@ namespace JidamVision.Core
                 //#PANEL TO TAB#4 초기화 과정에서 모든 속성 추가
                 propForm.SetInspType(InspectType.InspMatch);
                 propForm.SetInspType(InspectType.InspBinary);
+                propForm.SetInspType(InspectType.InspFilter);
             }
         }
     }
