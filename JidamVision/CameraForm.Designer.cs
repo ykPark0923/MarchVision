@@ -37,6 +37,8 @@
             this.rbtnRedChannel = new System.Windows.Forms.RadioButton();
             this.btnSetRoi = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.btnInspect = new System.Windows.Forms.Button();
+            this.rbtnColor = new System.Windows.Forms.RadioButton();
             this.imageViewer = new JidamVision.ImageViewCCtrl();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -63,15 +65,16 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.rbtnColor);
             this.groupBox1.Controls.Add(this.rbtnGrayChannel);
             this.groupBox1.Controls.Add(this.rbtnGreenChannel);
             this.groupBox1.Controls.Add(this.rbtnBlueChannel);
             this.groupBox1.Controls.Add(this.rbtnRedChannel);
-            this.groupBox1.Location = new System.Drawing.Point(351, 181);
+            this.groupBox1.Location = new System.Drawing.Point(351, 162);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox1.Size = new System.Drawing.Size(74, 103);
+            this.groupBox1.Size = new System.Drawing.Size(74, 122);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Channel";
@@ -79,7 +82,7 @@
             // rbtnGrayChannel
             // 
             this.rbtnGrayChannel.AutoSize = true;
-            this.rbtnGrayChannel.Location = new System.Drawing.Point(4, 81);
+            this.rbtnGrayChannel.Location = new System.Drawing.Point(7, 100);
             this.rbtnGrayChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnGrayChannel.Name = "rbtnGrayChannel";
             this.rbtnGrayChannel.Size = new System.Drawing.Size(50, 16);
@@ -91,7 +94,7 @@
             // rbtnGreenChannel
             // 
             this.rbtnGreenChannel.AutoSize = true;
-            this.rbtnGreenChannel.Location = new System.Drawing.Point(4, 63);
+            this.rbtnGreenChannel.Location = new System.Drawing.Point(7, 80);
             this.rbtnGreenChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnGreenChannel.Name = "rbtnGreenChannel";
             this.rbtnGreenChannel.Size = new System.Drawing.Size(57, 16);
@@ -104,7 +107,7 @@
             // rbtnBlueChannel
             // 
             this.rbtnBlueChannel.AutoSize = true;
-            this.rbtnBlueChannel.Location = new System.Drawing.Point(4, 44);
+            this.rbtnBlueChannel.Location = new System.Drawing.Point(7, 60);
             this.rbtnBlueChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnBlueChannel.Name = "rbtnBlueChannel";
             this.rbtnBlueChannel.Size = new System.Drawing.Size(48, 16);
@@ -117,7 +120,7 @@
             // rbtnRedChannel
             // 
             this.rbtnRedChannel.AutoSize = true;
-            this.rbtnRedChannel.Location = new System.Drawing.Point(4, 25);
+            this.rbtnRedChannel.Location = new System.Drawing.Point(7, 40);
             this.rbtnRedChannel.Margin = new System.Windows.Forms.Padding(2);
             this.rbtnRedChannel.Name = "rbtnRedChannel";
             this.rbtnRedChannel.Size = new System.Drawing.Size(45, 16);
@@ -139,13 +142,35 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(355, 99);
+            this.btnSave.Location = new System.Drawing.Point(350, 99);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(70, 22);
+            this.btnSave.Size = new System.Drawing.Size(75, 22);
             this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnInspect
+            // 
+            this.btnInspect.Location = new System.Drawing.Point(350, 127);
+            this.btnInspect.Name = "btnInspect";
+            this.btnInspect.Size = new System.Drawing.Size(75, 30);
+            this.btnInspect.TabIndex = 6;
+            this.btnInspect.Text = "검사";
+            this.btnInspect.UseVisualStyleBackColor = true;
+            this.btnInspect.Click += new System.EventHandler(this.btnInspect_Click);
+            // 
+            // rbtnColor
+            // 
+            this.rbtnColor.AutoSize = true;
+            this.rbtnColor.Location = new System.Drawing.Point(7, 19);
+            this.rbtnColor.Name = "rbtnColor";
+            this.rbtnColor.Size = new System.Drawing.Size(53, 16);
+            this.rbtnColor.TabIndex = 4;
+            this.rbtnColor.TabStop = true;
+            this.rbtnColor.Text = "Color";
+            this.rbtnColor.UseVisualStyleBackColor = true;
+            this.rbtnColor.CheckedChanged += new System.EventHandler(this.rbtnColor_CheckedChanged);
             // 
             // imageViewer
             // 
@@ -163,7 +188,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(432, 296);
+            this.ClientSize = new System.Drawing.Size(432, 291);
+            this.Controls.Add(this.btnInspect);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnSetRoi);
@@ -192,5 +218,7 @@
         private System.Windows.Forms.RadioButton rbtnBlueChannel;
         public System.Windows.Forms.Button btnSetRoi;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnInspect;
+        private System.Windows.Forms.RadioButton rbtnColor;
     }
 }

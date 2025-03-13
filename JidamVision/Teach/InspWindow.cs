@@ -22,27 +22,16 @@ namespace JidamVision.Teach
         //템플릿 매칭 이미지
         private Mat _teachingImage;
 
-        //템플릿 매칭 클래스
-        private MatchAlgorithm _matchAlgorithm;
+        //#ABSTRACT ALGORITHM#9 개별 변수로 있던, MatchAlgorithm과 BlobAlgorithm을
+        //InspAlgorithm으로 추상화하여 리스트로 관리하도록 변경
 
-        //템플릿 매칭으로 찾은 위치 리스트
-        private List<OpenCvSharp.Point> _outPoints;
-
-        public MatchAlgorithm MatchAlgorithm => _matchAlgorithm;
-
-
-        //#BINARY FILTER#5 이진화 알고리즘 추가
-        //이진화 검사 클래스
-        private BlobAlgorithm _blobAlgorithm;
-
-        public BlobAlgorithm BlobAlgorithm => _blobAlgorithm;
+        public List<InspAlgorithm> AlgorithmList { get; set; } = new List<InspAlgorithm>();
 
         public InspWindow()
         {
-            _matchAlgorithm = new MatchAlgorithm();
-
-            //#BINARY FILTER#6 이진화 알고리즘 인스턴스 생성
-            _blobAlgorithm = new BlobAlgorithm();
+            //#ABSTRACT ALGORITHM#13 매칭 알고리즘과 이진화 알고리즘 추가
+            AddInspAlgorithm(InspectType.InspMatch);
+            AddInspAlgorithm(InspectType.InspBinary);
         }
 
         public bool SetTeachingImage(Mat image, System.Drawing.Rectangle rect)
@@ -55,62 +44,72 @@ namespace JidamVision.Teach
         //#MATCH PROP#4 템플릿 매칭 이미지 로딩
         public bool PatternLearn()
         {
-            if (_matchAlgorithm == null)
-                return false;
-
-            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), Define.ROI_IMAGE_NAME);
-            if (File.Exists(templatePath))
+            foreach (var algorithm in AlgorithmList)
             {
-                _teachingImage = Cv2.ImRead(templatePath);
-                
-                if(_teachingImage != null)
-                    _matchAlgorithm.SetTemplateImage(_teachingImage);
+                if (algorithm.InspectType != InspectType.InspMatch)
+                    continue;
+
+                MatchAlgorithm matchAlgo = (MatchAlgorithm)algorithm;
+
+                string templatePath = Path.Combine(Directory.GetCurrentDirectory(), Define.ROI_IMAGE_NAME);
+                if (File.Exists(templatePath))
+                {
+                    _teachingImage = Cv2.ImRead(templatePath);
+
+                    if (_teachingImage != null)
+                        matchAlgo.SetTemplateImage(_teachingImage);
+                }
             }
 
             return true;
         }
-
-        //#MATCH PROP#5 템플릿 매칭 검사
-        public bool DoInpsect()
+        
+        //#ABSTRACT ALGORITHM#10 타입에 따라 알고리즘을 추가하는 함수
+        public bool AddInspAlgorithm(InspectType inspType)
         {
-            if (_teachingImage is null || _matchAlgorithm is null)
+            InspAlgorithm inspAlgo = null;
+
+            switch(inspType)
+            {
+                case InspectType.InspBinary:
+                    inspAlgo = new BlobAlgorithm();
+                    break;
+                case InspectType.InspMatch:
+                    inspAlgo = new MatchAlgorithm();
+                    break;
+            }
+
+            if (inspAlgo is null)
                 return false;
 
-            Mat srcImage = Global.Inst.InspStage.GetMat();
-
-            if (_matchAlgorithm.MatchCount == 1)
-            {
-                if(_matchAlgorithm.MatchTemplateSingle(srcImage) == false)
-                    return false;
-
-                _outPoints = new List<OpenCvSharp.Point>();
-                _outPoints.Add(_matchAlgorithm.OutPoint);
-            }
-            else
-            {
-                int matchCount = _matchAlgorithm.MatchTemplateMultiple(srcImage, out _outPoints);
-                if (matchCount <= 0)
-                    return false;
-            }
+            AlgorithmList.Add(inspAlgo);
 
             return true;
         }
 
-        //#MATCH PROP#6 템플릿 매칭 검사 결과 위치를 Rectangle 리스트로 반환
-        public int GetMatchRect(out List<Rect> rects)
+
+        //#ABSTRACT ALGORITHM#11 알고리즘을 리스트로 관리하므로, 필요한 타입의 알고리즘을 찾는 함수
+        public InspAlgorithm FindInspAlgorithm(InspectType inspType)
         {
-            rects = new List<Rect> ();
-
-            int halfWidth = _teachingImage.Width;
-            int halfHeight = _teachingImage.Height;
-
-            foreach (var point in _outPoints)
+            foreach (var algorithm in AlgorithmList)
             {
-                Console.WriteLine($"매칭된 위치: {_outPoints}");
-                rects.Add(new Rect(point.X - halfWidth, point.Y - halfHeight, _teachingImage.Width, _teachingImage.Height));
+                if (algorithm.InspectType == inspType)
+                    return algorithm;
+            }
+            return null;
+        }
+
+        //#ABSTRACT ALGORITHM#12 클래스 내에서, 인자로 입력된 타입의 알고리즘을 검사하거나,
+        ///모든 알고리즘을 검사하는 옵션을 가지는 검사 함수
+        public bool DoInpsect(InspectType inspType)
+        {
+            foreach( var inspAlgo in AlgorithmList)
+            {
+                if (inspAlgo.InspectType == inspType || inspAlgo.InspectType == InspectType.InspNone)
+                    inspAlgo.DoInspect();
             }
 
-            return rects.Count;
+            return true;
         }
     }
 }

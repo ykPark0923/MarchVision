@@ -25,6 +25,8 @@ namespace JidamVision
         public CameraForm()
         {
             InitializeComponent();
+
+            rbtnColor.Checked = true;
         }
 
         //# SAVE ROI#2 GUI상에서 선택된 채널 라디오 버튼에 따른 채널 정보를 반환
@@ -85,6 +87,7 @@ namespace JidamVision
             btnLive.Location = new System.Drawing.Point(xPos, btnLive.Location.Y);
             btnSetRoi.Location = new System.Drawing.Point(xPos, btnSetRoi.Location.Y);
             btnSave.Location = new System.Drawing.Point(xPos, btnSave.Location.Y);
+            btnInspect.Location = new System.Drawing.Point(xPos, btnInspect.Location.Y);
             groupBox1.Location = new System.Drawing.Point(xPos, groupBox1.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
@@ -109,6 +112,11 @@ namespace JidamVision
         private void CameraForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void rbtnColor_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateDisplay();
         }
 
         private void rbtnRedChannel_CheckedChanged(object sender, EventArgs e)
@@ -154,6 +162,9 @@ namespace JidamVision
             {
                 //현재 설정된 ROI 영역을 가져옴
                 Rectangle roiRect = imageViewer.GetRoiRect();
+                if (roiRect.IsEmpty == true)
+                    return;
+
                 //전체 이미지에서 ROI 영역만을 roiImage에 저장
                 Mat roiImage = new Mat(currentImage, new Rect(roiRect.X, roiRect.Y, roiRect.Width, roiRect.Height));
 
@@ -173,5 +184,12 @@ namespace JidamVision
             imageViewer.AddRect(rectangles);
             
         }
+
+        //#INSP WORKER#8 CaearaForm에 검사 버튼을 추가하고, 전체 검사 함수 추가
+        private void btnInspect_Click(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.InspWorker.RunInspect();
+        }
+
     }
 }

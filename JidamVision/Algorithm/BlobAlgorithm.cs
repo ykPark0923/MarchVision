@@ -29,19 +29,27 @@ namespace JidamVision.Algorithm
 
         public BlobAlgorithm()
         {
+            //#ABSTRACT ALGORITHM#5 각 함수마다 자신의 알고리즘 타입 설정
+            InspectType = InspectType.InspBinary;
         }
 
         //#BINARY FILTER#2 이진화 후, 필터를 이용해 원하는 영역을 얻음 
-        public bool DoInspect(Mat srcImage)
+
+        //#ABSTRACT ALGORITHM#6 
+        //InspAlgorithm을 상속받아, 구현하고, 인자로 입력받던 것을 부모의 _srcImage 이미지 사용
+        //검사 시작전 IsInspected = false로 초기화하고, 검사가 정상적으로 완료되면,IsInspected = true로 설정
+        public override bool DoInspect()
         {
-            if (srcImage == null)
+            IsInspected = false;
+
+            if (_srcImage == null)
                 return false;
 
             Mat grayImage = new Mat();
-            if (srcImage.Type() == MatType.CV_8UC3)
-                Cv2.CvtColor(srcImage, grayImage, ColorConversionCodes.BGR2GRAY);
+            if (_srcImage.Type() == MatType.CV_8UC3)
+                Cv2.CvtColor(_srcImage, grayImage, ColorConversionCodes.BGR2GRAY);
             else
-                grayImage = srcImage;
+                grayImage = _srcImage;
 
             Mat binaryImage = new Mat();
             //Cv2.Threshold(grayImage, binaryMask, lowerValue, upperValue, ThresholdTypes.Binary);
@@ -54,8 +62,10 @@ namespace JidamVision.Algorithm
             {
                 if (!BlobFilter(binaryImage, AreaFilter))
                     return false;
-
             }
+
+            IsInspected = true;
+
             return true;
         }
 
@@ -95,6 +105,7 @@ namespace JidamVision.Algorithm
 
                 // BoundingRect 정보 출력
                 //Console.WriteLine($"BoundingRect - X: {boundingRect.X}, Y: {boundingRect.Y}, Width: {boundingRect.Width}, Height: {boundingRect.Height}");
+
             }
 
             return true;
@@ -102,9 +113,13 @@ namespace JidamVision.Algorithm
 
 
         //#BINARY FILTER#4 이진화 영역 반환
-        public int GetResultRect(out List<Rect> resultArea)
+        public override int GetResultRect(out List<Rect> resultArea)
         {
             resultArea = null;
+
+            //#ABSTRACT ALGORITHM#7 검사가 완료되지 않았다면, 리턴
+            if (!IsInspected)
+                return -1;
 
             if (_findArea is null || _findArea.Count <= 0)
                 return -1;

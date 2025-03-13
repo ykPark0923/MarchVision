@@ -277,6 +277,7 @@ namespace JidamVision.Grab
                 return false;
             }
             Close();
+
             return Open();
         }
 
@@ -439,9 +440,11 @@ namespace JidamVision.Grab
 
             if (auto)
             {
-                // 자동 화이트 밸런스 설정
-                int nRet = _camera.MV_CC_SetEnumValue_NET("BalanceWhiteAuto",
-                    (uint)MyCamera.MV_CAM_BALANCEWHITE_AUTO.MV_BALANCEWHITE_AUTO_ONCE);
+                int nRet = _camera.MV_CC_SetBalanceWhiteAuto_NET(1);
+
+                //// 자동 화이트 밸런스 설정
+                //int nRet = _camera.MV_CC_SetEnumValue_NET("BalanceWhiteAuto",
+                //    (uint)MyCamera.MV_CAM_BALANCEWHITE_AUTO.MV_BALANCEWHITE_AUTO_ONCE);
 
                 if (MyCamera.MV_OK != nRet)
                 {

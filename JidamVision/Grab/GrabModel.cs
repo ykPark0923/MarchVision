@@ -104,8 +104,11 @@ namespace JidamVision.Grab
                 return false;
 
             if (!Open())
-                return false;
-
+            {
+                if (!Reconnect())
+                    return false;
+            }
+             
             return true;
         }
 

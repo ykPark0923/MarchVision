@@ -26,9 +26,6 @@ namespace JidamVision.Property
         public MatchInspProp()
         {
             InitializeComponent();
-
-            //#MATCH PROP#8 템플릿 매칭 속성값을 GUI에 설정
-            LoadInspParam();
         }
 
         //#MATCH PROP#7 템플릿 매칭 속성값을 GUI에 설정
@@ -38,9 +35,14 @@ namespace JidamVision.Property
             if (inspWindow is null)
                 return;
 
-            OpenCvSharp.Size extendSize = inspWindow.MatchAlgorithm.ExtSize;
-            int matchScore = inspWindow.MatchAlgorithm.MatchScore;
-            int matchCount = inspWindow.MatchAlgorithm.MatchCount;
+            //#INSP WORKER#14 inspWindow에서 매칭 알고리즘 찾는 코드
+            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
+            if (matchAlgo is null)
+                return;
+
+            OpenCvSharp.Size extendSize = matchAlgo.ExtSize;
+            int matchScore = matchAlgo.MatchScore;
+            int matchCount = matchAlgo.MatchCount;
 
             txtExtendX.Text = extendSize.Width.ToString();
             txtExtendY.Text = extendSize.Height.ToString();
@@ -51,6 +53,15 @@ namespace JidamVision.Property
         //#MATCH PROP#10 템플릿 매칭 실행
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
+            if (inspWindow is null)
+                return;
+
+            //#INSP WORKER#11 inspWindow에서 매칭 알고리즘 찾는 코드 추가
+            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
+            if (matchAlgo is null)
+                return;
+
             //GUI에 설정된 정보를 MatchAlgorithm에 설정
             OpenCvSharp.Size extendSize = new OpenCvSharp.Size();
             extendSize.Width = int.Parse(txtExtendX.Text);
@@ -58,28 +69,12 @@ namespace JidamVision.Property
             int matchScore = int.Parse(txtScore.Text);
             int matchCount = int.Parse(txtMatchCount.Text);
 
-            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
-            inspWindow.MatchAlgorithm.ExtSize = extendSize;
-            inspWindow.MatchAlgorithm.MatchScore = matchScore;
-            inspWindow.MatchAlgorithm.MatchCount = matchCount;
+            matchAlgo.ExtSize = extendSize;
+            matchAlgo.MatchScore = matchScore;
+            matchAlgo.MatchCount = matchCount;
 
-            //템플릿 매칭 실행
-            if (inspWindow.DoInpsect())
-            {
-                //#BINARY FILTER#17 Rect타입으로 통일, Rectangle -> Rect 변경할것
-
-                List<Rect> rects;
-                int findCount = inspWindow.GetMatchRect(out rects);
-                if (findCount > 0)
-                {
-                    //찾은 위치를 이미지상에서 표시
-                    var cameraForm = MainForm.GetDockForm<CameraForm>();
-                    if (cameraForm != null)
-                    {
-                        cameraForm.AddRect(rects);
-                    }
-                }
-            }
+            //#INSP WORKER#12 매칭 검사시, 해당 InspWindow와 매칭 알고리즘만 실행
+            Global.Inst.InspStage.InspWorker.TryInspect(inspWindow, InspectType.InspMatch);
         }
 
         //#MATCH PROP#9 저장된 ROI이미지 로딩

@@ -1,4 +1,5 @@
 ﻿using JidamVision.Grab;
+using JidamVision.Inspect;
 using JidamVision.Teach;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
@@ -25,6 +26,9 @@ namespace JidamVision.Core
         private CameraType _camType = CameraType.HikRobotCam;
         private PreviewImage _previewImage = null;
 
+        //#INSP WORKER#6 InspWorker 변수 추가 
+        private InspWorker _inspWorker = null;
+        
         private InspWindow _inspWindow = null;
 
         public ImageSpace ImageSpace
@@ -37,10 +41,19 @@ namespace JidamVision.Core
             get => _previewImage;
         }
 
+        //#INSP WORKER#7 InspWorker 프로퍼티 추가
+        public InspWorker InspWorker
+        {
+            get => _inspWorker;
+        }
+
         public InspWindow InspWindow
         {
             get => _inspWindow;
         }
+
+        //#INSP WORKER#1 1개만 있던 InspWindow를 리스트로 변경하여, 여러개의 ROI를 관리하도록 개선
+        public List<InspWindow> InspWindowList { get; set; } = new List<InspWindow>();
 
         public bool LiveMode { get; set; } = false;
 
@@ -53,6 +66,7 @@ namespace JidamVision.Core
         {
             _imageSpace = new ImageSpace();
             _previewImage = new PreviewImage();
+            _inspWorker = new InspWorker();
 
             switch (_camType)
             {
@@ -245,6 +259,9 @@ namespace JidamVision.Core
             if (imageChannel != eImageChannel.None)
                 SelImageChannel = imageChannel;
 
+            if (Global.Inst.InspStage.ImageSpace is null)
+                return null;
+
             return Global.Inst.InspStage.ImageSpace.GetBitmap(SelBufferIndex, SelImageChannel);
         }
         public Mat GetMat(int bufferIndex = -1, eImageChannel imageChannel = eImageChannel.None)
@@ -266,9 +283,11 @@ namespace JidamVision.Core
             var propForm = MainForm.GetDockForm<PropertiesForm>();
             if (propForm != null)
             {
-                //#PANEL TO TAB#4 초기화 과정에서 모든 속성 추가
-                propForm.SetInspType(InspectType.InspMatch);
-                propForm.SetInspType(InspectType.InspBinary);
+                //#ABSTRACT ALGORITHM#8 InspAlgorithm을 추상화하였으므로, 
+                //모든 검사 타입을 for문을 통해서 추가,
+                //함수명 변경 SetInspType -> AddInspType
+                for (int i = 0; i < (int)InspectType.InspPropCount; i++)
+                    propForm.AddInspType((InspectType)i);
             }
         }
     }

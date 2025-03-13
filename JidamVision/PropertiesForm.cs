@@ -92,7 +92,7 @@ namespace JidamVision
             return _inspProp;
         }
 
-        public void SetInspType(InspectType inspPropType)
+        public void AddInspType(InspectType inspPropType)
         {
             LoadOptionControl(inspPropType);
         }
