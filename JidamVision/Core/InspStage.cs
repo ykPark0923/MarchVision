@@ -22,7 +22,7 @@ namespace JidamVision.Core
 
         private ImageSpace _imageSpace = null;
         private GrabModel _grabManager = null;
-        private CameraType _camType = CameraType.WebCam;
+        private CameraType _camType = CameraType.HikRobotCam;
         private PreviewImage _previewImage = null;
 
         private InspWindow _inspWindow = null;
@@ -105,6 +105,16 @@ namespace JidamVision.Core
             }
 
             SetBuffer(bufferCount);
+
+            if(_camType == CameraType.HikRobotCam)
+            {
+                _grabManager.SetExposureTime(20000);
+                _grabManager.SetGain(1.4f);
+                _grabManager.Grab(0);
+
+                _grabManager.SetWhiteBalance(true);
+            }
+            
         }
         public void SetImageBuffer(string filePath)
         {
