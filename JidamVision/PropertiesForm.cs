@@ -27,7 +27,8 @@ namespace JidamVision
         InspNone = -1,
         InspBinary,
         InspMatch,
-        InspCount
+        InspFilter,
+        InspPropCount
     }
 
     public partial class PropertiesForm : DockContent
@@ -82,8 +83,14 @@ namespace JidamVision
                     break;
                 case InspectType.InspMatch:
                     MatchInspProp matchProp = new MatchInspProp();
-                    matchProp.LoadInspParam();
+                    //matchProp.LoadInspParam();
                     _inspProp = matchProp;
+                    break;
+                case InspectType.InspFilter:
+                    FilterInspProp filterProp = new FilterInspProp();
+                    //filterProp.LoadInspParam();
+                    filterProp.FilterSelected += FilterSelect_FilterChanged;
+                    _inspProp = filterProp;
                     break;
                 default:
                     MessageBox.Show("유효하지 않은 옵션입니다.");
@@ -107,6 +114,15 @@ namespace JidamVision
             bool invert = e.Invert;
             ShowBinaryMode showBinMode = e.ShowBinMode;
             Global.Inst.InspStage.PreView?.SetBinary(lowerValue, upperValue, invert, showBinMode);
+        }
+
+        private void FilterSelect_FilterChanged(object sender, FilterSelectedEventArgs e)
+        {
+            //선택된 필터값 PrieviewImage의 ApplyFilter로 보냄
+            string filter1 = e.FilterSelected1;
+            int filter2 = e.FilterSelected2;
+            Global.Inst.InspStage.PreView?.ApplyFilter(filter1, filter2);
+
         }
     }
 }
