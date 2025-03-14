@@ -446,7 +446,7 @@ namespace JidamVision.Grab
 
             if (disposing)
             {
-                _camera.MV_CC_CloseDevice_NET();
+                Close();
                 _camera.MV_CC_DestroyDevice_NET();
             }
             _disposed = true;
@@ -454,7 +454,7 @@ namespace JidamVision.Grab
 
         ~HikRobotCam()
         {
-            Dispose(disposing: false);
+            Dispose(disposing: true);
         }
         #endregion
     }
