@@ -29,7 +29,7 @@ namespace JidamVision.Core
         //#INSP WORKER#6 InspWorker 변수 추가 
         private InspWorker _inspWorker = null;
         
-        private InspWindow _baseWindow = null;
+        private InspWindow _inspWindow = null;
 
         public ImageSpace ImageSpace
         {
@@ -47,9 +47,9 @@ namespace JidamVision.Core
             get => _inspWorker;
         }
 
-        public InspWindow BaseWindow
+        public InspWindow InspWindow
         {
-            get => _baseWindow;
+            get => _inspWindow;
         }
 
         //#INSP WORKER#1 1개만 있던 InspWindow를 리스트로 변경하여, 여러개의 ROI를 관리하도록 개선
@@ -278,8 +278,8 @@ namespace JidamVision.Core
 
         private void InitInspWindow()
         {
-            _baseWindow = new InspWindow();
-            InspWindowList.Add(_baseWindow);
+            _inspWindow = new InspWindow();
+            InspWindowList.Add(_inspWindow);
 
             var propForm = MainForm.GetDockForm<PropertiesForm>();
             if (propForm != null)

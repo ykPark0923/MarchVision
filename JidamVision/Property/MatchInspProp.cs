@@ -31,7 +31,7 @@ namespace JidamVision.Property
         //#MATCH PROP#7 템플릿 매칭 속성값을 GUI에 설정
         public void LoadInspParam()
         {
-            InspWindow inspWindow = Global.Inst.InspStage.BaseWindow;
+            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
             if (inspWindow is null)
                 return;
 
@@ -53,7 +53,7 @@ namespace JidamVision.Property
         //#MATCH PROP#10 템플릿 매칭 실행
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            InspWindow inspWindow = Global.Inst.InspStage.BaseWindow;
+            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
             if (inspWindow is null)
                 return;
 
@@ -80,7 +80,7 @@ namespace JidamVision.Property
         //#MATCH PROP#9 저장된 ROI이미지 로딩
         private void btnTeach_Click(object sender, EventArgs e)
         {
-            InspWindow inspWindow = Global.Inst.InspStage.BaseWindow;
+            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
             if (inspWindow.PatternLearn())
                 MessageBox.Show("티칭 성공");
             else
