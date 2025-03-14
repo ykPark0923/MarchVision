@@ -61,7 +61,7 @@ namespace JidamVision.Property
             trackBarUpper.Value = 128;
 
             //#BINARY FILTER#8 이진화 필터값을 GUI에 로딩
-            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
+            InspWindow inspWindow = Global.Inst.InspStage.BaseWindow;
             if (inspWindow != null)
             {
                 //#INSP WORKER#13 inspWindow에서 이진화 알고리즘 찾는 코드
@@ -117,7 +117,7 @@ namespace JidamVision.Property
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
-            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
+            InspWindow inspWindow = Global.Inst.InspStage.BaseWindow;
             if (inspWindow is null)
                 return;
 

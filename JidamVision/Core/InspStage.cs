@@ -23,13 +23,13 @@ namespace JidamVision.Core
 
         private ImageSpace _imageSpace = null;
         private GrabModel _grabManager = null;
-        private CameraType _camType = CameraType.HikRobotCam;
+        private CameraType _camType = CameraType.WebCam;
         private PreviewImage _previewImage = null;
 
         //#INSP WORKER#6 InspWorker 변수 추가 
         private InspWorker _inspWorker = null;
         
-        private InspWindow _inspWindow = null;
+        private InspWindow _baseWindow = null;
 
         public ImageSpace ImageSpace
         {
@@ -47,9 +47,9 @@ namespace JidamVision.Core
             get => _inspWorker;
         }
 
-        public InspWindow InspWindow
+        public InspWindow BaseWindow
         {
-            get => _inspWindow;
+            get => _baseWindow;
         }
 
         //#INSP WORKER#1 1개만 있던 InspWindow를 리스트로 변경하여, 여러개의 ROI를 관리하도록 개선
@@ -278,7 +278,8 @@ namespace JidamVision.Core
 
         private void InitInspWindow()
         {
-            _inspWindow = new InspWindow();
+            _baseWindow = new InspWindow();
+            InspWindowList.Add(_baseWindow);
 
             var propForm = MainForm.GetDockForm<PropertiesForm>();
             if (propForm != null)
