@@ -35,6 +35,7 @@
         private void InitializeComponent()
         {
             this.grpBinary = new System.Windows.Forms.GroupBox();
+            this.chkShowBinary = new System.Windows.Forms.CheckBox();
             this.chkInvert = new System.Windows.Forms.CheckBox();
             this.chkHighlight = new System.Windows.Forms.CheckBox();
             this.trackBarUpper = new System.Windows.Forms.TrackBar();
@@ -43,7 +44,6 @@
             this.btnFilter = new System.Windows.Forms.Button();
             this.txtArea = new System.Windows.Forms.TextBox();
             this.lbArea = new System.Windows.Forms.Label();
-            this.chkShowBinary = new System.Windows.Forms.CheckBox();
             this.grpBinary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarUpper)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLower)).BeginInit();
@@ -63,6 +63,17 @@
             this.grpBinary.TabIndex = 0;
             this.grpBinary.TabStop = false;
             this.grpBinary.Text = "이진화";
+            // 
+            // chkShowBinary
+            // 
+            this.chkShowBinary.AutoSize = true;
+            this.chkShowBinary.Location = new System.Drawing.Point(125, 125);
+            this.chkShowBinary.Name = "chkShowBinary";
+            this.chkShowBinary.Size = new System.Drawing.Size(60, 16);
+            this.chkShowBinary.TabIndex = 5;
+            this.chkShowBinary.Text = "이진화";
+            this.chkShowBinary.UseVisualStyleBackColor = true;
+            this.chkShowBinary.CheckedChanged += new System.EventHandler(this.chkBinaryOnly_CheckedChanged);
             // 
             // chkInvert
             // 
@@ -142,17 +153,6 @@
             this.lbArea.Size = new System.Drawing.Size(31, 12);
             this.lbArea.TabIndex = 0;
             this.lbArea.Text = "Area";
-            // 
-            // chkShowBinary
-            // 
-            this.chkShowBinary.AutoSize = true;
-            this.chkShowBinary.Location = new System.Drawing.Point(125, 125);
-            this.chkShowBinary.Name = "chkShowBinary";
-            this.chkShowBinary.Size = new System.Drawing.Size(60, 16);
-            this.chkShowBinary.TabIndex = 5;
-            this.chkShowBinary.Text = "이진화";
-            this.chkShowBinary.UseVisualStyleBackColor = true;
-            this.chkShowBinary.CheckedChanged += new System.EventHandler(this.chkBinaryOnly_CheckedChanged);
             // 
             // BinaryInspProp
             // 
