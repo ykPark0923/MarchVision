@@ -286,7 +286,7 @@ namespace JidamVision.Core
                 //#ABSTRACT ALGORITHM#8 InspAlgorithm을 추상화하였으므로, 
                 //모든 검사 타입을 for문을 통해서 추가,
                 //함수명 변경 SetInspType -> AddInspType
-                for (int i = 0; i < (int)InspectType.InspPropCount; i++)
+                for (int i = 0; i < (int)InspectType.InspCount; i++)
                     propForm.AddInspType((InspectType)i);
             }
         }
