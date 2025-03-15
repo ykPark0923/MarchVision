@@ -93,6 +93,9 @@ namespace JidamVision
 
         private void ResizeCanas()
         {
+            if (Width <= 0 || Height <= 0)
+                return;
+
             // 캔버스를 UserControl 크기만큼 생성
             Canvas = new Bitmap(Width, Height);
             CanvasSize.Width = Width;
