@@ -191,5 +191,9 @@ namespace JidamVision
             Global.Inst.InspStage.InspWorker.RunInspect();
         }
 
+        public void AddRoi(InspWindowType inspWindowType)
+        {
+            imageViewer.NewRoi(inspWindowType);
+        }
     }
 }

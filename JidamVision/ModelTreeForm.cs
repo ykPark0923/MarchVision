@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JidamVision.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -53,16 +54,28 @@ namespace JidamVision
                 string nodeType = menuItem.Tag?.ToString();
                 if (nodeType == "Base")
                 {
-                    tvModelTree.SelectedNode.Nodes.Add("Base01");
+                    AddNewROI(InspWindowType.Base);
+                    //tvModelTree.SelectedNode.Nodes.Add("Base01");
                 }
                 else if (nodeType == "Sub")
                 {
-                    tvModelTree.SelectedNode.Nodes.Add("Sub");
+                    AddNewROI(InspWindowType.Sub);
+                    //tvModelTree.SelectedNode.Nodes.Add("Sub");
                 }
                 else if (nodeType == "ID")
                 {
-                    tvModelTree.SelectedNode.Nodes.Add("ID");
+                    AddNewROI(InspWindowType.ID);
+                    //tvModelTree.SelectedNode.Nodes.Add("ID");
                 }
+            }
+        }
+
+        private void AddNewROI(InspWindowType inspWindowType)
+        {
+            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+            if (cameraForm != null)
+            {
+                cameraForm.AddRoi(inspWindowType);
             }
         }
     }
