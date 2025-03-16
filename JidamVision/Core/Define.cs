@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace JidamVision.Core
 {
+    //#MODEL#1 InspWindowType 정의
     public enum InspWindowType
     {
         None = 0,
+        Global,
         Base,
         Sub,
         ID,

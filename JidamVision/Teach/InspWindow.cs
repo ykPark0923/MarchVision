@@ -22,6 +22,13 @@ namespace JidamVision.Teach
         //템플릿 매칭 이미지
         private Mat _teachingImage;
 
+        public InspWindowType InspWindowType {  get; private set; }
+
+        public string Name {  get; private set; }
+        public string UID { get; set; }
+
+        public Rect WindowArea { get; set; }
+
         //#ABSTRACT ALGORITHM#9 개별 변수로 있던, MatchAlgorithm과 BlobAlgorithm을
         //InspAlgorithm으로 추상화하여 리스트로 관리하도록 변경
 
@@ -30,6 +37,14 @@ namespace JidamVision.Teach
         public InspWindow()
         {
             //#ABSTRACT ALGORITHM#13 매칭 알고리즘과 이진화 알고리즘 추가
+            AddInspAlgorithm(InspectType.InspMatch);
+            AddInspAlgorithm(InspectType.InspBinary);
+        }
+
+        public InspWindow(InspWindowType windowType, string name)
+        {
+            InspWindowType = windowType;
+            Name = name;
             AddInspAlgorithm(InspectType.InspMatch);
             AddInspAlgorithm(InspectType.InspBinary);
         }

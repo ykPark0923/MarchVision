@@ -1,5 +1,6 @@
 ﻿using JidamVision.Core;
 using JidamVision.Teach;
+using OpenCvSharp.Dnn;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,8 +16,26 @@ using System.Windows.Forms;
 
 namespace JidamVision
 {
+    /*
+    #MULTI ROI# - <<<검사에 필요한 다양한 ROI를 추가하고 수정할 수 있도록 기능 수정>>> 
+    //여러타입의 ROI를 여러개 입력하도록 기능 수정
+    //개별로 선택된 ROI를 수정할 수 있음
+    */
+
+    //#MULTI ROI#2 ROI를 추가,수정,삭제하는 액션을 타입으로 설정
+    public enum EntityActionType
+    {
+        None = 0,
+        Add = 1,
+        Modify,
+        Delete
+    }
+
     public partial class ImageViewCCtrl : UserControl
     {
+        //#MULTI ROI#2 ROI를 추가,수정,삭제 등으로 변경 시, 이벤트 발생
+        public event EventHandler<DiagramEntityEventArgs> ModifyROI;
+
         private Point _roiStart = Point.Empty;
         private Rectangle _roiRect = Rectangle.Empty;
         private bool _isSelectingRoi = false;
@@ -71,13 +90,17 @@ namespace JidamVision
         private List<Rectangle> _rectangles = new List<Rectangle>();
 
         //#SETROI#1 ROI 그리기 모드
+
+        //#MULTI ROI#4 ROI 추가 기능을 모델트리에서 하므로, 사용하지 않음
         public bool RoiMode { get; set; } = false;
 
-        private bool _addRoi = false;
+        //#MULTI ROI#5 수정에 필요한 타입 추가
+
+        //새로 추가할 ROI 타입
         private InspWindowType _newRoiType = InspWindowType.None;
 
+        //여러개 ROI를 관리하기 위한 리스트
         private List<DiagramEntity> _diagramEntityList = new List<DiagramEntity>();
-        private int _selEntityIndex = -1;
         private DiagramEntity _selEntity;
         private Color _selColor = Color.White;
 
@@ -102,25 +125,34 @@ namespace JidamVision
             DoubleBuffered = true;
         }
 
-        public void NewRoi(InspWindowType inspWindowType)
+        //#MULTI ROI#6 InspWindow 타입에 따른, 칼라 정보 얻는 함수
+        public Color GetWindowColor(InspWindowType inspWindowType)
         {
-            _newRoiType = inspWindowType;
-            _selColor = Color.LightBlue;
+            Color color = Color.LightBlue;
 
             switch (inspWindowType)
             {
                 case InspWindowType.Base:
-                    _selColor = Color.Orange;
+                    color = Color.Orange;
                     break;
 
                 case InspWindowType.Sub:
-                    _selColor = Color.Magenta;
+                    color = Color.Magenta;
                     break;
 
                 case InspWindowType.ID:
-                    _selColor = Color.Cyan;
+                    color = Color.Cyan;
                     break;
             }
+
+            return color;
+        }
+
+        //#MULTI ROI#7 모델트리로 부터 호출되어, 신규 ROI를 추가하도록 하는 기능 시작점
+        public void NewRoi(InspWindowType inspWindowType)
+        {
+            _newRoiType = inspWindowType;
+            _selColor = GetWindowColor(inspWindowType);
         }
 
         private void ResizeCanas()
@@ -254,40 +286,40 @@ namespace JidamVision
             Invalidate();
         }
 
-        public Bitmap GetRoiImage(DiagramEntity entity)
-        {
-            Rectangle rect = entity.EntityROI;
+        //public Bitmap GetRoiImage(DiagramEntity entity)
+        //{
+        //    Rectangle rect = entity.EntityROI;
 
-            if (Bitmap == null || rect.IsEmpty)
-                return null;
+        //    if (Bitmap == null || rect.IsEmpty)
+        //        return null;
 
-            // 원본 이미지에서 ROI 크롭
-            Bitmap roiBitmap = new Bitmap(rect.Width, rect.Height);
-            using (Graphics g = Graphics.FromImage(roiBitmap))
-            {
-                g.DrawImage(Bitmap, new Rectangle(0, 0, rect.Width, rect.Height), rect, GraphicsUnit.Pixel);
-            }
+        //    // 원본 이미지에서 ROI 크롭
+        //    Bitmap roiBitmap = new Bitmap(rect.Width, rect.Height);
+        //    using (Graphics g = Graphics.FromImage(roiBitmap))
+        //    {
+        //        g.DrawImage(Bitmap, new Rectangle(0, 0, rect.Width, rect.Height), rect, GraphicsUnit.Pixel);
+        //    }
 
-            return roiBitmap;
-        }
+        //    return roiBitmap;
+        //}
 
-        public void SaveROI(DiagramEntity entity, string savePath)
-        {
-            Rectangle rect = entity.EntityROI;
+        //public void SaveROI(DiagramEntity entity, string savePath)
+        //{
+        //    Rectangle rect = entity.EntityROI;
 
-            if (Bitmap == null || rect.IsEmpty)
-                return;
+        //    if (Bitmap == null || rect.IsEmpty)
+        //        return;
 
-            // 원본 이미지에서 ROI 크롭
-            using (Bitmap roiBitmap = new Bitmap(rect.Width, rect.Height))
-            {
-                using (Graphics g = Graphics.FromImage(roiBitmap))
-                {
-                    g.DrawImage(Bitmap, new Rectangle(0, 0, rect.Width, rect.Height), rect, GraphicsUnit.Pixel);
-                }
-                roiBitmap.Save(savePath, ImageFormat.Png);
-            }
-        }
+        //    // 원본 이미지에서 ROI 크롭
+        //    using (Bitmap roiBitmap = new Bitmap(rect.Width, rect.Height))
+        //    {
+        //        using (Graphics g = Graphics.FromImage(roiBitmap))
+        //        {
+        //            g.DrawImage(Bitmap, new Rectangle(0, 0, rect.Width, rect.Height), rect, GraphicsUnit.Pixel);
+        //        }
+        //        roiBitmap.Save(savePath, ImageFormat.Png);
+        //    }
+        //}
 
         // Windows Forms에서 컨트롤이 다시 그려질 때 자동으로 호출되는 메서드
         // 화면새로고침(Invalidate()), 창 크기변경, 컨트롤이 숨겨졌다가 나타날때 실행
@@ -335,6 +367,7 @@ namespace JidamVision
                         }
                     }
 
+                    //#MULTI ROI#8 여러개 ROI를 그려주는 코드
                     foreach (DiagramEntity entity in _diagramEntityList)
                     {
                         Rectangle rect = entity.EntityROI;
@@ -343,7 +376,8 @@ namespace JidamVision
                             g.DrawRectangle(pen, rect);
                         }
 
-                        if(entity == _selEntity)
+                        //선택된 ROI가 있다면, 리사이즈 핸들 그리기
+                        if (entity == _selEntity)
                         {
                             // 리사이즈 핸들 그리기 (8개 포인트: 4 모서리 + 4 변 중간)
                             using (Brush brush = new SolidBrush(Color.LightBlue))
@@ -357,6 +391,7 @@ namespace JidamVision
                         }
                     }
 
+                    //#MULTI ROI#9 신규 ROI 추가할때, 해당 ROI 그리기
                     if (_isSelectingRoi && !_roiRect.IsEmpty)
                     {
                         Rectangle rect = _roiRect;
@@ -374,6 +409,7 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
         {
+            //#MULTI ROI#10 여러개 ROI 기능에 맞게 코드 수정
             if (e.Button == MouseButtons.Left)
             {
                 if (_newRoiType != InspWindowType.None)
@@ -381,7 +417,6 @@ namespace JidamVision
                     //새로운 ROI 그리기 시작 위치 설저어
                     _roiStart = e.Location;
                     _isSelectingRoi = true;
-                    _newRoiType = InspWindowType.None;
                     _selEntity = null;
                 }
                 else
@@ -420,6 +455,9 @@ namespace JidamVision
             // 마우스 오른쪽 버튼이 눌렸을 때 클릭 위치 저장
             else if (e.Button == MouseButtons.Right)
             {
+                //#MULTI ROI#11 같은 타입의 ROI추가가 더이상 없다면 초기화하여, ROI가 추가되지 않도록 함
+                _newRoiType = InspWindowType.None;
+
                 RightClick = e.Location;
 
                 // UserControl이 포커스를 받아야 마우스 휠이 정상적으로 동작함
@@ -429,6 +467,7 @@ namespace JidamVision
 
         private void ImageViewCCtrl_MouseMove(object sender, MouseEventArgs e)
         {
+            //#MULTI ROI#12 마우스 이동시, 구현 코드
             if (e.Button == MouseButtons.Left)
             {
                 //최초 ROI 생성하여 그리기
@@ -445,7 +484,7 @@ namespace JidamVision
                 else if (_isResizingRoi)
                 {
                     ResizeROI(e.Location);
-                    if(_selEntity != null)
+                    if (_selEntity != null)
                         _selEntity.EntityROI = _roiRect;
                     _resizeStart = e.Location;
                     Invalidate();
@@ -502,20 +541,22 @@ namespace JidamVision
         private void ImageViewCCtrl_MouseUp(object sender, MouseEventArgs e)
         {
             //#SETROI#5 ROI 크기 변경 또는 이동 완료
+            //#MULTI ROI#13 마우스 업일때, 구현 코드
             if (e.Button == MouseButtons.Left)
             {
                 if (_isSelectingRoi)
                 {
+                    //ROI 크기가 10보다 작으면, 추가하지 않음
                     if (_roiRect.Width >= 10 && _roiRect.Height >= 10)
                     {
-                        DiagramEntity entity = new DiagramEntity(_roiRect, _selColor);
-                        _diagramEntityList.Add(entity);
+                        _selEntity = new DiagramEntity(_roiRect, _selColor);
                     }
 
                     _isSelectingRoi = false;
                 }
                 else if (_isResizingRoi)
                 {
+                    _selEntity.EntityROI = _roiRect;
                     _isResizingRoi = false;
                 }
                 else if (_isMovingRoi)
@@ -523,6 +564,8 @@ namespace JidamVision
                     _selEntity.EntityROI = _roiRect;
                     _isMovingRoi = false;
                 }
+
+                UpdateEntity();
             }
 
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리
@@ -530,6 +573,26 @@ namespace JidamVision
             {
                 LastOffset = Offset;
             }
+        }
+
+        //#MULTI ROI#14 ROI 추가,수정,삭제 시, 이벤트 발생
+        private void UpdateEntity()
+        {
+            if (_selEntity is null)
+                return;
+
+            if (_selEntity.LinkedWindow is null)
+            {
+                ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Add, null, _newRoiType, _roiRect));
+                return;
+            }
+
+            ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Modify, _selEntity.LinkedWindow, _newRoiType, _roiRect));
+
+
+            //DiagramEntity entity = new DiagramEntity(_roiRect, _selColor);
+            //_diagramEntityList.Add(entity);
+
         }
 
         //마우스 위치가 ROI 크기 변경을 위한 여부를 확인하기 위해, 4개 모서리와 사각형 라인의 중간 위치 반환
@@ -737,5 +800,31 @@ namespace JidamVision
             _rectangles = rectangles;
             Invalidate();
         }
+
+        public bool SetDiagramEntityList(List<DiagramEntity> diagramEntityList)
+        {
+            _diagramEntityList = diagramEntityList;
+            _selEntity = null;
+            Invalidate();
+            return true;
+        }
     }
+
+    public class DiagramEntityEventArgs : EventArgs
+    {
+        public EntityActionType ActionType { get; private set; }
+        public InspWindow InspWindow { get; private set; }
+        public InspWindowType WindowType { get; private set; }
+
+        public OpenCvSharp.Rect Rect { get; private set; }
+
+        public DiagramEntityEventArgs(EntityActionType actionType, InspWindow inspWindow, InspWindowType windowType, Rectangle rect)
+        {
+            ActionType = actionType;
+            InspWindow = inspWindow;
+            WindowType = windowType;
+            Rect = new OpenCvSharp.Rect(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+    }
+
 }

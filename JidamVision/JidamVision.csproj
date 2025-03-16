@@ -184,6 +184,8 @@
     </Compile>
     <Compile Include="Teach\DiagramEntity.cs" />
     <Compile Include="Teach\InspWindow.cs" />
+    <Compile Include="Teach\InspWindowFactory.cs" />
+    <Compile Include="Teach\Model.cs" />
     <Compile Include="Util\BitmapExtension.cs" />
     <EmbeddedResource Include="CameraForm.resx">
       <DependentUpon>CameraForm.cs</DependentUpon>

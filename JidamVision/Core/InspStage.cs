@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -28,7 +29,10 @@ namespace JidamVision.Core
 
         //#INSP WORKER#6 InspWorker 변수 추가 
         private InspWorker _inspWorker = null;
-        
+
+        //#MODEL#6 모델 변수 선언
+        private Model _model = null;
+
         private InspWindow _inspWindow = null;
 
         public ImageSpace ImageSpace
@@ -47,10 +51,17 @@ namespace JidamVision.Core
             get => _inspWorker;
         }
 
+        //#MODEL#7 모델 프로퍼티 만들기
+        public Model CurModel
+        {
+            get => _model;
+        }
+
         public InspWindow InspWindow
         {
             get => _inspWindow;
         }
+
 
         //#INSP WORKER#1 1개만 있던 InspWindow를 리스트로 변경하여, 여러개의 ROI를 관리하도록 개선
         public List<InspWindow> InspWindowList { get; set; } = new List<InspWindow>();
@@ -67,6 +78,9 @@ namespace JidamVision.Core
             _imageSpace = new ImageSpace();
             _previewImage = new PreviewImage();
             _inspWorker = new InspWorker();
+
+            //#MODEL#8 모델 인스턴스 생성
+            _model = new Model();
 
             switch (_camType)
             {
@@ -278,9 +292,6 @@ namespace JidamVision.Core
 
         private void InitInspWindow()
         {
-            _inspWindow = new InspWindow();
-            InspWindowList.Add(_inspWindow);
-
             var propForm = MainForm.GetDockForm<PropertiesForm>();
             if (propForm != null)
             {
@@ -290,6 +301,50 @@ namespace JidamVision.Core
                 for (int i = 0; i < (int)InspectType.InspCount; i++)
                     propForm.AddInspType((InspectType)i);
             }
+        }
+
+        //#MODEL#9 ImageViwer에서 ROI를 추가하여, InspWindow생성하는 함수
+        public void AddInspWindow(InspWindowType windowType, Rect rect)
+        { 
+            InspWindow inspWindow = _model.AddInspWindow(windowType);
+            if (inspWindow is null)
+                return;
+
+            inspWindow.WindowArea = rect;
+            UpdateDiagramEntity();
+        }
+
+        //#MODEL#10 기존 ROI 수정되었을때, 그 정보를 InspWindow에 반영
+        public void ModifyInspWindow(InspWindow inspWindow, Rect rect)
+        {
+            if (inspWindow == null)
+                return;
+
+            inspWindow.WindowArea = rect;
+        }
+
+        //#MODEL#11 InspWindow 삭제하기
+        public void DelInspWindow(InspWindow inspWindow)
+        {
+            _model.DelInspWindow(InspWindow);
+            UpdateDiagramEntity();
+        }
+
+        //#MODEL#15 변경된 모델 정보 갱신하여, ImageViewer와 모델트리에 반영
+        public void UpdateDiagramEntity()
+        {
+            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+            if (cameraForm != null)
+            {
+                cameraForm.UpdateDiagramEntity();
+            }
+
+            ModelTreeForm modelTreeForm = MainForm.GetDockForm<ModelTreeForm>();
+            if (modelTreeForm != null)
+            {
+                modelTreeForm.UpdateDiagramEntity();
+            }
+
         }
     }
 }

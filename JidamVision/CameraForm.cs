@@ -26,7 +26,26 @@ namespace JidamVision
         {
             InitializeComponent();
 
+            imageViewer.ModifyROI += ImageViewer_ModifyROI;
             rbtnColor.Checked = true;
+        }
+
+        private void ImageViewer_ModifyROI(object sender, DiagramEntityEventArgs e)
+        {
+            switch (e.ActionType)
+            {
+                case EntityActionType.Add:
+                    Global.Inst.InspStage.AddInspWindow(e.WindowType, e.Rect);
+                    break;
+
+                case EntityActionType.Modify:
+                    Global.Inst.InspStage.ModifyInspWindow(e.InspWindow, e.Rect);
+                    break;
+
+                case EntityActionType.Delete:
+                    Global.Inst.InspStage.DelInspWindow(e.InspWindow);
+                    break;
+            }
         }
 
         //# SAVE ROI#2 GUI상에서 선택된 채널 라디오 버튼에 따른 채널 정보를 반환
@@ -194,6 +213,29 @@ namespace JidamVision
         public void AddRoi(InspWindowType inspWindowType)
         {
             imageViewer.NewRoi(inspWindowType);
+        }
+
+        //#MODEL#13 모델 정보를 이용해, ROI 갱신
+        public void UpdateDiagramEntity()
+        {
+            Model model = Global.Inst.InspStage.CurModel;
+            List<InspWindow> windowList = model.InspWindowList;
+            if(windowList.Count <= 0) 
+                return;
+
+            List<DiagramEntity> diagramEntityList = new List<DiagramEntity>();
+
+            foreach (InspWindow window in model.InspWindowList)
+            {
+                DiagramEntity diagramEntity = new DiagramEntity();
+                Rect rect = window.WindowArea;
+                diagramEntity.LinkedWindow = window;
+                diagramEntity.EntityROI = new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
+                diagramEntity.EntityColor = imageViewer.GetWindowColor(window.InspWindowType);
+                diagramEntityList.Add(diagramEntity);
+            }
+
+            imageViewer.SetDiagramEntityList(diagramEntityList);
         }
     }
 }
