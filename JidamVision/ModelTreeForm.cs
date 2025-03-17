@@ -53,7 +53,7 @@ namespace JidamVision
             if (e.Button == MouseButtons.Right)
             {
                 TreeNode clickedNode = tvModelTree.GetNodeAt(e.X, e.Y);
-                if (clickedNode != null && clickedNode.Text == "Root") ;
+                if (clickedNode != null && clickedNode.Text == "Root")
                 {
                     tvModelTree.SelectedNode = clickedNode;
                     _contextMenu.Show(tvModelTree, e.Location);

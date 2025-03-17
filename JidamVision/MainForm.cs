@@ -1,4 +1,5 @@
 ﻿using JidamVision.Core;
+using JidamVision.Setting;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
@@ -116,6 +117,13 @@ namespace JidamVision
                     Global.Inst.InspStage.SaveCurrentImage(filePath);
                 }
             }
+        }
+
+        //#SETUP#8 메인메뉴에 Setup 메뉴 추가하고, 아래 함수로 환경설정창 띄우기
+        private void setupToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            SetupForm setupForm = new SetupForm();
+            setupForm.ShowDialog();
         }
     }
 }
