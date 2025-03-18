@@ -1,6 +1,7 @@
 ﻿using MvCamCtrl.NET;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,8 +12,11 @@ namespace JidamVision.Grab
 {
     public enum CameraType
     {
+        [Description("사용안함")]
         None = 0,
+        [Description("웹캠")]
         WebCam,
+        [Description("HikRobot 카메라")]
         HikRobotCam
     }
 

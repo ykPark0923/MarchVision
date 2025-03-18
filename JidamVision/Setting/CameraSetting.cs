@@ -1,5 +1,6 @@
 ﻿using JidamVision.Grab;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,6 +14,7 @@ namespace JidamVision.Setting
 {
     //#SETUP#3 환경설정창에 추가할 카메라설정 UserContorl 추가
     //카메라 타입 설정
+    //콤보박스 속성 DropDownStyle : DropDownList로 설정
 
     public partial class CameraSetting : UserControl
     {
@@ -27,7 +29,21 @@ namespace JidamVision.Setting
         private void LoadSetting()
         {
             //카메라 타입을 콤보박스에 추가
+            
+            //방법1
+            //List<CameraType> cameras = new List<CameraType>();
+            //cameras.Add(CameraType.None);
+            //cameras.Add(CameraType.WebCam);
+            //cameras.Add(CameraType.HikRobotCam);
+
+            //cbCameraType.DataSource = cameras;
+
+            //방법2
+            //Enum.GetValues(typeof(CameraType)) → CameraType의 모든 값을 배열로 가져옴
+            //.Cast<CameraType>() → 배열을 IEnumerable<CameraType>으로 변환
+            //.ToList() → List<CameraType> 으로 변환
             cbCameraType.DataSource = Enum.GetValues(typeof(CameraType)).Cast<CameraType>().ToList();
+
             //환경설정에서 현재 카메라 타입 얻기
             cbCameraType.SelectedIndex = (int)SettingXml.Inst.CamType;
         }
