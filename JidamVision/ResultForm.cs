@@ -129,17 +129,8 @@ namespace JidamVision
             // 기존 검사 결과에서 같은 BodyID를 가진 부모 찾기
             var parentResult = existingResults.FirstOrDefault(r => r.BaseID == result.BaseID);
 
-            if (parentResult != null)
-            {
-                // 부모 ROI가 있으면 하위 객체로 추가
-                //parentResult.InspObject.Children.Add(result);
-            }
-            else
-            {
-                // 부모 ROI가 없으면 최상위에 추가
-                existingResults.Add(result);
-            }
-
+            existingResults.Add(result);
+            
             // TreeListView 업데이트
             _treeListView.SetObjects(existingResults);
         }
@@ -168,10 +159,6 @@ namespace JidamVision
                 ResultScore = 89.3f,
                 ResultInfo = "치수 정상"
             };
-
-            // 부모-자식 연결
-            //parentRoi.InspObject.Children.Add(child1);
-            //parentRoi.InspObject.Children.Add(child2);
 
             // ObjectListView에 데이터 설정
             _treeListView.SetObjects(new List<InspResult> { parentRoi });

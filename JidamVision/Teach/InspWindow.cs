@@ -23,12 +23,12 @@ namespace JidamVision.Teach
         //템플릿 매칭 이미지
         private Mat _teachingImage;
 
-        public InspWindowType InspWindowType {  get; set; }
+        public InspWindowType InspWindowType { get; set; }
 
 
         //#MODEL SAVE#5 모델 저장을 위한 Serialize를 위해서, prvate set -> set으로 변경
         //public string Name {  get; private set; }
-        public string Name {  get; set; }
+        public string Name { get; set; }
         public string UID { get; set; }
 
         public Rect WindowArea { get; set; }
@@ -39,6 +39,12 @@ namespace JidamVision.Teach
         //#MODEL SAVE#6 Xml Serialize를 위해서, Element을 명확하게 알려줘야 함
         [XmlElement("InspAlgorithm")]
         public List<InspAlgorithm> AlgorithmList { get; set; } = new List<InspAlgorithm>();
+
+        //부모-자식 관계를 위한 변수 추가
+        public InspWindow Parent { get; set; }
+
+        [XmlElement("ChildWindow")]
+        public List<InspWindow> Children { get; set; } = new List<InspWindow>();
 
         public InspWindow()
         {
@@ -84,13 +90,13 @@ namespace JidamVision.Teach
 
             return true;
         }
-        
+
         //#ABSTRACT ALGORITHM#10 타입에 따라 알고리즘을 추가하는 함수
         public bool AddInspAlgorithm(InspectType inspType)
         {
             InspAlgorithm inspAlgo = null;
 
-            switch(inspType)
+            switch (inspType)
             {
                 case InspectType.InspBinary:
                     inspAlgo = new BlobAlgorithm();
@@ -112,19 +118,21 @@ namespace JidamVision.Teach
         //#ABSTRACT ALGORITHM#11 알고리즘을 리스트로 관리하므로, 필요한 타입의 알고리즘을 찾는 함수
         public InspAlgorithm FindInspAlgorithm(InspectType inspType)
         {
-            foreach (var algorithm in AlgorithmList)
-            {
-                if (algorithm.InspectType == inspType)
-                    return algorithm;
-            }
-            return null;
+            //foreach (var algorithm in AlgorithmList)
+            //{
+            //    if (algorithm.InspectType == inspType)
+            //        return algorithm;
+            //}
+            //return null;
+
+            return AlgorithmList.Find(algo => algo.InspectType == inspType);
         }
 
         //#ABSTRACT ALGORITHM#12 클래스 내에서, 인자로 입력된 타입의 알고리즘을 검사하거나,
         ///모든 알고리즘을 검사하는 옵션을 가지는 검사 함수
         public bool DoInpsect(InspectType inspType)
         {
-            foreach( var inspAlgo in AlgorithmList)
+            foreach (var inspAlgo in AlgorithmList)
             {
                 if (inspAlgo.InspectType == inspType || inspAlgo.InspectType == InspectType.InspNone)
                     inspAlgo.DoInspect();
@@ -132,5 +140,40 @@ namespace JidamVision.Teach
 
             return true;
         }
+
+        #region 부모 - 자식 관계 관리 메서드 추가
+
+        public void AddChild(InspWindow child)
+        {
+            if (child == null || Children.Contains(child))
+                return;
+
+            child.Parent = this;
+            Children.Add(child);
+        }
+
+        public bool RemoveChild(InspWindow child)
+        {
+            if (child == null || !Children.Contains(child))
+                return false;
+
+            child.Parent = null;
+            if (!Children.Remove(child))
+                return false;
+
+            return true;
+        }
+
+        public InspWindow GetRoot()
+        {
+            InspWindow root = this;
+            while (root.Parent != null)
+                root = root.Parent;
+
+            return root;
+        }
+
+
+        #endregion
     }
 }
