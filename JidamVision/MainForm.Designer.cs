@@ -29,79 +29,105 @@
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageLoadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageFilterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.imageFilterToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.setupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.setupToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.FileTopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ModelOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ModelSaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ModelSaveAsMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ImageLoadMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ImageSaveMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetupTopMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SetupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ModelNewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.imageFilterToolStripMenuItem,
-            this.setupToolStripMenuItem});
+            this.FileTopMenuItem,
+            this.SetupTopMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // fileToolStripMenuItem
+            // FileTopMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.imageLoadToolStripMenuItem,
-            this.imageSaveToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
+            this.FileTopMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ModelNewMenuItem,
+            this.ModelOpenMenuItem,
+            this.ModelSaveMenuItem,
+            this.ModelSaveAsMenuItem,
+            this.toolStripSeparator1,
+            this.ImageLoadMenuItem,
+            this.ImageSaveMenuItem});
+            this.FileTopMenuItem.Name = "FileTopMenuItem";
+            this.FileTopMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.FileTopMenuItem.Text = "File";
             // 
-            // imageLoadToolStripMenuItem
+            // ModelOpenMenuItem
             // 
-            this.imageLoadToolStripMenuItem.Name = "imageLoadToolStripMenuItem";
-            this.imageLoadToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.imageLoadToolStripMenuItem.Text = "Image Load";
-            this.imageLoadToolStripMenuItem.Click += new System.EventHandler(this.imageLoadToolStripMenuItem_Click);
+            this.ModelOpenMenuItem.Name = "ModelOpenMenuItem";
+            this.ModelOpenMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ModelOpenMenuItem.Text = "Model Open";
+            this.ModelOpenMenuItem.Click += new System.EventHandler(this.ModelOpenMenuItem_Click);
             // 
-            // imageSaveToolStripMenuItem
+            // ModelSaveMenuItem
             // 
-            this.imageSaveToolStripMenuItem.Name = "imageSaveToolStripMenuItem";
-            this.imageSaveToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.imageSaveToolStripMenuItem.Text = "Image Save";
-            this.imageSaveToolStripMenuItem.Click += new System.EventHandler(this.imageSaveToolStripMenuItem_Click);
+            this.ModelSaveMenuItem.Name = "ModelSaveMenuItem";
+            this.ModelSaveMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ModelSaveMenuItem.Text = "Model Save";
+            this.ModelSaveMenuItem.Click += new System.EventHandler(this.ModelSaveMenuItem_Click);
             // 
-            // imageFilterToolStripMenuItem
+            // ModelSaveAsMenuItem
             // 
-            this.imageFilterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.imageFilterToolStripMenuItem1});
-            this.imageFilterToolStripMenuItem.Name = "imageFilterToolStripMenuItem";
-            this.imageFilterToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
-            this.imageFilterToolStripMenuItem.Text = "ImageFilter";
+            this.ModelSaveAsMenuItem.Name = "ModelSaveAsMenuItem";
+            this.ModelSaveAsMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ModelSaveAsMenuItem.Text = "Model SaveAs";
+            this.ModelSaveAsMenuItem.Click += new System.EventHandler(this.ModelSaveAsMenuItem_Click);
             // 
-            // imageFilterToolStripMenuItem1
+            // toolStripSeparator1
             // 
-            this.imageFilterToolStripMenuItem1.Name = "imageFilterToolStripMenuItem1";
-            this.imageFilterToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.imageFilterToolStripMenuItem1.Text = "Image Filter";
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
-            // setupToolStripMenuItem
+            // ImageLoadMenuItem
             // 
-            this.setupToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setupToolStripMenuItem1});
-            this.setupToolStripMenuItem.Name = "setupToolStripMenuItem";
-            this.setupToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
-            this.setupToolStripMenuItem.Text = "Setup";
+            this.ImageLoadMenuItem.Name = "ImageLoadMenuItem";
+            this.ImageLoadMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ImageLoadMenuItem.Text = "Image Load";
+            this.ImageLoadMenuItem.Click += new System.EventHandler(this.ImageLoadMenuItem_Click);
             // 
-            // setupToolStripMenuItem1
+            // ImageSaveMenuItem
             // 
-            this.setupToolStripMenuItem1.Name = "setupToolStripMenuItem1";
-            this.setupToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.setupToolStripMenuItem1.Text = "Setup";
-            this.setupToolStripMenuItem1.Click += new System.EventHandler(this.setupToolStripMenuItem1_Click);
+            this.ImageSaveMenuItem.Name = "ImageSaveMenuItem";
+            this.ImageSaveMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ImageSaveMenuItem.Text = "Image Save";
+            this.ImageSaveMenuItem.Click += new System.EventHandler(this.ImageSaveMenuItem_Click);
+            // 
+            // SetupTopMenuItem
+            // 
+            this.SetupTopMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SetupMenuItem});
+            this.SetupTopMenuItem.Name = "SetupTopMenuItem";
+            this.SetupTopMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.SetupTopMenuItem.Text = "Setup";
+            // 
+            // SetupMenuItem
+            // 
+            this.SetupMenuItem.Name = "SetupMenuItem";
+            this.SetupMenuItem.Size = new System.Drawing.Size(105, 22);
+            this.SetupMenuItem.Text = "Setup";
+            this.SetupMenuItem.Click += new System.EventHandler(this.SetupMenuItem_Click);
+            // 
+            // ModelNewMenuItem
+            // 
+            this.ModelNewMenuItem.Name = "ModelNewMenuItem";
+            this.ModelNewMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ModelNewMenuItem.Text = "Model New";
+            this.ModelNewMenuItem.Click += new System.EventHandler(this.ModelNewMenuItem_Click);
             // 
             // MainForm
             // 
@@ -122,12 +148,15 @@
         #endregion
 
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageLoadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageFilterToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageSaveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem imageFilterToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem setupToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem FileTopMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SetupTopMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SetupMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ModelOpenMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ModelSaveMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ModelSaveAsMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ImageLoadMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ImageSaveMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem ModelNewMenuItem;
     }
 }

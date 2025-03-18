@@ -18,7 +18,7 @@ namespace JidamVision.Property
         public event EventHandler<FilterSelectedEventArgs> FilterSelected;
         private String _selected_effect;
         private int _selected_effect2 = -1;
-        private string op_values = "0 0 0";
+        //private string op_values = "0 0 0";
 
         public FilterInspProp()
         {

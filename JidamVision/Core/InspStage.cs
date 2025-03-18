@@ -354,7 +354,22 @@ namespace JidamVision.Core
             {
                 modelTreeForm.UpdateDiagramEntity();
             }
+        }
 
+        //#MODEL SAVE#3 Mainform에서 호출되는 모델 열기와 저장 함수
+        public void LoadModel(string filePath)
+        {
+            _model = _model.Load(filePath);
+            UpdateDiagramEntity();
+        }
+
+        public void SaveModel(string filePath)
+        {
+            //입력 경로가 없으면 현재 모델 저장
+            if (string.IsNullOrEmpty(filePath))
+                Global.Inst.InspStage.CurModel.Save();
+            else
+                Global.Inst.InspStage.CurModel.SaveAs(filePath);
         }
     }
 }
