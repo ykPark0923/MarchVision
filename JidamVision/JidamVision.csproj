@@ -73,6 +73,9 @@
     <Reference Include="MvCameraControl.Net">
       <HintPath>..\ExternalLib\Dll\HikRobot\MvCameraControl.Net.dll</HintPath>
     </Reference>
+    <Reference Include="ObjectListView">
+      <HintPath>..\ExternalLib\Dll\ObjectListView\ObjectListView.dll</HintPath>
+    </Reference>
     <Reference Include="OpenCvSharp">
       <HintPath>..\ExternalLib\Dll\OpenCv\OpenCvSharp.dll</HintPath>
     </Reference>
@@ -141,6 +144,7 @@
     <Compile Include="ImageViewCCtrl.Designer.cs">
       <DependentUpon>ImageViewCCtrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Inspect\InspResult.cs" />
     <Compile Include="Inspect\InspWorker.cs" />
     <Compile Include="LogForm.cs">
       <SubType>Form</SubType>
