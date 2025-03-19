@@ -1,5 +1,6 @@
 ﻿using JidamVision.Core;
 using JidamVision.Setting;
+using JidamVision.Util;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
@@ -177,6 +178,7 @@ namespace JidamVision
         //#SETUP#8 메인메뉴에 Setup 메뉴 추가하고, 아래 함수로 환경설정창 띄우기
         private void SetupMenuItem_Click(object sender, EventArgs e)
         {
+            SLogger.Write($"환경설정창 열기");
             SetupForm setupForm = new SetupForm();
             setupForm.ShowDialog();
         }

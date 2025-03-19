@@ -1,4 +1,5 @@
 ﻿using JidamVision.Grab;
+using JidamVision.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,6 +37,8 @@ namespace JidamVision.Setting
             SettingXml.Inst.ModelDir = txtModelDir.Text;
             //환경설정 저장
             SettingXml.Save();
+
+            SLogger.Write($"Path 설정 저장");
         }
 
         //폴더 선택 기능
