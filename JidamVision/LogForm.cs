@@ -74,6 +74,7 @@ namespace JidamVision
         private void LogForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             SLogger.LogUpdated -= OnLogUpdated;
+            this.FormClosed -= LogForm_FormClosed;
         }
     }
 }
