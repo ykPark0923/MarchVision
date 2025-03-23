@@ -58,6 +58,36 @@ namespace JidamVision.Teach
             return false;
         }
 
+        public GroupWindow AddGroupWindow(List<InspWindow> inspWindowList)
+        {
+            GroupWindow groupWindow = (GroupWindow)InspWindowFactory.Inst.Create(InspWindowType.Group);
+            if (groupWindow is null)
+                return null;
+
+            foreach (var inspWindow in inspWindowList)
+                groupWindow.AddMember(inspWindow);
+
+            InspWindowList.Add(groupWindow);
+
+            return groupWindow;
+        }
+
+        public bool BreakGroupWindow(GroupWindow groupWindow)
+        {
+            if (groupWindow is null)
+                return false;
+
+            if(InspWindowList.Contains(groupWindow))
+            {
+                InspWindowList.Remove(groupWindow);
+            }
+
+            foreach (var inspWindow in groupWindow.Members)
+                InspWindowList.Add(inspWindow);
+
+            return true;
+        }
+
         //#MODEL SAVE#2 모델 생성,열기,저장을 위한 함수 구현
 
         //신규 모델 생성

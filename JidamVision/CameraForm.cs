@@ -14,6 +14,7 @@ using System.Web;
 using JidamVision.Teach;
 using System.IO;
 using OpenCvSharp;
+using JidamVision.Util;
 
 namespace JidamVision
 {
@@ -26,7 +27,10 @@ namespace JidamVision
         {
             InitializeComponent();
 
+            this.FormClosed += CameraForm_FormClosed;
+
             imageViewer.ModifyROI += ImageViewer_ModifyROI;
+            imageViewer.GroupWindowEvent += ImageViewer_GroupWindowEvent;
             rbtnColor.Checked = true;
         }
 
@@ -37,13 +41,24 @@ namespace JidamVision
                 case EntityActionType.Add:
                     Global.Inst.InspStage.AddInspWindow(e.WindowType, e.Rect);
                     break;
-
                 case EntityActionType.Modify:
                     Global.Inst.InspStage.ModifyInspWindow(e.InspWindow, e.Rect);
                     break;
-
                 case EntityActionType.Delete:
                     Global.Inst.InspStage.DelInspWindow(e.InspWindow);
+                    break;
+                case EntityActionType.Break:
+                    Global.Inst.InspStage.BreakGroupWindow((GroupWindow)e.InspWindow);
+                    break;
+            }
+        }
+
+        private void ImageViewer_GroupWindowEvent(object sender, GroupWindowEventArgs e)
+        {
+            switch (e.ActionType)
+            {
+                case EntityActionType.Add:
+                    Global.Inst.InspStage.CreateGroupWindow(e.InspWindowList);
                     break;
             }
         }
@@ -104,7 +119,6 @@ namespace JidamVision
 
             btnGrab.Location = new System.Drawing.Point(xPos, btnGrab.Location.Y);
             btnLive.Location = new System.Drawing.Point(xPos, btnLive.Location.Y);
-            btnSetRoi.Location = new System.Drawing.Point(xPos, btnSetRoi.Location.Y);
             btnSave.Location = new System.Drawing.Point(xPos, btnSave.Location.Y);
             btnInspect.Location = new System.Drawing.Point(xPos, btnInspect.Location.Y);
             groupBox1.Location = new System.Drawing.Point(xPos, groupBox1.Location.Y);
@@ -156,17 +170,6 @@ namespace JidamVision
         private void rbtnGrayChannel_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDisplay();
-        }
-
-        /*
-         #SETROI# - <<<ROI 설정 개발>>> 
-        이미지 상에서 ROI(Region of Interest)를 설정하는 기능
-         */
-        private void btnSetRoi_Click(object sender, EventArgs e)
-        {
-            //#SETROI#2 ROI 모드 토글 설정
-            imageViewer.RoiMode = !imageViewer.RoiMode;
-            imageViewer.Invalidate();
         }
 
         /*
@@ -236,6 +239,13 @@ namespace JidamVision
             }
 
             imageViewer.SetDiagramEntityList(diagramEntityList);
+        }
+        private void CameraForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            imageViewer.ModifyROI -= ImageViewer_ModifyROI;
+            imageViewer.GroupWindowEvent -= ImageViewer_GroupWindowEvent;
+
+            this.FormClosed -= CameraForm_FormClosed;
         }
     }
 }

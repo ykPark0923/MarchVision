@@ -349,6 +349,22 @@ namespace JidamVision.Core
             UpdateDiagramEntity();
         }
 
+        public void CreateGroupWindow(List<InspWindow> inspWindowList)
+        {
+            if (_model is null)
+                return;
+
+            _model.AddGroupWindow(inspWindowList);
+
+            UpdateDiagramEntity();
+        }
+
+        public void BreakGroupWindow(GroupWindow groupWindow)
+        {
+            _model.BreakGroupWindow(groupWindow);
+            UpdateDiagramEntity();
+        }
+
         //#MODEL#15 변경된 모델 정보 갱신하여, ImageViewer와 모델트리에 반영
         public void UpdateDiagramEntity()
         {

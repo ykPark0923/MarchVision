@@ -31,14 +31,13 @@
             this.btnGrab = new System.Windows.Forms.Button();
             this.btnLive = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.rbtnColor = new System.Windows.Forms.RadioButton();
             this.rbtnGrayChannel = new System.Windows.Forms.RadioButton();
             this.rbtnGreenChannel = new System.Windows.Forms.RadioButton();
             this.rbtnBlueChannel = new System.Windows.Forms.RadioButton();
             this.rbtnRedChannel = new System.Windows.Forms.RadioButton();
-            this.btnSetRoi = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnInspect = new System.Windows.Forms.Button();
-            this.rbtnColor = new System.Windows.Forms.RadioButton();
             this.imageViewer = new JidamVision.ImageViewCCtrl();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -78,6 +77,18 @@
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Channel";
+            // 
+            // rbtnColor
+            // 
+            this.rbtnColor.AutoSize = true;
+            this.rbtnColor.Location = new System.Drawing.Point(7, 19);
+            this.rbtnColor.Name = "rbtnColor";
+            this.rbtnColor.Size = new System.Drawing.Size(53, 16);
+            this.rbtnColor.TabIndex = 4;
+            this.rbtnColor.TabStop = true;
+            this.rbtnColor.Text = "Color";
+            this.rbtnColor.UseVisualStyleBackColor = true;
+            this.rbtnColor.CheckedChanged += new System.EventHandler(this.rbtnColor_CheckedChanged);
             // 
             // rbtnGrayChannel
             // 
@@ -130,16 +141,6 @@
             this.rbtnRedChannel.UseVisualStyleBackColor = true;
             this.rbtnRedChannel.CheckedChanged += new System.EventHandler(this.rbtnRedChannel_CheckedChanged);
             // 
-            // btnSetRoi
-            // 
-            this.btnSetRoi.Location = new System.Drawing.Point(350, 70);
-            this.btnSetRoi.Name = "btnSetRoi";
-            this.btnSetRoi.Size = new System.Drawing.Size(75, 23);
-            this.btnSetRoi.TabIndex = 3;
-            this.btnSetRoi.Text = "Set ROI";
-            this.btnSetRoi.UseVisualStyleBackColor = true;
-            this.btnSetRoi.Click += new System.EventHandler(this.btnSetRoi_Click);
-            // 
             // btnSave
             // 
             this.btnSave.Location = new System.Drawing.Point(350, 99);
@@ -160,18 +161,6 @@
             this.btnInspect.UseVisualStyleBackColor = true;
             this.btnInspect.Click += new System.EventHandler(this.btnInspect_Click);
             // 
-            // rbtnColor
-            // 
-            this.rbtnColor.AutoSize = true;
-            this.rbtnColor.Location = new System.Drawing.Point(7, 19);
-            this.rbtnColor.Name = "rbtnColor";
-            this.rbtnColor.Size = new System.Drawing.Size(53, 16);
-            this.rbtnColor.TabIndex = 4;
-            this.rbtnColor.TabStop = true;
-            this.rbtnColor.Text = "Color";
-            this.rbtnColor.UseVisualStyleBackColor = true;
-            this.rbtnColor.CheckedChanged += new System.EventHandler(this.rbtnColor_CheckedChanged);
-            // 
             // imageViewer
             // 
             this.imageViewer.AutoSize = true;
@@ -180,7 +169,6 @@
             this.imageViewer.Location = new System.Drawing.Point(12, 12);
             this.imageViewer.Margin = new System.Windows.Forms.Padding(4);
             this.imageViewer.Name = "imageViewer";
-            this.imageViewer.RoiMode = false;
             this.imageViewer.Size = new System.Drawing.Size(332, 272);
             this.imageViewer.TabIndex = 2;
             // 
@@ -192,7 +180,6 @@
             this.Controls.Add(this.btnInspect);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.btnSetRoi);
             this.Controls.Add(this.btnLive);
             this.Controls.Add(this.imageViewer);
             this.Controls.Add(this.btnGrab);
@@ -216,7 +203,6 @@
         private System.Windows.Forms.RadioButton rbtnGrayChannel;
         private System.Windows.Forms.RadioButton rbtnGreenChannel;
         private System.Windows.Forms.RadioButton rbtnBlueChannel;
-        public System.Windows.Forms.Button btnSetRoi;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnInspect;
         private System.Windows.Forms.RadioButton rbtnColor;
