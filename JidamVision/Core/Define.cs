@@ -11,10 +11,10 @@ namespace JidamVision.Core
     {
         None = 0,
         Global,
+        Group,
         Base,
         Sub,
         ID,
-        Group
     }
 
     public static class Define

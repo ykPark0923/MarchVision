@@ -29,7 +29,8 @@ namespace JidamVision
     {
         None = 0,
         Add = 1,
-        Modify,
+        Move,
+        Resize,
         Delete,
         Break
     }
@@ -101,6 +102,7 @@ namespace JidamVision
             _contextMenu = new ContextMenuStrip();
             _contextMenu.Items.Add("Create Group", null, OnCreateGroupClicked);
             _contextMenu.Items.Add("Break Group", null, OnBreakGroupClicked);
+            _contextMenu.Items.Add("Delete", null, OnDeleteClicked);
 
             // 마우스 휠 이벤트를 등록하여 줌 기능 추가
             // MouseWheel+= : 같은 이벤트에 여러 개의 핸들러 등록가능. 이전 핸들러 삭제않고 추가됨
@@ -228,7 +230,6 @@ namespace JidamVision
             else
                 ratio = (float)Height / (float)imageSize.Height;
 
-            //float minZoom = Math.Min(ratio, 1.0f);
             float minZoom = ratio;
 
             // MinZoom 및 줌 적용
@@ -315,6 +316,8 @@ namespace JidamVision
                     }
 
                     //#MULTI ROI#8 여러개 ROI를 그려주는 코드
+
+                    Rectangle screenSelectedRect = new Rectangle(0,0,0,0);
                     foreach (DiagramEntity entity in _diagramEntityList)
                     {
                         Rectangle screenRect = VirtualToScreen(entity.EntityROI);
@@ -323,14 +326,24 @@ namespace JidamVision
                             if (_multiSelectedEntities.Contains(entity))
                             {
                                 pen.DashStyle = DashStyle.Dash;
-                                pen.Width = 1;
+                                pen.Width = 2;
+
+                                if (screenSelectedRect.IsEmpty)
+                                {
+                                    screenSelectedRect = screenRect;
+                                }
+                                else
+                                {
+                                    //선택된 roi 영역 합치기
+                                    screenSelectedRect = Rectangle.Union(screenSelectedRect, screenRect);
+                                }
                             }
 
                             g.DrawRectangle(pen, screenRect);
                         }
 
                         //선택된 ROI가 있다면, 리사이즈 핸들 그리기
-                        if (entity == _selEntity)
+                        if (_multiSelectedEntities.Count <= 1 && entity == _selEntity)
                         {
                             // 리사이즈 핸들 그리기 (8개 포인트: 4 모서리 + 4 변 중간)
                             using (Brush brush = new SolidBrush(Color.LightBlue))
@@ -340,6 +353,25 @@ namespace JidamVision
                                 {
                                     g.FillRectangle(brush, handle.X - _ResizeHandleSize / 2, handle.Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
                                 }
+                            }
+                        }
+                    }
+
+                    //선택된 개별 roi가 없고, 여러개가 선택되었다면
+                    if(_multiSelectedEntities.Count > 1 && !screenSelectedRect.IsEmpty)
+                    {
+                        using (Pen pen = new Pen(Color.White, 2))
+                        {
+                            g.DrawRectangle(pen, screenSelectedRect);
+                        }
+
+                        // 리사이즈 핸들 그리기 (8개 포인트: 4 모서리 + 4 변 중간)
+                        using (Brush brush = new SolidBrush(Color.LightBlue))
+                        {
+                            Point[] resizeHandles = GetResizeHandles(screenSelectedRect);
+                            foreach (Point handle in resizeHandles)
+                            {
+                                g.FillRectangle(brush, handle.X - _ResizeHandleSize / 2, handle.Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
                             }
                         }
                     }
@@ -359,6 +391,7 @@ namespace JidamVision
                         using (Pen pen = new Pen(Color.LightSkyBlue, 3))
                         {
                             pen.DashStyle = DashStyle.Dash;
+                            pen.Width = 2;
                             g.DrawRectangle(pen, _selectionBox);
                         }
                     }
@@ -383,7 +416,7 @@ namespace JidamVision
                 }
                 else
                 {
-                    if (_selEntity != null)
+                    if (_selEntity != null && _selEntity.GetParentGroup() == null)
                     {
                         Rectangle screenRect = VirtualToScreen(_selEntity.EntityROI);
                         //마우스 클릭 위치가 ROI 크기 변경을 하기 위한 위치(모서리,엣지)인지 여부 판단
@@ -411,13 +444,13 @@ namespace JidamVision
                                 }
                                 else
                                 {
-                                    _multiSelectedEntities.Add(entity);
+                                    AddSelectedROI(entity);
                                 }
                             }
                             else
                             {
                                 _multiSelectedEntities.Clear();
-                                _multiSelectedEntities.Add(entity);
+                                AddSelectedROI(entity);
                             }
 
                             _selEntity = entity;
@@ -479,11 +512,28 @@ namespace JidamVision
                     int dx = e.X - _moveStart.X;
                     int dy = e.Y - _moveStart.Y;
 
-                    _roiRect.X += (int)((float)dx / _curZoom + 0.5f);
-                    _roiRect.Y += (int)((float)dy / _curZoom + 0.5f);
+                    int dxVirtual = (int)((float)dx / _curZoom + 0.5f);
+                    int dyVirtual = (int)((float)dy / _curZoom + 0.5f);
 
-                    if (_selEntity != null)
+                    if (_multiSelectedEntities.Count > 1)
+                    {
+                        foreach (var entity in _multiSelectedEntities)
+                        {
+                            if (entity is null || entity.IsHold)
+                                continue;
+
+                            Rectangle rect = entity.EntityROI;
+                            rect.X += dxVirtual;
+                            rect.Y += dyVirtual;
+                            entity.EntityROI = rect;
+                        }
+                    }
+                    else if (_selEntity != null)
+                    {
+                        _roiRect.X += dxVirtual;
+                        _roiRect.Y += dyVirtual;
                         _selEntity.EntityROI = _roiRect;
+                    }
 
                     _moveStart = e.Location;
                     Invalidate();
@@ -539,16 +589,34 @@ namespace JidamVision
                     }
 
                     _isSelectingRoi = false;
+
+                    ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Add, null, _newRoiType, _roiRect, new Point()));
                 }
                 else if (_isResizingRoi)
                 {
                     _selEntity.EntityROI = _roiRect;
                     _isResizingRoi = false;
+
+                    ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Resize, _selEntity.LinkedWindow, _newRoiType, _roiRect, new Point()));
                 }
                 else if (_isMovingRoi)
                 {
-                    _selEntity.EntityROI = _roiRect;
+                    if (_selEntity != null)
+                        _selEntity.EntityROI = _roiRect;
+
                     _isMovingRoi = false;
+
+                    InspWindow linkedWindow = _selEntity.LinkedWindow;
+
+                    Point offsetMove = new Point(0,0);
+                    if (linkedWindow != null)
+                    {
+                        offsetMove.X = _roiRect.X - linkedWindow.WindowArea.X;
+                        offsetMove.Y = _roiRect.Y - linkedWindow.WindowArea.Y;
+                    }
+
+                    if(offsetMove.X != 0 || offsetMove.Y != 0)
+                        ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Move, linkedWindow, _newRoiType, _roiRect, offsetMove));
                 }
                 // ROI 선택 완료
                 if (_isBoxSelecting)
@@ -571,9 +639,8 @@ namespace JidamVision
 
                     _selectionBox = Rectangle.Empty;
                     Invalidate();
+                    return;
                 }
-
-                UpdateEntity();
             }
 
             // 마우스를 떼면 마지막 오프셋 값을 저장하여 이후 이동을 연속적으로 처리
@@ -587,21 +654,28 @@ namespace JidamVision
             }
         }
 
-        //#MULTI ROI#14 ROI 추가,수정,삭제 시, 이벤트 발생
-        private void UpdateEntity()
+        private void AddSelectedROI(DiagramEntity entity)
         {
-            if (_selEntity is null)
+            if (entity is null)
                 return;
 
-            if (_selEntity.LinkedWindow is null)
+            GroupWindow group = entity.GetParentGroup();
+            if (group != null)
             {
-                ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Add, null, _newRoiType, _roiRect));
-                return;
+                var entityList = _diagramEntityList
+                    .Where(m => group.Members.Contains(m.LinkedWindow))
+                    .Except(_multiSelectedEntities)
+                    .ToList();
+                _multiSelectedEntities.AddRange(entityList);
             }
-
-            ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Modify, _selEntity.LinkedWindow, _newRoiType, _roiRect));
+            else
+            {
+                if (!_multiSelectedEntities.Contains(entity))
+                    _multiSelectedEntities.Add(entity);
+            }
         }
 
+        #region ROI Handle
         //마우스 위치가 ROI 크기 변경을 위한 여부를 확인하기 위해, 4개 모서리와 사각형 라인의 중간 위치 반환
         private Point[] GetResizeHandles(Rectangle rect)
         {
@@ -642,6 +716,7 @@ namespace JidamVision
                 default: return Cursors.Default;
             }
         }
+        #endregion
 
         //ROI 크기 변경시, 마우스 위치를 입력받아, ROI 크기 변경
         private void ResizeROI(Point mousePos)
@@ -721,7 +796,6 @@ namespace JidamVision
 
             ImageRect.X -= dx;
             ImageRect.Y -= dy;
-
         }
 
         private void ImageViewCCtrl_Resize(object sender, EventArgs e)
@@ -767,6 +841,7 @@ namespace JidamVision
             return true;
         }
 
+        #region Group Create and Break
         private void OnCreateGroupClicked(object sender, EventArgs e)
         {
             List<InspWindow> selected = _multiSelectedEntities
@@ -791,7 +866,27 @@ namespace JidamVision
             GroupWindowEvent?.Invoke(this, new GroupWindowEventArgs(EntityActionType.Break, _selEntity.LinkedWindow));
         }
 
-        //좌표계 변환
+        private void OnDeleteClicked(object sender, EventArgs e)
+        {
+            if (_selEntity == null)
+                return;
+
+            InspWindow linkedWindow = _selEntity.LinkedWindow;
+            if (linkedWindow is null)
+                return;
+
+            InspWindow group = linkedWindow.Parent;
+            if (group != null)
+                linkedWindow = group;
+
+            ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Delete, linkedWindow, _newRoiType, _roiRect, new Point()));
+        }
+        
+
+        #endregion
+
+
+        #region 좌표계 변환
         private PointF GetScreenOffset()
         {
             return new PointF(ImageRect.X, ImageRect.Y);
@@ -832,6 +927,7 @@ namespace JidamVision
                 virtualPos.X * _curZoom + offset.X,
                 virtualPos.Y * _curZoom + offset.Y);
         }
+        #endregion
     }
 
     #region EventArgs
@@ -843,12 +939,15 @@ namespace JidamVision
 
         public OpenCvSharp.Rect Rect { get; private set; }
 
-        public DiagramEntityEventArgs(EntityActionType actionType, InspWindow inspWindow, InspWindowType windowType, Rectangle rect)
+        public OpenCvSharp.Point OffsetMove { get; private set; }
+
+        public DiagramEntityEventArgs(EntityActionType actionType, InspWindow inspWindow, InspWindowType windowType, Rectangle rect, Point offsetMove)
         {
             ActionType = actionType;
             InspWindow = inspWindow;
             WindowType = windowType;
             Rect = new OpenCvSharp.Rect(rect.X, rect.Y, rect.Width, rect.Height);
+            OffsetMove = new OpenCvSharp.Point( offsetMove.X,offsetMove.Y);
         }
     }
 

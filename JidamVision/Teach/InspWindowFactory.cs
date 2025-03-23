@@ -34,7 +34,13 @@ namespace JidamVision.Teach
             if (!GetWindowName(windowType, out name, out prefix))
                 return null;
 
-            InspWindow inspWindow = new InspWindow(windowType,name);
+            InspWindow inspWindow = null;
+
+            if(InspWindowType.Group == windowType)
+                inspWindow = new GroupWindow(name);
+            else
+                inspWindow = new InspWindow(windowType,name);
+
             if(inspWindow is null) 
                 return null;
 
@@ -61,6 +67,10 @@ namespace JidamVision.Teach
                 case InspWindowType.Global:
                     name = "GLOBAL";
                     prefix = "GLB";
+                    break;
+                case InspWindowType.Group:
+                    name = "GROUP";
+                    prefix = "GRP";
                     break;
                 case InspWindowType.Base:
                     name = "BASE";

@@ -141,6 +141,15 @@ namespace JidamVision.Teach
             return true;
         }
 
+        public virtual bool OffsetMove(OpenCvSharp.Point offset)
+        {
+            Rect windowRect = WindowArea;
+            windowRect.X += offset.X;
+            windowRect.Y += offset.Y;
+            WindowArea = windowRect;
+            return true;
+        }
+
         #region 부모 - 자식 관계 관리 메서드 추가
 
         public void AddChild(InspWindow child)

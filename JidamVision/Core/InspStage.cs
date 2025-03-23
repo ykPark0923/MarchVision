@@ -333,6 +333,18 @@ namespace JidamVision.Core
             UpdateDiagramEntity();
         }
 
+        public void MoveInspWindow(InspWindow inspWindow, OpenCvSharp.Point offset)
+        {
+            if (inspWindow == null)
+                return;
+
+            GroupWindow group = (GroupWindow)inspWindow.Parent;
+            if (group != null)
+                group.OffsetMove(offset);
+            else
+                inspWindow.OffsetMove(offset);
+        }
+
         //#MODEL#10 기존 ROI 수정되었을때, 그 정보를 InspWindow에 반영
         public void ModifyInspWindow(InspWindow inspWindow, Rect rect)
         {
@@ -345,7 +357,7 @@ namespace JidamVision.Core
         //#MODEL#11 InspWindow 삭제하기
         public void DelInspWindow(InspWindow inspWindow)
         {
-            _model.DelInspWindow(InspWindow);
+            _model.DelInspWindow(inspWindow);
             UpdateDiagramEntity();
         }
 

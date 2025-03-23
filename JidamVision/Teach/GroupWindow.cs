@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenCvSharp;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -14,10 +15,9 @@ namespace JidamVision.Teach
         [XmlElement("InspWindow")]
         public List<InspWindow> Members { get; private set; } = new List<InspWindow>();
 
-        public GroupWindow(string groupId, string groupName)
+        public GroupWindow(string groupName)
             : base(Core.InspWindowType.Group, groupName)
         {
-            UID = groupId;
             Name = groupName;
         }
 
@@ -36,17 +36,6 @@ namespace JidamVision.Teach
         public bool Contains(InspWindow window)
         {
             return Members.Contains(window);
-        }
-
-        public void MoveAllWindows(int offsetX, int offsetY)
-        {
-            foreach (var window in Members)
-            {
-                var area = window.WindowArea;
-                area.X += offsetX;
-                area.Y += offsetY;
-                window.WindowArea = area;
-            }
         }
 
         public Rectangle GetBoundingRect()
@@ -71,5 +60,15 @@ namespace JidamVision.Teach
             }
             return true;
         }
+
+        public override bool OffsetMove(OpenCvSharp.Point offset)
+        {
+            foreach (var window in Members)
+            {
+                window.OffsetMove(offset);
+            }
+            return true;
+        }
+
     }
 }

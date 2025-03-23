@@ -34,4 +34,28 @@ namespace JidamVision.Teach
             IsHold = hold;
         }
     }
+
+    public static class DiagramEntityExtensions
+    {
+        /// <summary>
+        /// 해당 DiagramEntity가 어떤 GroupWindow에 속한 멤버인지 찾아 반환
+        /// </summary>
+        public static GroupWindow GetParentGroup(this DiagramEntity entity)
+        {
+            if (entity?.LinkedWindow?.Parent is GroupWindow group)
+                return group;
+
+            return null;
+        }
+
+        /// <summary>
+        /// 동일 그룹의 모든 자식 DiagramEntity 목록을 가져오기
+        /// </summary>
+        public static List<DiagramEntity> GetGroupMembers(this GroupWindow group, List<DiagramEntity> allEntities)
+        {
+            return allEntities
+                .Where(e => group.Members.Contains(e.LinkedWindow))
+                .ToList();
+        }
+    }
 }

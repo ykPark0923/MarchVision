@@ -41,7 +41,10 @@ namespace JidamVision
                 case EntityActionType.Add:
                     Global.Inst.InspStage.AddInspWindow(e.WindowType, e.Rect);
                     break;
-                case EntityActionType.Modify:
+                case EntityActionType.Move:
+                    Global.Inst.InspStage.MoveInspWindow(e.InspWindow, e.OffsetMove);
+                    break;
+                case EntityActionType.Resize:
                     Global.Inst.InspStage.ModifyInspWindow(e.InspWindow, e.Rect);
                     break;
                 case EntityActionType.Delete:
@@ -230,12 +233,36 @@ namespace JidamVision
 
             foreach (InspWindow window in model.InspWindowList)
             {
-                DiagramEntity diagramEntity = new DiagramEntity();
-                Rect rect = window.WindowArea;
-                diagramEntity.LinkedWindow = window;
-                diagramEntity.EntityROI = new Rectangle(rect.X, rect.Y, rect.Width, rect.Height);
-                diagramEntity.EntityColor = imageViewer.GetWindowColor(window.InspWindowType);
-                diagramEntityList.Add(diagramEntity);
+                if (window is null)
+                    continue;
+
+                if (window is GroupWindow group)
+                {
+                    foreach (InspWindow member in group.Members)
+                    {
+                        DiagramEntity entity = new DiagramEntity()
+                        {
+                            LinkedWindow = member,
+                            EntityROI = new Rectangle(
+                                member.WindowArea.X, member.WindowArea.Y,
+                                member.WindowArea.Width, member.WindowArea.Height),
+                            EntityColor = imageViewer.GetWindowColor(member.InspWindowType)
+                        };
+                        diagramEntityList.Add(entity);
+                    }
+                }
+                else if (window.Parent == null)
+                {
+                    DiagramEntity entity = new DiagramEntity()
+                    {
+                        LinkedWindow = window,
+                        EntityROI = new Rectangle(
+                            window.WindowArea.X, window.WindowArea.Y,
+                                window.WindowArea.Width, window.WindowArea.Height),
+                        EntityColor = imageViewer.GetWindowColor(window.InspWindowType)
+                    };
+                    diagramEntityList.Add(entity);
+                }
             }
 
             imageViewer.SetDiagramEntityList(diagramEntityList);

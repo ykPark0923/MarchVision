@@ -65,7 +65,11 @@ namespace JidamVision.Teach
                 return null;
 
             foreach (var inspWindow in inspWindowList)
+            {
+                inspWindow.Parent = groupWindow;
                 groupWindow.AddMember(inspWindow);
+                DelInspWindow(inspWindow);
+            }
 
             InspWindowList.Add(groupWindow);
 
