@@ -98,6 +98,7 @@ namespace JidamVision
         private Rectangle _selectionBox = Rectangle.Empty;
         private bool _isBoxSelecting = false;
         private bool _isCtrlPressed = false;
+        private Rectangle _screenSelectedRect = Rectangle.Empty;
 
         //팝업 메뉴
         private ContextMenuStrip _contextMenu;
@@ -334,7 +335,7 @@ namespace JidamVision
 
                     //#MULTI ROI#8 여러개 ROI를 그려주는 코드
                     //#GROUP ROI#8 멀티ROI 처리
-                    Rectangle screenSelectedRect = new Rectangle(0, 0, 0, 0);
+                    _screenSelectedRect = new Rectangle(0, 0, 0, 0);
                     foreach (DiagramEntity entity in _diagramEntityList)
                     {
                         Rectangle screenRect = VirtualToScreen(entity.EntityROI);
@@ -345,15 +346,15 @@ namespace JidamVision
                                 pen.DashStyle = DashStyle.Dash;
                                 pen.Width = 2;
 
-                                if (screenSelectedRect.IsEmpty)
+                                if (_screenSelectedRect.IsEmpty)
                                 {
-                                    screenSelectedRect = screenRect;
+                                    _screenSelectedRect = screenRect;
                                 }
                                 else
                                 {
                                     //선택된 roi가 여러개 일때, 전체 roi 영역 계산
                                     //선택된 roi 영역 합치기
-                                    screenSelectedRect = Rectangle.Union(screenSelectedRect, screenRect);
+                                    _screenSelectedRect = Rectangle.Union(_screenSelectedRect, screenRect);
                                 }
                             }
 
@@ -376,17 +377,17 @@ namespace JidamVision
                     }
 
                     //#GROUP ROI#9 선택된 개별 roi가 없고, 여러개가 선택되었다면
-                    if (_multiSelectedEntities.Count > 1 && !screenSelectedRect.IsEmpty)
+                    if (_multiSelectedEntities.Count > 1 && !_screenSelectedRect.IsEmpty)
                     {
                         using (Pen pen = new Pen(Color.White, 2))
                         {
-                            g.DrawRectangle(pen, screenSelectedRect);
+                            g.DrawRectangle(pen, _screenSelectedRect);
                         }
 
                         // 리사이즈 핸들 그리기 (8개 포인트: 4 모서리 + 4 변 중간)
                         using (Brush brush = new SolidBrush(Color.LightBlue))
                         {
-                            Point[] resizeHandles = GetResizeHandles(screenSelectedRect);
+                            Point[] resizeHandles = GetResizeHandles(_screenSelectedRect);
                             foreach (Point handle in resizeHandles)
                             {
                                 g.FillRectangle(brush, handle.X - _ResizeHandleSize / 2, handle.Y - _ResizeHandleSize / 2, _ResizeHandleSize, _ResizeHandleSize);
@@ -435,6 +436,19 @@ namespace JidamVision
                 }
                 else
                 {
+                    if (_multiSelectedEntities.Count > 1)
+                    {
+                        if (_screenSelectedRect.Contains(e.Location))
+                        {
+                            _selEntity = _multiSelectedEntities[0];
+                            _isMovingRoi = true;
+                            _moveStart = e.Location;
+                            _roiRect = _multiSelectedEntities[0].EntityROI;
+                            Invalidate();
+                            return;
+                        }
+                    }
+
                     if (_selEntity != null && _selEntity.GetParentGroup() == null)
                     {
                         Rectangle screenRect = VirtualToScreen(_selEntity.EntityROI);
@@ -624,23 +638,23 @@ namespace JidamVision
                 }
                 else if (_isMovingRoi)
                 {
-                    //if (_selEntity != null)
-                    //    _selEntity.EntityROI = _roiRect;
-
                     _isMovingRoi = false;
 
-                    InspWindow linkedWindow = _selEntity.LinkedWindow;
-
-                    Point offsetMove = new Point(0, 0);
-                    if (linkedWindow != null)
+                    if (_selEntity != null)
                     {
-                        offsetMove.X = _selEntity.EntityROI.X - linkedWindow.WindowArea.X;
-                        offsetMove.Y = _selEntity.EntityROI.Y - linkedWindow.WindowArea.Y;
-                    }
+                        InspWindow linkedWindow = _selEntity.LinkedWindow;
 
-                    //모델에 InspWindow 이동 이벤트 발생
-                    if (offsetMove.X != 0 || offsetMove.Y != 0)
-                        DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Move, linkedWindow, _newRoiType, _roiRect, offsetMove));
+                        Point offsetMove = new Point(0, 0);
+                        if (linkedWindow != null)
+                        {
+                            offsetMove.X = _selEntity.EntityROI.X - linkedWindow.WindowArea.X;
+                            offsetMove.Y = _selEntity.EntityROI.Y - linkedWindow.WindowArea.Y;
+                        }
+
+                        //모델에 InspWindow 이동 이벤트 발생
+                        if (offsetMove.X != 0 || offsetMove.Y != 0)
+                            DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Move, linkedWindow, _newRoiType, _roiRect, offsetMove));
+                    }
                 }
                 // ROI 선택 완료
                 if (_isBoxSelecting)
@@ -870,7 +884,11 @@ namespace JidamVision
 
         public bool SetDiagramEntityList(List<DiagramEntity> diagramEntityList)
         {
-            _diagramEntityList = diagramEntityList;
+            //작은 roi가 먼저 선택되도록, 소팅
+            _diagramEntityList = diagramEntityList
+                                .OrderBy(r => r.EntityROI.Width * r.EntityROI.Height)
+                                .ToList();
+
             _selEntity = null;
             Invalidate();
             return true;
