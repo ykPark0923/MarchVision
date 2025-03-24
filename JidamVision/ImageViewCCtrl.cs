@@ -32,7 +32,8 @@ namespace JidamVision
     public enum EntityActionType
     {
         None = 0,
-        Add = 1,
+        Select,
+        Add,
         Move,
         Resize,
         Delete,
@@ -654,6 +655,10 @@ namespace JidamVision
                         //모델에 InspWindow 이동 이벤트 발생
                         if (offsetMove.X != 0 || offsetMove.Y != 0)
                             DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Move, linkedWindow, _newRoiType, _roiRect, offsetMove));
+                        else      
+                            //모델에 InspWindow 선택 변경 이벤트 발생
+                            DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Select, _selEntity.LinkedWindow));
+
                     }
                 }
                 // ROI 선택 완료

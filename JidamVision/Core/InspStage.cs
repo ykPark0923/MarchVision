@@ -1,4 +1,5 @@
-﻿using JidamVision.Grab;
+﻿using JidamVision.Algorithm;
+using JidamVision.Grab;
 using JidamVision.Inspect;
 using JidamVision.Setting;
 using JidamVision.Teach;
@@ -19,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace JidamVision.Core
 {
@@ -37,8 +39,6 @@ namespace JidamVision.Core
 
         //#MODEL#6 모델 변수 선언
         private Model _model = null;
-
-        private InspWindow _inspWindow = null;
 
         public ImageSpace ImageSpace
         {
@@ -61,12 +61,6 @@ namespace JidamVision.Core
         {
             get => _model;
         }
-
-        public InspWindow InspWindow
-        {
-            get => _inspWindow;
-        }
-
 
         //#INSP WORKER#1 1개만 있던 InspWindow를 리스트로 변경하여, 여러개의 ROI를 관리하도록 개선
         public List<InspWindow> InspWindowList { get; set; } = new List<InspWindow>();
@@ -324,6 +318,14 @@ namespace JidamVision.Core
             }
         }
 
+        public void SelectInspWindow(InspWindow inspWindow)
+        {
+            if (inspWindow is null)
+                return;
+
+            UpdateProperty(inspWindow);
+        }
+
         //#MODEL#9 ImageViwer에서 ROI를 추가하여, InspWindow생성하는 함수
         public void AddInspWindow(InspWindowType windowType, Rect rect)
         { 
@@ -332,6 +334,7 @@ namespace JidamVision.Core
                 return;
 
             inspWindow.WindowArea = rect;
+            UpdateProperty(inspWindow);
             UpdateDiagramEntity();
         }
 
@@ -346,7 +349,10 @@ namespace JidamVision.Core
             if (group != null)
                 group.OffsetMove(offset);
             else
+            {
                 inspWindow.OffsetMove(offset);
+                UpdateProperty(inspWindow);
+            }
         }
 
         //#MODEL#10 기존 ROI 수정되었을때, 그 정보를 InspWindow에 반영
@@ -356,6 +362,8 @@ namespace JidamVision.Core
                 return;
 
             inspWindow.WindowArea = rect;
+
+            UpdateProperty(inspWindow);
         }
 
         //#MODEL#11 InspWindow 삭제하기
@@ -406,6 +414,33 @@ namespace JidamVision.Core
 
             _model.BreakGroupWindow(group);
             UpdateDiagramEntity();
+        }
+
+        private void UpdateProperty(InspWindow inspWindow)
+        {
+            if(inspWindow is null) 
+                return;
+
+            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+            if (cameraForm is null)
+                return;
+
+            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
+            if (matchAlgo != null)
+            {
+                Mat curImage = cameraForm.GetDisplayImage();
+                if (curImage is null)
+                    return;
+                
+                Mat teachingImage = curImage[inspWindow.WindowArea];
+                matchAlgo.SetTemplateImage(teachingImage);
+            }
+
+            PropertiesForm propertiesForm = MainForm.GetDockForm<PropertiesForm>();
+            if (propertiesForm is null)
+                return;
+
+            propertiesForm.UpdateProperty(inspWindow);
         }
 
         //#MODEL#15 변경된 모델 정보 갱신하여, ImageViewer와 모델트리에 반영

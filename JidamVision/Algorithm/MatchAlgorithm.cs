@@ -13,7 +13,7 @@ namespace JidamVision.Algorithm
     public class MatchAlgorithm : InspAlgorithm
     {
         //템플릿 매칭용 이미지(찾을 이미지)
-        private Mat _templateImage;
+        private Mat _templateImage = null;
 
         //찾을 이미지의 매칭율
         public int MatchScore { get; set; } = 60;
@@ -41,6 +41,11 @@ namespace JidamVision.Algorithm
         public void SetTemplateImage(Mat templateImage)
         {
             _templateImage = templateImage;
+        }
+
+        public Mat GetTemplateImage()
+        {
+            return _templateImage;
         }
 
         /// <summary>

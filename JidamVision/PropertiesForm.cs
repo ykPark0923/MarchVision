@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using JidamVision.Property;
 using JidamVision.Core;
+using JidamVision.Teach;
+using JidamVision.Algorithm;
 
 namespace JidamVision
 {
@@ -77,18 +79,15 @@ namespace JidamVision
             {
                 case InspectType.InspBinary:
                     BinaryInspProp blobProp = new BinaryInspProp();
-                    blobProp.LoadInspParam();
                     blobProp.RangeChanged += RangeSlider_RangeChanged;
                     _inspProp = blobProp;
                     break;
                 case InspectType.InspMatch:
                     MatchInspProp matchProp = new MatchInspProp();
-                    matchProp.LoadInspParam();
                     _inspProp = matchProp;
                     break;
                 case InspectType.InspFilter:
                     FilterInspProp filterProp = new FilterInspProp();
-                    //filterProp.LoadInspParam();
                     filterProp.FilterSelected += FilterSelect_FilterChanged;
                     _inspProp = filterProp;
                     break;
@@ -98,12 +97,42 @@ namespace JidamVision
             }
             return _inspProp;
         }
-
+        
         public void AddInspType(InspectType inspPropType)
         {
             LoadOptionControl(inspPropType);
         }
 
+        public void UpdateProperty(InspWindow window)
+        {
+            if (window is null)
+                return;
+
+            foreach (TabPage tabPage in tabPropControl.TabPages)
+            {
+                if (tabPage.Controls.Count > 0)
+                {
+                    UserControl uc = tabPage.Controls[0] as UserControl;
+
+                    if (uc is MatchInspProp matchProp)
+                    {
+                        MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
+                        if (matchAlgo is null)
+                            continue;
+
+                        matchProp.SetAlgorithm(matchAlgo);
+                    }
+                    else if (uc is BinaryInspProp binaryProp)
+                    {
+                        BlobAlgorithm blobAlgo = (BlobAlgorithm)window.FindInspAlgorithm(InspectType.InspBinary);
+                        if (blobAlgo is null)
+                            continue;
+
+                        binaryProp.SetAlgorithm(blobAlgo);
+                    }
+                }
+            }
+        }
 
         //#BINARY FILTER#16 이진화 속성 변경시 발생하는 이벤트 수정
         private void RangeSlider_RangeChanged(object sender, RangeChangedEventArgs e)

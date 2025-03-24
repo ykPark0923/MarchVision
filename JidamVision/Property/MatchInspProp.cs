@@ -11,6 +11,7 @@ using JidamVision.Algorithm;
 using JidamVision.Core;
 using JidamVision.Teach;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 
 namespace JidamVision.Property
 {
@@ -23,43 +24,44 @@ namespace JidamVision.Property
      */
     public partial class MatchInspProp : UserControl
     {
+        MatchAlgorithm _matchAlgo = null;
+
         public MatchInspProp()
         {
             InitializeComponent();
         }
 
-        //#MATCH PROP#7 템플릿 매칭 속성값을 GUI에 설정
-        public void LoadInspParam()
+        public void SetAlgorithm(MatchAlgorithm matchAlgo)
         {
-            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
-            if (inspWindow is null)
+            _matchAlgo = matchAlgo;
+            SetProperty();
+        }
+
+        public void SetProperty()
+        {
+            if (_matchAlgo is null)
                 return;
 
-            //#INSP WORKER#14 inspWindow에서 매칭 알고리즘 찾는 코드
-            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
-            if (matchAlgo is null)
-                return;
-
-            OpenCvSharp.Size extendSize = matchAlgo.ExtSize;
-            int matchScore = matchAlgo.MatchScore;
-            int matchCount = matchAlgo.MatchCount;
+            OpenCvSharp.Size extendSize = _matchAlgo.ExtSize;
+            int matchScore = _matchAlgo.MatchScore;
+            int matchCount = _matchAlgo.MatchCount;
 
             txtExtendX.Text = extendSize.Width.ToString();
             txtExtendY.Text = extendSize.Height.ToString();
             txtScore.Text = matchScore.ToString();
             txtMatchCount.Text = matchCount.ToString();
+
+            Mat teachImage = _matchAlgo.GetTemplateImage();
+            if (teachImage != null)
+            {
+                Bitmap bmpImage = BitmapConverter.ToBitmap(teachImage);
+                picTeachImage.Image = bmpImage;
+            }
         }
 
-        //#MATCH PROP#10 템플릿 매칭 실행
-        private void btnSearch_Click(object sender, EventArgs e)
+        public void GetProperty()
         {
-            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
-            if (inspWindow is null)
-                return;
-
-            //#INSP WORKER#11 inspWindow에서 매칭 알고리즘 찾는 코드 추가
-            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
-            if (matchAlgo is null)
+            if (_matchAlgo is null)
                 return;
 
             //GUI에 설정된 정보를 MatchAlgorithm에 설정
@@ -69,22 +71,14 @@ namespace JidamVision.Property
             int matchScore = int.Parse(txtScore.Text);
             int matchCount = int.Parse(txtMatchCount.Text);
 
-            matchAlgo.ExtSize = extendSize;
-            matchAlgo.MatchScore = matchScore;
-            matchAlgo.MatchCount = matchCount;
-
-            //#INSP WORKER#12 매칭 검사시, 해당 InspWindow와 매칭 알고리즘만 실행
-            Global.Inst.InspStage.InspWorker.TryInspect(inspWindow, InspectType.InspMatch);
+            _matchAlgo.ExtSize = extendSize;
+            _matchAlgo.MatchScore = matchScore;
+            _matchAlgo.MatchCount = matchCount;
         }
 
-        //#MATCH PROP#9 저장된 ROI이미지 로딩
-        private void btnTeach_Click(object sender, EventArgs e)
+        private void btnApply_Click(object sender, EventArgs e)
         {
-            InspWindow inspWindow = Global.Inst.InspStage.InspWindow;
-            if (inspWindow.PatternLearn())
-                MessageBox.Show("티칭 성공");
-            else
-                MessageBox.Show("티칭 실패");
+            GetProperty();
         }
     }
 }

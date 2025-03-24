@@ -29,14 +29,17 @@ namespace JidamVision
 
             this.FormClosed += CameraForm_FormClosed;
 
-            imageViewer.DiagramEntityEvent += ImageViewer_ModifyROI;
+            imageViewer.DiagramEntityEvent += ImageViewer_DiagramEntityEvent;
             rbtnColor.Checked = true;
         }
 
-        private void ImageViewer_ModifyROI(object sender, DiagramEntityEventArgs e)
+        private void ImageViewer_DiagramEntityEvent(object sender, DiagramEntityEventArgs e)
         {
             switch (e.ActionType)
             {
+                case EntityActionType.Select:
+                    Global.Inst.InspStage.SelectInspWindow(e.InspWindow);
+                    break;
                 case EntityActionType.Add:
                     Global.Inst.InspStage.AddInspWindow(e.WindowType, e.Rect);
                     break;
@@ -262,7 +265,7 @@ namespace JidamVision
         }
         private void CameraForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            imageViewer.DiagramEntityEvent -= ImageViewer_ModifyROI;
+            imageViewer.DiagramEntityEvent -= ImageViewer_DiagramEntityEvent;
 
             this.FormClosed -= CameraForm_FormClosed;
         }

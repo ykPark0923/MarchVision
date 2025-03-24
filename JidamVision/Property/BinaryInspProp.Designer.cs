@@ -41,9 +41,9 @@
             this.trackBarUpper = new System.Windows.Forms.TrackBar();
             this.trackBarLower = new System.Windows.Forms.TrackBar();
             this.grpFilter = new System.Windows.Forms.GroupBox();
-            this.btnFilter = new System.Windows.Forms.Button();
             this.txtArea = new System.Windows.Forms.TextBox();
             this.lbArea = new System.Windows.Forms.Label();
+            this.btnApply = new System.Windows.Forms.Button();
             this.grpBinary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarUpper)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLower)).BeginInit();
@@ -118,25 +118,14 @@
             // 
             // grpFilter
             // 
-            this.grpFilter.Controls.Add(this.btnFilter);
             this.grpFilter.Controls.Add(this.txtArea);
             this.grpFilter.Controls.Add(this.lbArea);
             this.grpFilter.Location = new System.Drawing.Point(4, 192);
             this.grpFilter.Name = "grpFilter";
-            this.grpFilter.Size = new System.Drawing.Size(249, 180);
+            this.grpFilter.Size = new System.Drawing.Size(249, 146);
             this.grpFilter.TabIndex = 1;
             this.grpFilter.TabStop = false;
             this.grpFilter.Text = "필터";
-            // 
-            // btnFilter
-            // 
-            this.btnFilter.Location = new System.Drawing.Point(81, 87);
-            this.btnFilter.Name = "btnFilter";
-            this.btnFilter.Size = new System.Drawing.Size(97, 24);
-            this.btnFilter.TabIndex = 2;
-            this.btnFilter.Text = "필터적용";
-            this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // txtArea
             // 
@@ -154,10 +143,21 @@
             this.lbArea.TabIndex = 0;
             this.lbArea.Text = "Area";
             // 
+            // btnApply
+            // 
+            this.btnApply.Location = new System.Drawing.Point(192, 346);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(60, 21);
+            this.btnApply.TabIndex = 2;
+            this.btnApply.Text = "적용";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
             // BinaryInspProp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnApply);
             this.Controls.Add(this.grpFilter);
             this.Controls.Add(this.grpBinary);
             this.Name = "BinaryInspProp";
@@ -182,7 +182,7 @@
         private System.Windows.Forms.GroupBox grpFilter;
         private System.Windows.Forms.TextBox txtArea;
         private System.Windows.Forms.Label lbArea;
-        private System.Windows.Forms.Button btnFilter;
         private System.Windows.Forms.CheckBox chkShowBinary;
+        private System.Windows.Forms.Button btnApply;
     }
 }
