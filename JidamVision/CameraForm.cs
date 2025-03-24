@@ -29,8 +29,7 @@ namespace JidamVision
 
             this.FormClosed += CameraForm_FormClosed;
 
-            imageViewer.ModifyROI += ImageViewer_ModifyROI;
-            imageViewer.GroupWindowEvent += ImageViewer_GroupWindowEvent;
+            imageViewer.DiagramEntityEvent += ImageViewer_ModifyROI;
             rbtnColor.Checked = true;
         }
 
@@ -50,19 +49,14 @@ namespace JidamVision
                 case EntityActionType.Delete:
                     Global.Inst.InspStage.DelInspWindow(e.InspWindow);
                     break;
-                case EntityActionType.Break:
-                    Global.Inst.InspStage.BreakGroupWindow((GroupWindow)e.InspWindow);
+                case EntityActionType.DeleteList:
+                    Global.Inst.InspStage.DelInspWindow(e.InspWindowList);
                     break;
-            }
-        }
-
-        //그룹 생성 이벤트 발생시 처리
-        private void ImageViewer_GroupWindowEvent(object sender, GroupWindowEventArgs e)
-        {
-            switch (e.ActionType)
-            {
-                case EntityActionType.Add:
+                case EntityActionType.AddGroup:
                     Global.Inst.InspStage.CreateGroupWindow(e.InspWindowList);
+                    break;
+                case EntityActionType.Break:
+                    Global.Inst.InspStage.BreakGroupWindow(e.InspWindow);
                     break;
             }
         }
@@ -151,6 +145,7 @@ namespace JidamVision
 
         }
 
+        #region Select Channel
         private void rbtnColor_CheckedChanged(object sender, EventArgs e)
         {
             UpdateDisplay();
@@ -175,6 +170,7 @@ namespace JidamVision
         {
             UpdateDisplay();
         }
+        #endregion
 
         /*
          #SAVE ROI# - <<<ROI 영역 이미지 파일 저장>>> 
@@ -226,10 +222,6 @@ namespace JidamVision
         public void UpdateDiagramEntity()
         {
             Model model = Global.Inst.InspStage.CurModel;
-            List<InspWindow> windowList = model.InspWindowList;
-            if(windowList.Count <= 0) 
-                return;
-
             List<DiagramEntity> diagramEntityList = new List<DiagramEntity>();
 
             foreach (InspWindow window in model.InspWindowList)
@@ -270,8 +262,7 @@ namespace JidamVision
         }
         private void CameraForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            imageViewer.ModifyROI -= ImageViewer_ModifyROI;
-            imageViewer.GroupWindowEvent -= ImageViewer_GroupWindowEvent;
+            imageViewer.DiagramEntityEvent -= ImageViewer_ModifyROI;
 
             this.FormClosed -= CameraForm_FormClosed;
         }

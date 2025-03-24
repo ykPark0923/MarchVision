@@ -57,10 +57,23 @@ namespace JidamVision.Teach
             }
             return false;
         }
+        public bool DelInspWindowList(List<InspWindow> inspWindowList)
+        {
+            int before = InspWindowList.Count;
+            InspWindowList.RemoveAll(w => inspWindowList.Contains(w));
+            return InspWindowList.Count < before;
+        }
 
         //#GROUP ROI#1 GroupWindow를 만들어 모델에 추가
         public GroupWindow AddGroupWindow(List<InspWindow> inspWindowList)
         {
+            bool hasParentWindow = inspWindowList.Any(m => m.Parent != null);
+            if( hasParentWindow)
+            {
+                MessageBox.Show("이미 그룹에 속한 윈도우 입니다!");
+                return null;
+            }
+
             GroupWindow groupWindow = (GroupWindow)InspWindowFactory.Inst.Create(InspWindowType.Group);
             if (groupWindow is null)
                 return null;
@@ -93,7 +106,10 @@ namespace JidamVision.Teach
 
             //그룹의 개별 윈도우를 전체 리스트에 추가
             foreach (var inspWindow in groupWindow.Members)
+            {
+                inspWindow.Parent = null;
                 InspWindowList.Add(inspWindow);
+            }
 
             return true;
         }

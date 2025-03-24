@@ -14,9 +14,11 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Policy;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using System.Windows.Forms;
 
 namespace JidamVision.Core
 {
@@ -363,6 +365,12 @@ namespace JidamVision.Core
             UpdateDiagramEntity();
         }
 
+        public void DelInspWindow(List<InspWindow> inspWindowList)
+        {
+            _model.DelInspWindowList(inspWindowList);
+            UpdateDiagramEntity();
+        }
+
         //GroupWindow 생성
         public void CreateGroupWindow(List<InspWindow> inspWindowList)
         {
@@ -375,9 +383,28 @@ namespace JidamVision.Core
         }
 
         //GroupWindow 해제
-        public void BreakGroupWindow(GroupWindow groupWindow)
+        public void BreakGroupWindow(InspWindow window)
         {
-            _model.BreakGroupWindow(groupWindow);
+            if (window is null)
+                return;
+
+            GroupWindow group = null;
+            if (window.InspWindowType == InspWindowType.Group)
+            {
+                group = (GroupWindow)window;
+            }
+            else
+            {
+                group = (GroupWindow)window.Parent;
+            }
+
+            if(group == null)
+            {
+                MessageBox.Show("그룹윈도우가 아닙니다!");
+                return;
+            }
+
+            _model.BreakGroupWindow(group);
             UpdateDiagramEntity();
         }
 
