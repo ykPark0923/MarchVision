@@ -56,6 +56,7 @@ namespace JidamVision
             }
         }
 
+        //그룹 생성 이벤트 발생시 처리
         private void ImageViewer_GroupWindowEvent(object sender, GroupWindowEventArgs e)
         {
             switch (e.ActionType)

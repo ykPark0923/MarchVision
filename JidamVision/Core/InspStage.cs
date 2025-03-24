@@ -333,11 +333,13 @@ namespace JidamVision.Core
             UpdateDiagramEntity();
         }
 
+        //입력된 윈도우 이동
         public void MoveInspWindow(InspWindow inspWindow, OpenCvSharp.Point offset)
         {
             if (inspWindow == null)
                 return;
 
+            //그룹이 있다면 해당 그룹을 이동
             GroupWindow group = (GroupWindow)inspWindow.Parent;
             if (group != null)
                 group.OffsetMove(offset);
@@ -361,6 +363,7 @@ namespace JidamVision.Core
             UpdateDiagramEntity();
         }
 
+        //GroupWindow 생성
         public void CreateGroupWindow(List<InspWindow> inspWindowList)
         {
             if (_model is null)
@@ -371,6 +374,7 @@ namespace JidamVision.Core
             UpdateDiagramEntity();
         }
 
+        //GroupWindow 해제
         public void BreakGroupWindow(GroupWindow groupWindow)
         {
             _model.BreakGroupWindow(groupWindow);

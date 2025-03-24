@@ -58,6 +58,7 @@ namespace JidamVision.Teach
             return false;
         }
 
+        //#GROUP ROI#1 GroupWindow를 만들어 모델에 추가
         public GroupWindow AddGroupWindow(List<InspWindow> inspWindowList)
         {
             GroupWindow groupWindow = (GroupWindow)InspWindowFactory.Inst.Create(InspWindowType.Group);
@@ -66,26 +67,31 @@ namespace JidamVision.Teach
 
             foreach (var inspWindow in inspWindowList)
             {
+                //그룹멤버로 추가하고, 전체리스트에서는 제거
                 inspWindow.Parent = groupWindow;
                 groupWindow.AddMember(inspWindow);
                 DelInspWindow(inspWindow);
             }
 
+            //그룹을 전체리스트에 추가
             InspWindowList.Add(groupWindow);
 
             return groupWindow;
         }
 
+        //#GROUP ROI#2 그룹해제
         public bool BreakGroupWindow(GroupWindow groupWindow)
         {
             if (groupWindow is null)
                 return false;
 
+            //전체 리스트에서 그룹을 제거
             if(InspWindowList.Contains(groupWindow))
             {
                 InspWindowList.Remove(groupWindow);
             }
 
+            //그룹의 개별 윈도우를 전체 리스트에 추가
             foreach (var inspWindow in groupWindow.Members)
                 InspWindowList.Add(inspWindow);
 

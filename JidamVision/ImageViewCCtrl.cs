@@ -24,6 +24,10 @@ namespace JidamVision
     //개별로 선택된 ROI를 수정할 수 있음
     */
 
+
+    //Virtual좌표계 : 이미지 크기 기준 좌표, 예> 640X480 이미지 상의 좌표(InspWindow상의 좌표)
+    //Screen좌표계 : UserControl 크기 기준으로 좌표(마우스 좌표, 커서 위치 등)
+
     //#MULTI ROI#2 ROI를 추가,수정,삭제하는 액션을 타입으로 설정
     public enum EntityActionType
     {
@@ -67,6 +71,7 @@ namespace JidamVision
 
         // 현재 줌 배율
         private float _curZoom = 1.0f;
+        // 줌 배율 변경 시, 확대/축소 단위
         private float _zoomFactor = 1.1f;
 
         // 최소 및 최대 줌 제한 값
@@ -83,6 +88,8 @@ namespace JidamVision
 
         //여러개 ROI를 관리하기 위한 리스트
         private List<DiagramEntity> _diagramEntityList = new List<DiagramEntity>();
+
+        //현재 선택된 ROI 리스트
         private List<DiagramEntity> _multiSelectedEntities = new List<DiagramEntity>();
         private DiagramEntity _selEntity;
         private Color _selColor = Color.White;
@@ -99,6 +106,7 @@ namespace JidamVision
             InitializeComponent();
             InitializeCanvas();
 
+            //#GROUP ROI#3 화면상에서, 팝업 메뉴 띄우기
             _contextMenu = new ContextMenuStrip();
             _contextMenu.Items.Add("Create Group", null, OnCreateGroupClicked);
             _contextMenu.Items.Add("Break Group", null, OnBreakGroupClicked);
@@ -149,6 +157,9 @@ namespace JidamVision
             _newRoiType = inspWindowType;
             _selColor = GetWindowColor(inspWindowType);
         }
+
+
+        //#GROUP ROI#5 줌에 따른 좌표 계산 기능 수정 
         private void ResizeCanvas()
         {
             if (Width <= 0 || Height <= 0 || _bitmapImage == null)
@@ -169,6 +180,7 @@ namespace JidamVision
             ImageRect = new RectangleF(offsetX, offsetY, virtualWidth, virtualHeight);
         }
 
+        //#GROUP ROI#6 이미지 로딩 함수
         public void LoadBitmap(Bitmap bitmap)
         {
             // 기존에 로드된 이미지가 있다면 해제 후 초기화, 메모리누수 방지
@@ -214,6 +226,7 @@ namespace JidamVision
             }
         }
 
+        //#GROUP ROI#7 현재 이미지를 기준으로 줌 비율 재계산
         private void RecalcZoomRatio()
         {
             if (_bitmapImage == null || Width <= 0 || Height <= 0)
@@ -224,12 +237,14 @@ namespace JidamVision
             float aspectRatio = (float)imageSize.Height / (float)imageSize.Width;
             float clientAspect = (float)Height / (float)Width;
 
+            //UserControl과 이미지의 비율의 관계를 통해, 이미지가 UserControl안에 들어가도록 Zoom비율 설정
             float ratio;
             if (aspectRatio <= clientAspect)
                 ratio = (float)Width / (float)imageSize.Width;
             else
                 ratio = (float)Height / (float)imageSize.Height;
 
+            //최소 줌 비율은 이미지가 UserControl에 꽉차게 들어가는 것으로 설정
             float minZoom = ratio;
 
             // MinZoom 및 줌 적용
@@ -240,7 +255,7 @@ namespace JidamVision
             Invalidate();
         }
 
-
+        #region 나중에 사용할 함수로 활요
         //public Bitmap GetRoiImage(DiagramEntity entity)
         //{
         //    Rectangle rect = entity.EntityROI;
@@ -275,6 +290,7 @@ namespace JidamVision
         //        roiBitmap.Save(savePath, ImageFormat.Png);
         //    }
         //}
+        #endregion
 
         // Windows Forms에서 컨트롤이 다시 그려질 때 자동으로 호출되는 메서드
         // 화면새로고침(Invalidate()), 창 크기변경, 컨트롤이 숨겨졌다가 나타날때 실행
@@ -316,7 +332,7 @@ namespace JidamVision
                     }
 
                     //#MULTI ROI#8 여러개 ROI를 그려주는 코드
-
+                    //#GROUP ROI#8 멀티ROI 처리
                     Rectangle screenSelectedRect = new Rectangle(0,0,0,0);
                     foreach (DiagramEntity entity in _diagramEntityList)
                     {
@@ -334,6 +350,7 @@ namespace JidamVision
                                 }
                                 else
                                 {
+                                    //선택된 roi가 여러개 일때, 전체 roi 영역 계산
                                     //선택된 roi 영역 합치기
                                     screenSelectedRect = Rectangle.Union(screenSelectedRect, screenRect);
                                 }
@@ -357,8 +374,8 @@ namespace JidamVision
                         }
                     }
 
-                    //선택된 개별 roi가 없고, 여러개가 선택되었다면
-                    if(_multiSelectedEntities.Count > 1 && !screenSelectedRect.IsEmpty)
+                    //#GROUP ROI#9 선택된 개별 roi가 없고, 여러개가 선택되었다면
+                    if (_multiSelectedEntities.Count > 1 && !screenSelectedRect.IsEmpty)
                     {
                         using (Pen pen = new Pen(Color.White, 2))
                         {
@@ -386,6 +403,7 @@ namespace JidamVision
                         }
                     }
 
+                    //#GROUP ROI#10 선택 영역 박스 그리기
                     if (_isBoxSelecting && !_selectionBox.IsEmpty)
                     {
                         using (Pen pen = new Pen(Color.LightSkyBlue, 3))
@@ -436,6 +454,7 @@ namespace JidamVision
                         Rectangle screenRect = VirtualToScreen(entity.EntityROI);
                         if (screenRect.Contains(e.Location))
                         {
+                            //#GROUP ROI#11 컨트롤키를 이용해, 개별 ROI 추가/제거
                             if (_isCtrlPressed)
                             {
                                 if (_multiSelectedEntities.Contains(entity))
@@ -515,6 +534,7 @@ namespace JidamVision
                     int dxVirtual = (int)((float)dx / _curZoom + 0.5f);
                     int dyVirtual = (int)((float)dy / _curZoom + 0.5f);
 
+                    //#GROUP ROI#12 여러개 선택된 roi 이동
                     if (_multiSelectedEntities.Count > 1)
                     {
                         foreach (var entity in _multiSelectedEntities)
@@ -590,6 +610,7 @@ namespace JidamVision
 
                     _isSelectingRoi = false;
 
+                    //모델에 InspWindow 추가하는 이벤트 발생
                     ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Add, null, _newRoiType, _roiRect, new Point()));
                 }
                 else if (_isResizingRoi)
@@ -597,6 +618,7 @@ namespace JidamVision
                     _selEntity.EntityROI = _roiRect;
                     _isResizingRoi = false;
 
+                    //모델에 InspWindow 크기 변경 이벤트 발생
                     ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Resize, _selEntity.LinkedWindow, _newRoiType, _roiRect, new Point()));
                 }
                 else if (_isMovingRoi)
@@ -615,6 +637,7 @@ namespace JidamVision
                         offsetMove.Y = _roiRect.Y - linkedWindow.WindowArea.Y;
                     }
 
+                    //모델에 InspWindow 이동 이벤트 발생
                     if(offsetMove.X != 0 || offsetMove.Y != 0)
                         ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Move, linkedWindow, _newRoiType, _roiRect, offsetMove));
                 }
@@ -781,6 +804,7 @@ namespace JidamVision
             Invalidate();
         }
 
+        //#GROUP ROI#13 휠에 의해, Zoom 확대/축소 값 계산
         private void ZoomMove(float zoom, Point zoomOrigin)
         {
             PointF virtualOrigin = ScreenToVirtual(new PointF(zoomOrigin.X, zoomOrigin.Y));
@@ -819,6 +843,7 @@ namespace JidamVision
             Invalidate();
         }
 
+        //#GROUP ROI#14 키보드 이벤트 받기 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             _isCtrlPressed = keyData == Keys.Control;
@@ -841,6 +866,7 @@ namespace JidamVision
             return true;
         }
 
+        //#GROUP ROI#4 팝업 메뉴 함수 
         #region Group Create and Break
         private void OnCreateGroupClicked(object sender, EventArgs e)
         {
@@ -881,11 +907,12 @@ namespace JidamVision
 
             ModifyROI?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Delete, linkedWindow, _newRoiType, _roiRect, new Point()));
         }
-        
+
 
         #endregion
 
 
+        //#GROUP ROI#3-1 Virtual <-> Screen 좌표계 변환
         #region 좌표계 변환
         private PointF GetScreenOffset()
         {
@@ -951,6 +978,7 @@ namespace JidamVision
         }
     }
 
+    //#GROUP ROI#3-2 그룹 생성 이벤트
     public class GroupWindowEventArgs : EventArgs
     {
         public EntityActionType ActionType { get; private set; }

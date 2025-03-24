@@ -9,6 +9,12 @@ using System.Xml.Serialization;
 
 namespace JidamVision.Teach
 {
+    /*
+    #GROUP ROI# - <<<계층 구조를 가지는 ROI 그룹을 관리하는 클래스 만들기>>> 
+    검사를 위해서는 여러개의 ROI가 각각의 역할을 해야하고, 이 들의 관계를 묶어서, 검사함.
+    이를 위해 InspWindow를 상속받은 GroupWindow를 만들어 사용함    
+     */
+
     public class GroupWindow : InspWindow
     {
         //#MODEL#1 InspStage에 있던 InspWindowList 위치를 이곳으로 변경
@@ -38,6 +44,7 @@ namespace JidamVision.Teach
             return Members.Contains(window);
         }
 
+        //그룹내 모든 ROI 전체의 바운딩 박스를 구함
         public Rectangle GetBoundingRect()
         {
             if (Members.Count == 0)
@@ -52,6 +59,7 @@ namespace JidamVision.Teach
             return new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
 
+        //그룹내 모든 윈도우 검사
         public override bool DoInpsect(InspectType inspType)
         {
             foreach (var window in Members)
@@ -61,6 +69,7 @@ namespace JidamVision.Teach
             return true;
         }
 
+        //그룹내의 모든 윈도우 이동
         public override bool OffsetMove(OpenCvSharp.Point offset)
         {
             foreach (var window in Members)
