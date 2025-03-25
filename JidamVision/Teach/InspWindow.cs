@@ -113,13 +113,6 @@ namespace JidamVision.Teach
         //#ABSTRACT ALGORITHM#11 알고리즘을 리스트로 관리하므로, 필요한 타입의 알고리즘을 찾는 함수
         public InspAlgorithm FindInspAlgorithm(InspectType inspType)
         {
-            //foreach (var algorithm in AlgorithmList)
-            //{
-            //    if (algorithm.InspectType == inspType)
-            //        return algorithm;
-            //}
-            //return null;
-
             return AlgorithmList.Find(algo => algo.InspectType == inspType);
         }
 
@@ -129,7 +122,7 @@ namespace JidamVision.Teach
         {
             foreach (var inspAlgo in AlgorithmList)
             {
-                if (inspAlgo.InspectType == inspType || inspAlgo.InspectType == InspectType.InspNone)
+                if (inspAlgo.InspectType == inspType || inspType == InspectType.InspNone)
                     inspAlgo.DoInspect();
             }
 

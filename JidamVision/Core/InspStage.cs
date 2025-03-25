@@ -313,7 +313,7 @@ namespace JidamVision.Core
             if (inspWindow is null)
                 return;
 
-            InspWorker.TryInspect(inspWindow, InspectType.InspBinary);
+            InspWorker.TryInspect(inspWindow, InspectType.InspNone);
         }
 
         public void SelectInspWindow(InspWindow inspWindow)
@@ -331,6 +331,8 @@ namespace JidamVision.Core
             }
 
             UpdateProperty(inspWindow);
+
+            Global.Inst.InspStage.PreView.SetInspWindow(inspWindow);
         }
 
         //#MODEL#9 ImageViwer에서 ROI를 추가하여, InspWindow생성하는 함수

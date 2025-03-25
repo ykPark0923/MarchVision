@@ -247,7 +247,7 @@ namespace JidamVision.Algorithm
             foreach (var point in OutPoints)
             {
                 Console.WriteLine($"매칭된 위치: {OutPoints}");
-                resultArea.Add(new Rect(point.X - halfWidth, point.Y - halfHeight, _templateImage.Width, _templateImage.Height));
+                resultArea.Add(new Rect(point.X, point.Y , _templateImage.Width, _templateImage.Height));
             }
 
             return resultArea.Count;

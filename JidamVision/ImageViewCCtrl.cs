@@ -661,16 +661,26 @@ namespace JidamVision
             {
                 if (_isSelectingRoi)
                 {
-                    //ROI 크기가 10보다 작으면, 추가하지 않음
-                    if (_roiRect.Width >= 10 && _roiRect.Height >= 10)
-                    {
-                        _selEntity = new DiagramEntity(_roiRect, _selColor);
-                    }
-
                     _isSelectingRoi = false;
 
+                    if (_bitmapImage is null)
+                        return;
+
+                    //ROI 크기가 10보다 작으면, 추가하지 않음
+                    if (_roiRect.Width < 10 ||
+                        _roiRect.Height < 10 ||
+                        _roiRect.X < 0 ||
+                        _roiRect.Y < 0 ||
+                        _roiRect.Right > _bitmapImage.Width ||
+                        _roiRect.Bottom > _bitmapImage.Height)
+                        return;
+                    
+                    _selEntity = new DiagramEntity(_roiRect, _selColor);
+                    
                     //모델에 InspWindow 추가하는 이벤트 발생
                     DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Add, null, _newRoiType, _roiRect, new Point()));
+
+
                 }
                 else if (_isResizingRoi)
                 {

@@ -119,17 +119,7 @@ namespace JidamVision.Inspect
             if (inspObj is null)
                 return false;
 
-            InspAlgorithm inspAlgo = inspObj.FindInspAlgorithm(inspType);
-            if (inspAlgo is null)
-                return false;
-
-            Rect windowArea = inspObj.WindowArea;
-
-            if (!UpdateInspData(inspAlgo, windowArea))
-                return false;
-
-            if(!inspObj.DoInpsect(inspType))
-                return false;
+            RunInspWindow(inspObj);
 
             DisplayResult(inspObj, inspType);
             return true;
@@ -188,7 +178,7 @@ namespace JidamVision.Inspect
             List<InspAlgorithm> inspAlgorithmList = inspObj.AlgorithmList;
             foreach (var algorithm in inspAlgorithmList)
             {
-                if (algorithm.InspectType != inspType && algorithm.InspectType != InspectType.InspNone)
+                if (algorithm.InspectType != inspType && inspType != InspectType.InspNone)
                     continue;
 
                 List<Rect> resultArea = new List<Rect>();
