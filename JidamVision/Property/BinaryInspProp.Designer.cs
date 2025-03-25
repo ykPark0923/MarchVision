@@ -21,6 +21,9 @@
                 if (trackBarUpper != null)
                     trackBarUpper.ValueChanged -= OnValueChanged;
 
+                if (txtArea != null)
+                    txtArea.Leave -= OnAreaLeave;
+
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -43,7 +46,6 @@
             this.grpFilter = new System.Windows.Forms.GroupBox();
             this.txtArea = new System.Windows.Forms.TextBox();
             this.lbArea = new System.Windows.Forms.Label();
-            this.btnApply = new System.Windows.Forms.Button();
             this.grpBinary.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarUpper)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarLower)).BeginInit();
@@ -143,21 +145,10 @@
             this.lbArea.TabIndex = 0;
             this.lbArea.Text = "Area";
             // 
-            // btnApply
-            // 
-            this.btnApply.Location = new System.Drawing.Point(192, 346);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(60, 21);
-            this.btnApply.TabIndex = 2;
-            this.btnApply.Text = "적용";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
             // BinaryInspProp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.btnApply);
             this.Controls.Add(this.grpFilter);
             this.Controls.Add(this.grpBinary);
             this.Name = "BinaryInspProp";
@@ -183,6 +174,5 @@
         private System.Windows.Forms.TextBox txtArea;
         private System.Windows.Forms.Label lbArea;
         private System.Windows.Forms.CheckBox chkShowBinary;
-        private System.Windows.Forms.Button btnApply;
     }
 }

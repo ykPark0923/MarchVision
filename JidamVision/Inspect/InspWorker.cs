@@ -3,11 +3,14 @@ using JidamVision.Core;
 using JidamVision.Teach;
 using OpenCvSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static JidamVision.Core.ImageSpace;
 
 namespace JidamVision.Inspect
 { 
@@ -20,8 +23,68 @@ namespace JidamVision.Inspect
     //검사 관련 처리 클래스
     public class InspWorker
     {
+        private readonly ConcurrentQueue<InspWindow> _jobQueue = new ConcurrentQueue<InspWindow>();
+        private readonly List<Task> _workerTasks = new List<Task>();
+        private CancellationTokenSource _cts = new CancellationTokenSource();
+        private int _threadCount = 2;
+
+        public InspWorker(int threadCount = 2)
+        {
+            _threadCount = threadCount;
+        }
+
         public InspWorker()
         {
+        }
+
+        public void AddJob(InspWindow job)
+        {
+            _jobQueue.Enqueue(job);
+        }
+        public void StartAsync()
+        {
+            _cts = new CancellationTokenSource();
+
+            for (int i = 0; i < _threadCount; i++)
+            {
+                var task = Task.Run(() => DoWork(_cts.Token));
+                _workerTasks.Add(task);
+            }
+        }
+        public void Stop()
+        {
+            _cts.Cancel();
+            Task.WaitAll(_workerTasks.ToArray());
+            _workerTasks.Clear();
+        }
+
+        private void DoWork(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                if (_jobQueue.TryDequeue(out var inspWindow))
+                {
+                    RunInspWindow(inspWindow);
+                }
+                else
+                {
+                    Thread.Sleep(10); // 잠깐 대기
+                }
+            }
+        }
+
+        private void RunInspWindow(InspWindow inspWindow)
+        {
+            if (inspWindow == null)
+                return;
+
+            foreach (var algo in inspWindow.AlgorithmList)
+            {
+                if (!UpdateInspData(algo, inspWindow.WindowArea))
+                    continue;
+            }
+
+            inspWindow.DoInpsect(InspectType.InspNone);
         }
 
         //#INSP WORKER#2 InspStage내의 모든 InspWindow들을 검사하는 함수
@@ -36,7 +99,7 @@ namespace JidamVision.Inspect
                 List<InspAlgorithm> inspAlgorithmList = inspWindow.AlgorithmList;
                 foreach (var algorithm in inspAlgorithmList)
                 {
-                    UpdateInspData(algorithm);
+                    UpdateInspData(algorithm, inspWindow.WindowArea);
                 }
             }
 
@@ -60,7 +123,9 @@ namespace JidamVision.Inspect
             if (inspAlgo is null)
                 return false;
 
-            if (!UpdateInspData(inspAlgo))
+            Rect windowArea = inspObj.WindowArea;
+
+            if (!UpdateInspData(inspAlgo, windowArea))
                 return false;
 
             if(!inspObj.DoInpsect(inspType))
@@ -71,8 +136,15 @@ namespace JidamVision.Inspect
         }
 
         //#INSP WORKER#3 각 알고리즘 타입 별로 검사에 필요한 데이터를 입력하는 함수
-        private bool UpdateInspData(InspAlgorithm inspAlgo)
+        private bool UpdateInspData(InspAlgorithm inspAlgo, Rect windowArea)
         {
+            if (inspAlgo is null)
+                return false;
+
+            //검사 영역 초기화
+            inspAlgo.TeachRect = windowArea;
+            inspAlgo.InspRect = windowArea;
+
             InspectType inspType = inspAlgo.InspectType;
 
             switch (inspType)

@@ -147,6 +147,7 @@
     <Compile Include="ImageViewCCtrl.Designer.cs">
       <DependentUpon>ImageViewCCtrl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Inspect\InspectBoard.cs" />
     <Compile Include="Inspect\InspResult.cs" />
     <Compile Include="Inspect\InspWorker.cs" />
     <Compile Include="LogForm.cs">

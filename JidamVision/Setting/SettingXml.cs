@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using JidamVision.Core;
 
 namespace JidamVision.Setting
 {
@@ -96,6 +97,8 @@ namespace JidamVision.Setting
 
 
         public SettingXml() { }
+
+        public MachineType MachineType { get; set; } = MachineType.SMT;
 
         public string ModelDir { get; set; } = "";
 

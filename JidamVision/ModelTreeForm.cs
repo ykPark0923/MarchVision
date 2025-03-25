@@ -1,4 +1,5 @@
 ﻿using JidamVision.Core;
+using JidamVision.Setting;
 using JidamVision.Teach;
 using OpenCvSharp;
 using System;
@@ -38,13 +39,19 @@ namespace JidamVision
 
             // 컨텍스트 메뉴 초기화
             _contextMenu = new ContextMenuStrip();
-            ToolStripMenuItem addBaseRoiItem = new ToolStripMenuItem("Base", null, AddNode_Click) { Tag = "Base" };
-            ToolStripMenuItem addSubRoiItem = new ToolStripMenuItem("Sub", null, AddNode_Click) { Tag = "Sub" };
-            ToolStripMenuItem addIdRoiItem = new ToolStripMenuItem("ID", null, AddNode_Click) { Tag = "ID" };
 
-            _contextMenu.Items.Add(addBaseRoiItem);
-            _contextMenu.Items.Add(addSubRoiItem);
-            _contextMenu.Items.Add(addIdRoiItem);
+            List<InspWindowType> windowTypeList;
+            if (MachineType.SMT == SettingXml.Inst.MachineType)
+            {
+                windowTypeList = new List<InspWindowType> { InspWindowType.Package, InspWindowType.Chip, InspWindowType.Pad, InspWindowType.ID };
+            }
+            else
+            {
+                windowTypeList = new List<InspWindowType> { InspWindowType.Base, InspWindowType.Body, InspWindowType.Sub, InspWindowType.ID };
+            }
+
+            foreach (InspWindowType windowType in windowTypeList)
+                _contextMenu.Items.Add(new ToolStripMenuItem(windowType.ToString(), null, AddNode_Click) { Tag = windowType });
         }
 
         private void tvModelTree_MouseDown(object sender, MouseEventArgs e)
@@ -67,19 +74,8 @@ namespace JidamVision
             if (tvModelTree.SelectedNode != null & sender is ToolStripMenuItem)
             {
                 ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
-                string nodeType = menuItem.Tag?.ToString();
-                if (nodeType == "Base")
-                {
-                    AddNewROI(InspWindowType.Base);
-                }
-                else if (nodeType == "Sub")
-                {
-                    AddNewROI(InspWindowType.Sub);
-                }
-                else if (nodeType == "ID")
-                {
-                    AddNewROI(InspWindowType.ID);
-                }
+                InspWindowType windowType = (InspWindowType)menuItem.Tag;
+                AddNewROI(windowType);
             }
         }
 

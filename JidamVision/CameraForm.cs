@@ -40,6 +40,9 @@ namespace JidamVision
                 case EntityActionType.Select:
                     Global.Inst.InspStage.SelectInspWindow(e.InspWindow);
                     break;
+                case EntityActionType.Inspect:
+                    Global.Inst.InspStage.TryInspection(e.InspWindow);
+                    break;
                 case EntityActionType.Add:
                     Global.Inst.InspStage.AddInspWindow(e.WindowType, e.Rect);
                     break;
@@ -183,7 +186,7 @@ namespace JidamVision
         {
             //# SAVE ROI#5 현재 채널 이미지에서, 설정된 ROI 영역을 파일로 저장
             OpenCvSharp.Mat currentImage = Global.Inst.InspStage.GetMat(0, _currentImageChannel);
-            if(currentImage != null )
+            if (currentImage != null)
             {
                 //현재 설정된 ROI 영역을 가져옴
                 Rectangle roiRect = imageViewer.GetRoiRect();
@@ -207,7 +210,7 @@ namespace JidamVision
             //아래 코드를 이용해, Rect -> Rectangle로 변환하는 람다식
             var rectangles = rects.Select(r => new Rectangle(r.X, r.Y, r.Width, r.Height)).ToList();
             imageViewer.AddRect(rectangles);
-            
+
         }
 
         //#INSP WORKER#8 CaearaForm에 검사 버튼을 추가하고, 전체 검사 함수 추가
@@ -263,6 +266,16 @@ namespace JidamVision
 
             imageViewer.SetDiagramEntityList(diagramEntityList);
         }
+        public void SelectDiagramEntity(InspWindow window)
+        {
+            imageViewer.SelectDiagramEntity(window);
+        }
+
+        public void UpdateImageViewer()
+        {
+            imageViewer.Invalidate();
+        }
+
         private void CameraForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             imageViewer.DiagramEntityEvent -= ImageViewer_DiagramEntityEvent;

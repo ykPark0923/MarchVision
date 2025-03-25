@@ -31,6 +31,7 @@ namespace JidamVision.Teach
         public string UID { get; set; }
 
         public Rect WindowArea { get; set; }
+        public Rect InspArea { get; set; }
 
         //#ABSTRACT ALGORITHM#9 개별 변수로 있던, MatchAlgorithm과 BlobAlgorithm을
         //InspAlgorithm으로 추상화하여 리스트로 관리하도록 변경
@@ -47,17 +48,12 @@ namespace JidamVision.Teach
 
         public InspWindow()
         {
-            //#ABSTRACT ALGORITHM#13 매칭 알고리즘과 이진화 알고리즘 추가
-            AddInspAlgorithm(InspectType.InspMatch);
-            AddInspAlgorithm(InspectType.InspBinary);
         }
 
         public InspWindow(InspWindowType windowType, string name)
         {
             InspWindowType = windowType;
             Name = name;
-            AddInspAlgorithm(InspectType.InspMatch);
-            AddInspAlgorithm(InspectType.InspBinary);
         }
 
         public bool SetTeachingImage(Mat image, System.Drawing.Rectangle rect)
@@ -146,6 +142,13 @@ namespace JidamVision.Teach
             windowRect.X += offset.X;
             windowRect.Y += offset.Y;
             WindowArea = windowRect;
+            return true;
+        }
+
+        public bool SetInspOffset(OpenCvSharp.Point offset)
+        {
+            InspArea = WindowArea + offset;
+            AlgorithmList.ForEach(algo => algo.InspRect = algo.TeachRect + offset);
             return true;
         }
 

@@ -35,6 +35,8 @@ namespace JidamVision
 
     public partial class PropertiesForm : DockContent
     {
+        Dictionary<string, TabPage> _allTabs = new Dictionary<string, TabPage>();
+
         public PropertiesForm()
         {
             InitializeComponent();
@@ -49,10 +51,15 @@ namespace JidamVision
             foreach (TabPage tabPage in tabPropControl.TabPages)
             {
                 if (tabPage.Text == tabName)
-                {
-                    tabPropControl.SelectedTab = tabPage;
                     return;
-                }
+            }
+
+            // 딕셔너리에 있으면 추가
+            if (_allTabs.TryGetValue(tabName, out TabPage page))
+            {
+                tabPropControl.TabPages.Add(page);
+                tabPropControl.SelectedTab = page; // 필요시 선택
+                return;
             }
 
             // 새로운 UserControl 생성
@@ -69,6 +76,8 @@ namespace JidamVision
             newTab.Controls.Add(_inspProp);
             tabPropControl.TabPages.Add(newTab);
             tabPropControl.SelectedTab = newTab; // 새 탭 선택
+
+            _allTabs[tabName] = newTab;
         }
 
         //#PANEL TO TAB#2 속성탭 타입에 맞게 UseControl 생성하여 반환
@@ -80,10 +89,12 @@ namespace JidamVision
                 case InspectType.InspBinary:
                     BinaryInspProp blobProp = new BinaryInspProp();
                     blobProp.RangeChanged += RangeSlider_RangeChanged;
+                    blobProp.PropertyChanged += PropertyChanged;
                     _inspProp = blobProp;
                     break;
                 case InspectType.InspMatch:
                     MatchInspProp matchProp = new MatchInspProp();
+                    matchProp.PropertyChanged += PropertyChanged;
                     _inspProp = matchProp;
                     break;
                 case InspectType.InspFilter:
@@ -98,9 +109,19 @@ namespace JidamVision
             return _inspProp;
         }
         
-        public void AddInspType(InspectType inspPropType)
+        public void ShowProperty(InspWindow window)
         {
-            LoadOptionControl(inspPropType);
+            foreach (InspAlgorithm algo in window.AlgorithmList)
+            {
+                LoadOptionControl(algo.InspectType);
+            }
+
+            tabPropControl.SelectedIndex = 0;
+        }
+
+        public void ResetProperty()
+        {
+            tabPropControl.TabPages.Clear();
         }
 
         public void UpdateProperty(InspWindow window)
@@ -152,6 +173,11 @@ namespace JidamVision
             int filter2 = e.FilterSelected2;
             Global.Inst.InspStage.PreView?.ApplyFilter(filter1, filter2);
 
+        }
+
+        private void PropertyChanged(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.RedrawMainView();
         }
     }
 }

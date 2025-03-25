@@ -15,6 +15,11 @@
         {
             if (disposing && (components != null))
             {
+                txtExtendX.Leave -= OnUpdateValue;
+                txtExtendY.Leave -= OnUpdateValue;
+                txtScore.Leave -= OnUpdateValue;
+                txtMatchCount.Leave -= OnUpdateValue;
+
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -29,6 +34,7 @@
         private void InitializeComponent()
         {
             this.grpMatch = new System.Windows.Forms.GroupBox();
+            this.picTeachImage = new System.Windows.Forms.PictureBox();
             this.txtMatchCount = new System.Windows.Forms.TextBox();
             this.lbMatchCount = new System.Windows.Forms.Label();
             this.lbScore = new System.Windows.Forms.Label();
@@ -37,15 +43,12 @@
             this.txtExtendX = new System.Windows.Forms.TextBox();
             this.lbX = new System.Windows.Forms.Label();
             this.lbExtent = new System.Windows.Forms.Label();
-            this.picTeachImage = new System.Windows.Forms.PictureBox();
-            this.btnApply = new System.Windows.Forms.Button();
             this.grpMatch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTeachImage)).BeginInit();
             this.SuspendLayout();
             // 
             // grpMatch
             // 
-            this.grpMatch.Controls.Add(this.btnApply);
             this.grpMatch.Controls.Add(this.picTeachImage);
             this.grpMatch.Controls.Add(this.txtMatchCount);
             this.grpMatch.Controls.Add(this.lbMatchCount);
@@ -61,6 +64,15 @@
             this.grpMatch.TabIndex = 0;
             this.grpMatch.TabStop = false;
             this.grpMatch.Text = "패턴매칭";
+            // 
+            // picTeachImage
+            // 
+            this.picTeachImage.Location = new System.Drawing.Point(9, 113);
+            this.picTeachImage.Name = "picTeachImage";
+            this.picTeachImage.Size = new System.Drawing.Size(168, 144);
+            this.picTeachImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picTeachImage.TabIndex = 7;
+            this.picTeachImage.TabStop = false;
             // 
             // txtMatchCount
             // 
@@ -126,24 +138,6 @@
             this.lbExtent.TabIndex = 0;
             this.lbExtent.Text = "확장영역";
             // 
-            // picTeachImage
-            // 
-            this.picTeachImage.Location = new System.Drawing.Point(9, 113);
-            this.picTeachImage.Name = "picTeachImage";
-            this.picTeachImage.Size = new System.Drawing.Size(168, 144);
-            this.picTeachImage.TabIndex = 7;
-            this.picTeachImage.TabStop = false;
-            // 
-            // btnApply
-            // 
-            this.btnApply.Location = new System.Drawing.Point(232, 228);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(58, 29);
-            this.btnApply.TabIndex = 8;
-            this.btnApply.Text = "적용";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
             // MatchInspProp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -170,6 +164,5 @@
         private System.Windows.Forms.TextBox txtMatchCount;
         private System.Windows.Forms.Label lbMatchCount;
         private System.Windows.Forms.PictureBox picTeachImage;
-        private System.Windows.Forms.Button btnApply;
     }
 }

@@ -30,6 +30,7 @@ namespace JidamVision.Property
 
     public partial class BinaryInspProp : UserControl
     {
+        public event EventHandler<EventArgs> PropertyChanged;
         public event EventHandler<RangeChangedEventArgs> RangeChanged;
 
         BlobAlgorithm _blobAlgo = null;
@@ -53,6 +54,8 @@ namespace JidamVision.Property
             // TrackBar 초기 설정
             trackBarLower.ValueChanged += OnValueChanged;
             trackBarUpper.ValueChanged += OnValueChanged;
+            
+            txtArea.Leave += OnAreaLeave;
 
             trackBarLower.Value = 0;
             trackBarUpper.Value = 128;
@@ -70,6 +73,11 @@ namespace JidamVision.Property
             if (_blobAlgo is null)
                 return;
 
+            BinaryThreshold threshold = _blobAlgo.BinThreshold;
+            trackBarLower.Value = threshold.lower;
+            trackBarUpper.Value = threshold.upper;
+            chkInvert.Checked = threshold.invert;
+
             int filterArea = _blobAlgo.AreaFilter;
             txtArea.Text = filterArea.ToString();
         }
@@ -86,13 +94,18 @@ namespace JidamVision.Property
 
             _blobAlgo.BinThreshold = threshold;
 
-            int filterArea = int.Parse(txtArea.Text);
-            _blobAlgo.AreaFilter = filterArea;
+            if (txtArea.Text != "")
+            {
+                int filterArea = int.Parse(txtArea.Text);
+                _blobAlgo.AreaFilter = filterArea;
+            }
         }
 
         //#BINARY FILTER#10 이진화 옵션을 선택할때마다, 이진화 이미지가 갱신되도록 하는 함수
         private void UpdateBinary()
         {
+            GetProperty();
+
             bool invert = chkInvert.Checked;
             bool highlight = chkHighlight.Checked;
 
@@ -131,9 +144,21 @@ namespace JidamVision.Property
             UpdateBinary();
         }
 
-        private void btnApply_Click(object sender, EventArgs e)
+        private void OnAreaLeave(object sender, EventArgs e)
         {
-            GetProperty();
+            if (_blobAlgo == null) 
+                return;
+
+            if (int.TryParse(txtArea.Text, out int area))
+            {
+                _blobAlgo.AreaFilter = area;
+                PropertyChanged?.Invoke(this, null);
+            }
+            else
+            {
+                MessageBox.Show("숫자만 입력 가능합니다.");
+                txtArea.Text = _blobAlgo.AreaFilter.ToString(); // 기존 값 복원
+            }
         }
     }
 

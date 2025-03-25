@@ -306,22 +306,29 @@ namespace JidamVision.Core
         private void InitInspWindow()
         {
             SLogger.Write("검사 속성창 초기화!");
-
-            var propForm = MainForm.GetDockForm<PropertiesForm>();
-            if (propForm != null)
-            {
-                //#ABSTRACT ALGORITHM#8 InspAlgorithm을 추상화하였으므로, 
-                //모든 검사 타입을 for문을 통해서 추가,
-                //함수명 변경 SetInspType -> AddInspType
-                for (int i = 0; i < (int)InspectType.InspCount; i++)
-                    propForm.AddInspType((InspectType)i);
-            }
         }
 
-        public void SelectInspWindow(InspWindow inspWindow)
+        public void TryInspection(InspWindow inspWindow)
         {
             if (inspWindow is null)
                 return;
+
+            InspWorker.TryInspect(inspWindow, InspectType.InspBinary);
+        }
+
+        public void SelectInspWindow(InspWindow inspWindow)
+        {   
+            var propForm = MainForm.GetDockForm<PropertiesForm>();
+            if (propForm != null)
+            {
+                if (inspWindow is null)
+                {
+                    propForm.ResetProperty();
+                    return;
+                }
+                
+                propForm.ShowProperty(inspWindow);
+            }
 
             UpdateProperty(inspWindow);
         }
@@ -336,6 +343,13 @@ namespace JidamVision.Core
             inspWindow.WindowArea = rect;
             UpdateProperty(inspWindow);
             UpdateDiagramEntity();
+
+            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+            if (cameraForm != null)
+            {
+                cameraForm.SelectDiagramEntity(inspWindow);
+                SelectInspWindow(inspWindow);
+            }
         }
 
         //입력된 윈도우 이동
@@ -456,6 +470,15 @@ namespace JidamVision.Core
             if (modelTreeForm != null)
             {
                 modelTreeForm.UpdateDiagramEntity();
+            }
+        }
+
+        public void RedrawMainView()
+        {
+            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+            if (cameraForm != null)
+            {
+                cameraForm.UpdateImageViewer();
             }
         }
 

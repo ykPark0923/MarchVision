@@ -45,11 +45,13 @@ namespace JidamVision.Algorithm
             if (_srcImage == null)
                 return false;
 
+            Mat targetImage = _srcImage[InspRect];
+
             Mat grayImage = new Mat();
-            if (_srcImage.Type() == MatType.CV_8UC3)
-                Cv2.CvtColor(_srcImage, grayImage, ColorConversionCodes.BGR2GRAY);
+            if (targetImage.Type() == MatType.CV_8UC3)
+                Cv2.CvtColor(targetImage, grayImage, ColorConversionCodes.BGR2GRAY);
             else
-                grayImage = _srcImage;
+                grayImage = targetImage;
 
             Mat binaryImage = new Mat();
             //Cv2.Threshold(grayImage, binaryMask, lowerValue, upperValue, ThresholdTypes.Binary);
@@ -98,7 +100,7 @@ namespace JidamVision.Algorithm
                 //RotatedRect rotatedRect = Cv2.MinAreaRect(contour);
                 Rect boundingRect = Cv2.BoundingRect(contour);
 
-                _findArea.Add(boundingRect);
+                _findArea.Add(boundingRect + InspRect.TopLeft);
 
                 // RotatedRect 정보 출력
                 //Console.WriteLine($"RotatedRect - Center: {rotatedRect.Center}, Size: {rotatedRect.Size}, Angle: {rotatedRect.Angle}");
