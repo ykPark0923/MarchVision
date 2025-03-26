@@ -33,6 +33,8 @@ namespace JidamVision.Teach
         public Rect WindowArea { get; set; }
         public Rect InspArea { get; set; }
 
+        public bool IsTeach { get; set; } = false;
+
         //#ABSTRACT ALGORITHM#9 개별 변수로 있던, MatchAlgorithm과 BlobAlgorithm을
         //InspAlgorithm으로 추상화하여 리스트로 관리하도록 변경
 

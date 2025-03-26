@@ -194,6 +194,11 @@ namespace JidamVision.Algorithm
             Rect ExtArea = InspRect;
             ExtArea.Inflate(ExtSize);
 
+            if (ExtArea.X < 0) { ExtArea.X = 0; }
+            if (ExtArea.Y < 0) { ExtArea.Y = 0; }
+            if (ExtArea.Right > srcImage.Width) { ExtArea.Width = srcImage.Width - ExtArea.X; }
+            if (ExtArea.Bottom > srcImage.Height) { ExtArea.Height = srcImage.Height - ExtArea.Y; }
+
             Mat targetImage = srcImage[ExtArea];
 
             if (MatchCount == 1)
@@ -221,8 +226,8 @@ namespace JidamVision.Algorithm
         public Point GetOffset()
         {
             Point offset = new Point(0, 0);
-         
-            if(IsInspected)
+
+            if (IsInspected)
             {
                 offset.X = OutPoint.X - InspRect.X;
                 offset.Y = OutPoint.Y - InspRect.Y;
@@ -247,7 +252,7 @@ namespace JidamVision.Algorithm
             foreach (var point in OutPoints)
             {
                 Console.WriteLine($"매칭된 위치: {OutPoints}");
-                resultArea.Add(new Rect(point.X, point.Y , _templateImage.Width, _templateImage.Height));
+                resultArea.Add(new Rect(point.X, point.Y, _templateImage.Width, _templateImage.Height));
             }
 
             return resultArea.Count;
