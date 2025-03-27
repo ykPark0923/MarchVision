@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using JidamVision.Inspect;
 using JidamVision.Core;
 using JidamVision.Teach;
+using OpenCvSharp;
 
 namespace JidamVision
 {
@@ -200,6 +201,15 @@ namespace JidamVision
             if (_treeListView.SelectedObject is InspResult result)
             {
                 _txtDetails.Text = result.ResultInfo.ToString();
+
+                if(result.ResultRectList != null)
+                {
+                    CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+                    if (cameraForm != null)
+                    {
+                        cameraForm.AddRect(result.ResultRectList);
+                    }
+                }
             }
             else if (_treeListView.SelectedObject is InspWindow window)
             {

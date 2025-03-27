@@ -66,6 +66,10 @@ namespace JidamVision.Inspect
                     inspResult.ResultScore =  matchAlgo.OutScore;
                 }
 
+                List<Rect> resultArea = new List<Rect>();
+                int resultCnt = algo.GetResultRect(out resultArea);
+                inspResult.ResultRectList = resultArea;
+
                 window.AddInspResult(inspResult);
             }
 
