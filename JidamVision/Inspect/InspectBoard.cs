@@ -12,9 +12,6 @@ namespace JidamVision.Inspect
 {
     public class InspectBoard
     {
-        //private InspWindow _window = null;
-        //private List<InspWindow> _inspWindows = new List<InspWindow>();
-
         public InspectBoard()
         {
         }
@@ -57,13 +54,19 @@ namespace JidamVision.Inspect
                     ObjectID = window.UID,
                     InspType = algo.InspectType,
                     IsDefect = algo.IsDefect,
-                    ResultInfo = resultInfo
+                    ResultInfos = resultInfo
                 };
 
-                if(algo.InspectType == InspectType.InspMatch)
+                switch (algo.InspectType)
                 {
-                    MatchAlgorithm matchAlgo = new MatchAlgorithm();
-                    inspResult.ResultScore =  matchAlgo.OutScore;
+                    case InspectType.InspMatch:
+                        MatchAlgorithm matchAlgo = algo as MatchAlgorithm;
+                        inspResult.ResultValue = $"{matchAlgo.OutScore}";
+                        break;
+                    case InspectType.InspBinary:
+                        BlobAlgorithm blobAlgo = algo as BlobAlgorithm;
+                        inspResult.ResultValue = $"{blobAlgo.OutBlobCount}/{blobAlgo.BlobCount}";
+                        break;
                 }
 
                 List<Rect> resultArea = new List<Rect>();
@@ -99,19 +102,14 @@ namespace JidamVision.Inspect
                     }
                 }
             }
-            else
+
+            foreach (InspWindow window in windowList)
             {
-                //InspWindow idWindow = windowList.Find(w => w.InspWindowType == Core.InspWindowType.Package);
-
+                //모든 윈도우에 오프셋 반영
+                window.SetInspOffset(alignOffset);
+                if (!InspectWindow(window))
+                    return false;
             }
-
-                foreach (InspWindow window in windowList)
-                {
-                    //모든 윈도우에 오프셋 반영
-                    window.SetInspOffset(alignOffset);
-                    if (!InspectWindow(window))
-                        return false;
-                }
 
             return true;
         }

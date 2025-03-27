@@ -28,12 +28,10 @@ namespace JidamVision.Inspect
         public int ErrorCode { get; set; }
         //결과가 불량인지 여부
         public bool IsDefect { get; set; }
-        //결과 점수
-        public float ResultScore { get; set; }
         //결과 값(점수가 아닌 실제 값)
-        public float ResultValue { get; set; }
+        public string ResultValue { get; set; }
         //세부적인 검사 결과
-        public string ResultInfo { get; set; }
+        public string ResultInfos { get; set; }
 
         //검사 결과로 찾은 불량 위치
         public List<Rect> ResultRectList { get; set; } = null;
@@ -46,9 +44,8 @@ namespace JidamVision.Inspect
             ObjectType = InspWindowType.None;
             ErrorCode = 0;
             IsDefect = false;
-            ResultScore = 0;
-            ResultValue = 0;
-            ResultInfo = string.Empty;
+            ResultValue = "";
+            ResultInfos = string.Empty;
         }
 
         public InspResult(InspWindow window, string baseID, string objectID, InspWindowType objectType)
@@ -59,9 +56,8 @@ namespace JidamVision.Inspect
             ObjectType = objectType;
             ErrorCode = 0;
             IsDefect = false;
-            ResultScore = 0;
-            ResultValue = 0;
-            ResultInfo = string.Empty;
+            ResultValue = "";
+            ResultInfos = string.Empty;
         }
     }
 }

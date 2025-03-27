@@ -157,7 +157,7 @@ namespace JidamVision.Core
 
             SetBuffer(bufferCount);
 
-            if(_camType == CameraType.HikRobotCam)
+            if (_camType == CameraType.HikRobotCam)
             {
                 _grabManager.SetExposureTime(20000);
                 _grabManager.SetGain(1.4f);
@@ -165,12 +165,14 @@ namespace JidamVision.Core
 
                 _grabManager.SetWhiteBalance(true);
             }
-            
+
         }
         public void SetImageBuffer(string filePath)
         {
             if (_grabManager == null)
                 return;
+
+            SLogger.Write($"Load Image : {filePath}");
 
             Mat matImage = Cv2.ImRead(filePath);
 
@@ -184,7 +186,7 @@ namespace JidamVision.Core
 
             imageWidth = (matImage.Width + 3) / 4 * 4;
             imageHeight = matImage.Height;
-            
+
             // 4바이트 정렬된 새로운 Mat 생성
             Mat alignedMat = new Mat();
             Cv2.CopyMakeBorder(matImage, alignedMat, 0, 0, 0, imageWidth - matImage.Width, BorderTypes.Constant, Scalar.Black);
@@ -276,7 +278,17 @@ namespace JidamVision.Core
             var cameraForm = MainForm.GetDockForm<CameraForm>();
             if (cameraForm != null)
             {
-                cameraForm.UpdateDisplay();
+                if(cameraForm.InvokeRequired)
+                {
+                    cameraForm.Invoke((MethodInvoker)(() =>
+                    {
+                        cameraForm.UpdateDisplay();
+                    }));
+                }
+                else
+                {
+                    cameraForm.UpdateDisplay();
+                }   
             }
         }
 
@@ -324,11 +336,10 @@ namespace JidamVision.Core
         public void TryInspection(InspWindow inspWindow)
         {
             InspWorker.TryInspect(inspWindow, InspectType.InspNone);
-
         }
 
         public void SelectInspWindow(InspWindow inspWindow)
-        {   
+        {
             var propForm = MainForm.GetDockForm<PropertiesForm>();
             if (propForm != null)
             {
@@ -337,7 +348,7 @@ namespace JidamVision.Core
                     propForm.ResetProperty();
                     return;
                 }
-                
+
                 propForm.ShowProperty(inspWindow);
             }
 
@@ -348,7 +359,7 @@ namespace JidamVision.Core
 
         //#MODEL#9 ImageViwer에서 ROI를 추가하여, InspWindow생성하는 함수
         public void AddInspWindow(InspWindowType windowType, Rect rect)
-        { 
+        {
             InspWindow inspWindow = _model.AddInspWindow(windowType);
             if (inspWindow is null)
                 return;
@@ -438,7 +449,7 @@ namespace JidamVision.Core
                 group = (GroupWindow)window.Parent;
             }
 
-            if(group == null)
+            if (group == null)
             {
                 MessageBox.Show("그룹윈도우가 아닙니다!");
                 return;
@@ -450,7 +461,7 @@ namespace JidamVision.Core
 
         private void UpdateProperty(InspWindow inspWindow)
         {
-            if(inspWindow is null) 
+            if (inspWindow is null)
                 return;
 
             PropertiesForm propertiesForm = MainForm.GetDockForm<PropertiesForm>();
@@ -462,7 +473,7 @@ namespace JidamVision.Core
 
         public void SetTeachingImage(InspWindow inspWindow)
         {
-            if(inspWindow is null)
+            if (inspWindow is null)
                 return;
 
             CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
@@ -515,10 +526,10 @@ namespace JidamVision.Core
 
             _model = _model.Load(filePath);
 
-            if(_model != null)
+            if (_model != null)
             {
                 string inspImagePath = _model.InspectImagePath;
-                if(File.Exists(inspImagePath))
+                if (File.Exists(inspImagePath))
                 {
                     Global.Inst.InspStage.SetImageBuffer(inspImagePath);
                 }
@@ -538,7 +549,7 @@ namespace JidamVision.Core
                 Global.Inst.InspStage.CurModel.SaveAs(filePath);
         }
 
-        public void CycleInspect()
+        public void CycleInspect(bool isCycle)
         {
             string inspImagePath = CurModel.InspectImagePath;
             if (inspImagePath == "")
@@ -548,30 +559,47 @@ namespace JidamVision.Core
             if (!Directory.Exists(inspImageDir))
                 return;
 
-            _imageLoader.LoadImages(inspImageDir);
+            if(!_imageLoader.IsLoadedImages())
+                _imageLoader.LoadImages(inspImageDir);
+
+            if (isCycle)
+                _inspWorker.StartCycleInspectImage();
+            else
+                OneCycle();
         }
 
-        public void VirtualGrab()
+        public bool OneCycle()
+        {
+            if (!VirtualGrab())
+                return false;
+
+            _inspWorker.RunInspect();
+
+            return true;
+        }
+
+        public void StopCycle()
+        {
+            if (_inspWorker != null)
+                _inspWorker.Stop();
+        }
+
+        public bool VirtualGrab()
         {
             if (_imageLoader is null)
-                return;
+                return false;
 
             string imagePath = _imageLoader.GetNextImagePath();
             if (imagePath == "")
-                return;
+                return false;
 
-            //Image image = Image.FromFile(imagePath);
             Global.Inst.InspStage.SetImageBuffer(imagePath);
 
             _imageSpace.Split(0);
 
             DisplayGrabImage(0);
 
-            if (_previewImage != null)
-            {
-                Bitmap bitmap = ImageSpace.GetBitmap(0);
-                _previewImage.SetImage(BitmapConverter.ToMat(bitmap));
-            }
+            return true;
         }
     }
 }

@@ -85,7 +85,7 @@ namespace JidamVision
                     if (obj is InspWindow win)
                         return win.UID;
                     if (obj is InspResult res)
-                        return res.ObjectID;
+                        return res.InspType.ToString();
                     return "";
                 }
             };
@@ -121,7 +121,7 @@ namespace JidamVision
                 AspectGetter = obj =>
                 {
                     if (obj is InspResult res)
-                        return res.ResultValue.ToString("F2");
+                        return res.ResultValue;
                     return "";
                 }
             };
@@ -200,7 +200,7 @@ namespace JidamVision
 
             if (_treeListView.SelectedObject is InspResult result)
             {
-                _txtDetails.Text = result.ResultInfo.ToString();
+                _txtDetails.Text = result.ResultInfos.ToString();
 
                 if(result.ResultRectList != null)
                 {
@@ -213,7 +213,7 @@ namespace JidamVision
             }
             else if (_treeListView.SelectedObject is InspWindow window)
             {
-                var infos = window.InspResultList.Select(r => $"-  {r.ObjectID}: {r.ResultInfo}").ToList();
+                var infos = window.InspResultList.Select(r => $" -{r.ObjectID}: {r.ResultInfos}").ToList();
                 _txtDetails.Text = $"{window.UID}\r\n" +
                     string.Join("\r\n", infos);
             }

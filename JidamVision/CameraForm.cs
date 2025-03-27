@@ -198,19 +198,6 @@ namespace JidamVision
 
         }
 
-        //#INSP WORKER#8 CaearaForm에 검사 버튼을 추가하고, 전체 검사 함수 추가
-        private void btnInspect_Click(object sender, EventArgs e)
-        {
-            if(chkCycle.Checked)
-            {
-                Global.Inst.InspStage.CycleInspect();
-            }
-            else
-            {
-                Global.Inst.InspStage.InspWorker.RunInspect();
-            }
-        }
-
         public void AddRoi(InspWindowType inspWindowType)
         {
             imageViewer.NewRoi(inspWindowType);
@@ -277,8 +264,15 @@ namespace JidamVision
             this.FormClosed -= CameraForm_FormClosed;
         }
 
+        //#INSP WORKER#8 CaearaForm에 검사 버튼을 추가하고, 전체 검사 함수 추가
+        private void btnInspect_Click(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.CycleInspect(chkCycle.Checked);
+        }
+
         private void btnStop_Click(object sender, EventArgs e)
         {
+            Global.Inst.InspStage.StopCycle();
 
         }
 

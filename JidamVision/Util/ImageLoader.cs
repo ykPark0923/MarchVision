@@ -35,6 +35,17 @@ namespace JidamVision.Util
             return true;
         }
 
+        public bool IsLoadedImages()
+        {
+            if (_sortedImages is null)
+                return false;
+
+            if (_sortedImages.Count() <= 0)
+                return false;
+
+            return true;
+        }
+
         public bool Reset()
         {
             _grabIndex = -1;

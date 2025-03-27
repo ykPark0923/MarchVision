@@ -34,6 +34,7 @@ namespace JidamVision.Algorithm
         public int HeightMin { get; set; } = 0;
         public int HeightMax { get; set; } = 0;
         public int BlobCount { get; set; } = 0;
+        public int OutBlobCount { get; set; } = 0;
 
         public BlobAlgorithm()
         {
@@ -49,6 +50,7 @@ namespace JidamVision.Algorithm
         public override bool DoInspect()
         {
             ResetResult();
+            OutBlobCount = 0;
 
             if (_srcImage == null)
                 return false;
@@ -95,7 +97,7 @@ namespace JidamVision.Algorithm
 
             _findArea.Clear();
 
-            int findBlob = 0;
+            int findBlobCount = 0;
 
             foreach (var contour in contours)
             {
@@ -128,7 +130,7 @@ namespace JidamVision.Algorithm
                 // 필터링된 객체를 이미지에 그림
                 //Cv2.DrawContours(filteredImage, new Point[][] { contour }, -1, Scalar.White, -1);
 
-                findBlob++;
+                findBlobCount++;
                 Rect blobRect = boundingRect + InspRect.TopLeft;
 
                 string blobInfo;
@@ -138,15 +140,17 @@ namespace JidamVision.Algorithm
                 _findArea.Add(blobRect);
             }
 
+            OutBlobCount = findBlobCount;
+
             if (BlobCount > 0)
             {
                 string result = "NG";
-                if (findBlob == BlobCount)
+                if (findBlobCount == BlobCount)
                 {
                     result = "OK";
                 }
                 string resultInfo = "";
-                resultInfo = $"[{result}] match blob count [in : {BlobCount},out : {findBlob}]";
+                resultInfo = $"[{result}] match blob count [in : {BlobCount},out : {findBlobCount}]";
                 ResultString.Add(resultInfo);
             }
 

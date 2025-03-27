@@ -28,11 +28,12 @@ namespace JidamVision.Inspect
         private readonly ConcurrentQueue<InspWindow> _jobQueue = new ConcurrentQueue<InspWindow>();
         private readonly List<Task> _workerTasks = new List<Task>();
         private CancellationTokenSource _cts = new CancellationTokenSource();
-        private int _threadCount = 2;
+        private int _threadCount = 1;
+        private SynchronizationContext _uiContext;
 
         private InspectBoard _inspectBoard = new InspectBoard();
 
-        public InspWorker(int threadCount = 2)
+        public InspWorker(int threadCount)
         {
             _threadCount = threadCount;
         }
@@ -45,6 +46,7 @@ namespace JidamVision.Inspect
         {
             _jobQueue.Enqueue(job);
         }
+
         public void StartAsync()
         {
             _cts = new CancellationTokenSource();
@@ -86,6 +88,24 @@ namespace JidamVision.Inspect
                 return;
 
             inspWindow.DoInpsect(InspectType.InspNone);
+        }
+
+        public void StartCycleInspectImage()
+        {
+            _cts = new CancellationTokenSource();
+            _uiContext = SynchronizationContext.Current;
+
+            Task.Run(() => InspectionLoop(this, _cts.Token));
+        }
+
+        private void InspectionLoop(InspWorker inspWorker, CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                Global.Inst.InspStage.OneCycle();
+
+                //Thread.Sleep(200); // 주기 설정
+            }
         }
 
         //#INSP WORKER#2 InspStage내의 모든 InspWindow들을 검사하는 함수
