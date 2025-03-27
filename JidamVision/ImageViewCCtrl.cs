@@ -2,6 +2,7 @@
 using JidamVision.Core;
 using JidamVision.Teach;
 using OpenCvSharp.Dnn;
+using OpenCvSharp.Internal.Vectors;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,6 +45,7 @@ namespace JidamVision
         DeleteList,
         AddGroup,
         Break,
+        UpdateImage
     }
 
     public partial class ImageViewCCtrl : UserControl
@@ -120,6 +122,7 @@ namespace JidamVision
             _contextMenu.Items.Add("Delete", null, OnDeleteClicked);
             _contextMenu.Items.Add(new ToolStripSeparator());
             _contextMenu.Items.Add("Teaching", null, OnTeachingClicked);
+            _contextMenu.Items.Add("Update Image", null, OnUpdateImageClicked);
             _contextMenu.Items.Add("Unlock", null, OnUnlockClicked);
 
             // 마우스 휠 이벤트를 등록하여 줌 기능 추가
@@ -207,7 +210,7 @@ namespace JidamVision
             if (_bitmapImage != null)
             {
                 //이미지 크기가 같다면, 이미지 변경 후, 화면 갱신
-                if(_bitmapImage.Width == bitmap.Width && _bitmapImage.Height == bitmap.Height)
+                if (_bitmapImage.Width == bitmap.Width && _bitmapImage.Height == bitmap.Height)
                 {
                     _bitmapImage = bitmap;
                     Invalidate();
@@ -228,7 +231,11 @@ namespace JidamVision
                 ResizeCanvas();
             }
 
-            //원본 이미지 크기를 1로 볼때 화면 크기에 맞는 줌 비율을 구하여 반영
+            FitImageToScreen();
+        }
+
+        private void FitImageToScreen()
+        {
             RecalcZoomRatio();
 
             float NewWidth = _bitmapImage.Width * _curZoom;
@@ -242,7 +249,6 @@ namespace JidamVision
                 NewHeight
             );
 
-            // 변경된 화면을 다시 그리도록 요청
             Invalidate();
         }
 
@@ -949,10 +955,11 @@ namespace JidamVision
                     break;
                 case Keys.Enter:
                     {
+                        InspWindow selWindow = null;
                         if (_selEntity != null)
-                        {
-                            DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Inspect, _selEntity.LinkedWindow));
-                        }
+                            selWindow = _selEntity.LinkedWindow;
+
+                        DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.Inspect, selWindow));
                     }
                     break;
             }
@@ -1036,6 +1043,19 @@ namespace JidamVision
 
             window.IsTeach = true;
             _selEntity.IsHold = true;
+        }
+
+        private void OnUpdateImageClicked(object sender, EventArgs e)
+        {
+            if (_selEntity is null)
+                return;
+
+            InspWindow window = _selEntity.LinkedWindow;
+
+            if (window is null)
+                return;
+
+            DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.UpdateImage, _selEntity.LinkedWindow));
         }
 
         private void OnUnlockClicked(object sender, EventArgs e)
@@ -1124,6 +1144,11 @@ namespace JidamVision
                 virtualPos.Y * _curZoom + offset.Y);
         }
         #endregion
+
+        private void ImageViewCCtrl_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            FitImageToScreen();
+        }
     }
 
     #region EventArgs

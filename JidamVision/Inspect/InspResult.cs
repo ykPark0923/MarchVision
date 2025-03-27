@@ -15,12 +15,15 @@ namespace JidamVision.Inspect
         //검사한 ROI 정보
         public InspWindow InspObject { get; set; }
         //ROI가 여러개 있을 때, 기준이 되는 ROI
-        public string BaseID { get; set; }
+        public string GroupID { get; set; }
         //실제 검사한 ROI
         public string ObjectID { get; set; }
 
         //검사한 ROI의 타입
         public InspWindowType ObjectType { get; set; }
+
+        //검사한 알고리즘 타입
+        public InspectType InspType { get; set; }
         //검사 결과 코드
         public int ErrorCode { get; set; }
         //결과가 불량인지 여부
@@ -38,7 +41,7 @@ namespace JidamVision.Inspect
         public InspResult()
         {
             InspObject = new InspWindow();
-            BaseID = string.Empty;
+            GroupID = string.Empty;
             ObjectID = string.Empty;
             ObjectType = InspWindowType.None;
             ErrorCode = 0;
@@ -51,7 +54,7 @@ namespace JidamVision.Inspect
         public InspResult(InspWindow window, string baseID, string objectID, InspWindowType objectType)
         {
             InspObject = window;
-            BaseID = baseID;
+            GroupID = baseID;
             ObjectID = objectID;
             ObjectType = objectType;
             ErrorCode = 0;

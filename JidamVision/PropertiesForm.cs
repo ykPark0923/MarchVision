@@ -58,7 +58,6 @@ namespace JidamVision
             if (_allTabs.TryGetValue(tabName, out TabPage page))
             {
                 tabPropControl.TabPages.Add(page);
-                tabPropControl.SelectedTab = page; // 필요시 선택
                 return;
             }
 

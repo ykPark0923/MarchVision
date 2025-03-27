@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -40,6 +41,8 @@ namespace JidamVision.Core
         //#MODEL#6 모델 변수 선언
         private Model _model = null;
 
+        private ImageLoader _imageLoader = null;
+
         public ImageSpace ImageSpace
         {
             get => _imageSpace;
@@ -60,6 +63,14 @@ namespace JidamVision.Core
         public Model CurModel
         {
             get => _model;
+        }
+
+        public ImageLoader ImageLoader
+        {
+            get
+            {
+                return _imageLoader;
+            }
         }
 
         //#INSP WORKER#1 1개만 있던 InspWindow를 리스트로 변경하여, 여러개의 ROI를 관리하도록 개선
@@ -83,6 +94,8 @@ namespace JidamVision.Core
             //#MODEL#8 모델 인스턴스 생성
             _model = new Model();
 
+            _imageLoader = new ImageLoader();
+
             //#SETUP#7 환경설정에서 설정값 가져오기
             LoadSetting();
 
@@ -100,7 +113,7 @@ namespace JidamVision.Core
                     }
                 default:
                     {
-                        Console.WriteLine("Not supported camera type!");
+                        SLogger.Write("Not supported camera type!", SLogger.LogType.Error);
                         return false;
                     }
             }
@@ -310,10 +323,8 @@ namespace JidamVision.Core
 
         public void TryInspection(InspWindow inspWindow)
         {
-            if (inspWindow is null)
-                return;
-
             InspWorker.TryInspect(inspWindow, InspectType.InspNone);
+
         }
 
         public void SelectInspWindow(InspWindow inspWindow)
@@ -343,6 +354,8 @@ namespace JidamVision.Core
                 return;
 
             inspWindow.WindowArea = rect;
+            inspWindow.IsTeach = false;
+            SetTeachingImage(inspWindow);
             UpdateProperty(inspWindow);
             UpdateDiagramEntity();
 
@@ -378,6 +391,8 @@ namespace JidamVision.Core
                 return;
 
             inspWindow.WindowArea = rect;
+            inspWindow.IsTeach = false;
+            SetTeachingImage(inspWindow);
 
             UpdateProperty(inspWindow);
         }
@@ -388,6 +403,7 @@ namespace JidamVision.Core
             _model.DelInspWindow(inspWindow);
             UpdateDiagramEntity();
         }
+
 
         public void DelInspWindow(List<InspWindow> inspWindowList)
         {
@@ -437,26 +453,34 @@ namespace JidamVision.Core
             if(inspWindow is null) 
                 return;
 
-            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
-            if (cameraForm is null)
-                return;
-
-            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
-            if (matchAlgo != null)
-            {
-                Mat curImage = cameraForm.GetDisplayImage();
-                if (curImage is null)
-                    return;
-                
-                Mat teachingImage = curImage[inspWindow.WindowArea];
-                matchAlgo.SetTemplateImage(teachingImage);
-            }
-
             PropertiesForm propertiesForm = MainForm.GetDockForm<PropertiesForm>();
             if (propertiesForm is null)
                 return;
 
             propertiesForm.UpdateProperty(inspWindow);
+        }
+
+        public void SetTeachingImage(InspWindow inspWindow)
+        {
+            if(inspWindow is null)
+                return;
+
+            CameraForm cameraForm = MainForm.GetDockForm<CameraForm>();
+            if (cameraForm is null)
+                return;
+
+            Mat curImage = cameraForm.GetDisplayImage();
+            if (curImage is null)
+                return;
+
+            Mat windowImage = curImage[inspWindow.WindowArea];
+            inspWindow.WindowImage = windowImage;
+
+            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
+            if (matchAlgo != null)
+            {
+                matchAlgo.SetTemplateImage(windowImage);
+            }
         }
 
         //#MODEL#15 변경된 모델 정보 갱신하여, ImageViewer와 모델트리에 반영
@@ -490,6 +514,16 @@ namespace JidamVision.Core
             SLogger.Write($"모델 로딩:{filePath}");
 
             _model = _model.Load(filePath);
+
+            if(_model != null)
+            {
+                string inspImagePath = _model.InspectImagePath;
+                if(File.Exists(inspImagePath))
+                {
+                    Global.Inst.InspStage.SetImageBuffer(inspImagePath);
+                }
+            }
+
             UpdateDiagramEntity();
         }
 
@@ -502,6 +536,42 @@ namespace JidamVision.Core
                 Global.Inst.InspStage.CurModel.Save();
             else
                 Global.Inst.InspStage.CurModel.SaveAs(filePath);
+        }
+
+        public void CycleInspect()
+        {
+            string inspImagePath = CurModel.InspectImagePath;
+            if (inspImagePath == "")
+                return;
+
+            string inspImageDir = Path.GetDirectoryName(inspImagePath);
+            if (!Directory.Exists(inspImageDir))
+                return;
+
+            _imageLoader.LoadImages(inspImageDir);
+        }
+
+        public void VirtualGrab()
+        {
+            if (_imageLoader is null)
+                return;
+
+            string imagePath = _imageLoader.GetNextImagePath();
+            if (imagePath == "")
+                return;
+
+            //Image image = Image.FromFile(imagePath);
+            Global.Inst.InspStage.SetImageBuffer(imagePath);
+
+            _imageSpace.Split(0);
+
+            DisplayGrabImage(0);
+
+            if (_previewImage != null)
+            {
+                Bitmap bitmap = ImageSpace.GetBitmap(0);
+                _previewImage.SetImage(BitmapConverter.ToMat(bitmap));
+            }
         }
     }
 }

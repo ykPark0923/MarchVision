@@ -1,11 +1,16 @@
 ﻿using JidamVision.Core;
+using JidamVision.Setting;
+using JidamVision.Teach;
 using JidamVision.Util;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace JidamVision.Algorithm
 {
@@ -66,11 +71,9 @@ namespace JidamVision.Algorithm
             Cv2.MinMaxLoc(result, out _, out double maxVal, out _, out Point maxLoc);
 
             OutScore = (int)(maxVal * 100);
+            OutPoint = maxLoc + leftTopPos;
 
             SLogger.Write($"최적 매칭 위치: {maxLoc}, 신뢰도: {maxVal:F2}");
-
-            //OutPoint = new Point(maxLoc.X + _templateImage.Width, maxLoc.Y + _templateImage.Height);
-            OutPoint = maxLoc + leftTopPos;
 
             return true;
         }
@@ -186,10 +189,25 @@ namespace JidamVision.Algorithm
         //#ABSTRACT ALGORITHM#3 매칭 알고리즘 검사 구현
         public override bool DoInspect()
         {
-            IsInspected = false;
-            OutPoint = new Point(0, 0);
+            ResetResult();
 
-            Mat srcImage = Global.Inst.InspStage.GetMat();
+            OutPoint = new Point(0, 0);
+            OutPoints.Clear();
+            MatchScore = 0;
+
+            if (_templateImage is null)
+            {
+                MessageBox.Show("티칭 이미지는 유효하지 않습니다!");
+                return false;
+            }
+
+            if (_templateImage.Type() == MatType.CV_8UC3)
+            {
+                MessageBox.Show("티칭 이미지는 칼라를 허용하지 않습니다!");
+                return false;
+            }
+
+            Mat srcImage = Global.Inst.InspStage.GetMat(0, ImageChannel);
 
             Rect ExtArea = InspRect;
             ExtArea.Inflate(ExtSize);
@@ -201,13 +219,21 @@ namespace JidamVision.Algorithm
 
             Mat targetImage = srcImage[ExtArea];
 
+            int halfWidth = (int)(_templateImage.Width * 0.5f + 0.5f);
+            int halfHeight = (int)(_templateImage.Height * 0.5f + 0.5f);
+
             if (MatchCount == 1)
             {
                 if (MatchTemplateSingle(targetImage, ExtArea.TopLeft) == false)
                     return false;
 
-                OutPoints.Clear();
                 OutPoints.Add(OutPoint);
+
+                Point matchPos = new Point(OutPoint.X + halfWidth, OutPoint.Y + halfHeight);
+                IsDefect = (OutScore >= MatchScore) ? true : false;
+                string defectInfo = IsDefect ? "NG" : "OK";
+                string resultInfo = $"[{defectInfo}] 매칭 결과 : X {matchPos.X}, Y {matchPos.Y}, Score {OutScore}";
+                ResultString.Add(resultInfo);
             }
             else
             {
@@ -217,6 +243,18 @@ namespace JidamVision.Algorithm
                     return false;
 
                 OutPoints = outPoints;
+
+                string resultInfo;
+                resultInfo = $"[Match Result] match count : {matchCount}";
+                ResultString.Add(resultInfo);
+
+                for (int i = 0; i < matchCount; i++)
+                {
+                    Point pos = outPoints[i];
+                    Point matchPos = new Point(pos.X + halfWidth, pos.Y + halfHeight);
+                    resultInfo = $"[매칭 결과 : X {matchPos.X}, Y {matchPos.Y}";
+                    ResultString.Add(resultInfo);
+                }
             }
 
             IsInspected = true;
@@ -251,12 +289,13 @@ namespace JidamVision.Algorithm
 
             foreach (var point in OutPoints)
             {
-                Console.WriteLine($"매칭된 위치: {OutPoints}");
+                SLogger.Write($"매칭된 위치: {OutPoints}");
                 resultArea.Add(new Rect(point.X, point.Y, _templateImage.Width, _templateImage.Height));
             }
 
             return resultArea.Count;
         }
+
     }
 
 }

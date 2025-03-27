@@ -41,15 +41,38 @@ namespace JidamVision.Inspect
 
         private bool InspectWindow(InspWindow window)
         {
+            window.ResetInspResult();
             foreach (InspAlgorithm algo in window.AlgorithmList)
             {
+                //if (algo.IsUse == false)
+                //    continue;
+
                 if (!algo.DoInspect())
                     return false;
+
+                string resultInfo = string.Join("\r\n", algo.ResultString);
+
+                InspResult inspResult = new InspResult
+                {
+                    ObjectID = window.UID,
+                    InspType = algo.InspectType,
+                    IsDefect = algo.IsDefect,
+                    ResultInfo = resultInfo
+                };
+
+                if(algo.InspectType == InspectType.InspMatch)
+                {
+                    MatchAlgorithm matchAlgo = new MatchAlgorithm();
+                    inspResult.ResultScore =  matchAlgo.OutScore;
+                }
+
+                window.AddInspResult(inspResult);
             }
+
             return true;
         }
 
-        private bool InspectWindowList(List<InspWindow> windowList)
+        public bool InspectWindowList(List<InspWindow> windowList)
         {
             if (windowList.Count <= 0)
                 return false;
@@ -60,7 +83,7 @@ namespace JidamVision.Inspect
             if (idWindow != null)
             {
                 MatchAlgorithm matchAlgo = (MatchAlgorithm)idWindow.FindInspAlgorithm(InspectType.InspMatch);
-                if (matchAlgo.IsUse)
+                if (matchAlgo != null && matchAlgo.IsUse)
                 {
                     if (!InspectWindow(idWindow))
                         return false;
@@ -72,14 +95,19 @@ namespace JidamVision.Inspect
                     }
                 }
             }
-
-            foreach (InspWindow window in windowList)
+            else
             {
-                //모든 윈도우에 오프셋 반영
-                window.SetInspOffset(alignOffset);
-                if (!InspectWindow(idWindow))
-                    return false;
+                //InspWindow idWindow = windowList.Find(w => w.InspWindowType == Core.InspWindowType.Package);
+
             }
+
+                foreach (InspWindow window in windowList)
+                {
+                    //모든 윈도우에 오프셋 반영
+                    window.SetInspOffset(alignOffset);
+                    if (!InspectWindow(window))
+                        return false;
+                }
 
             return true;
         }

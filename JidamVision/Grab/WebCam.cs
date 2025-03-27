@@ -1,4 +1,5 @@
-﻿using MvCamCtrl.NET;
+﻿using JidamVision.Util;
+using MvCamCtrl.NET;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace JidamVision.Grab
                     }
                     else
                     {
-                        Console.WriteLine("Error: Buffer size is too small.");
+                        SLogger.Write("Error: Buffer size is too small.",SLogger.LogType.Error);
                     }
                 }
 
@@ -80,12 +81,6 @@ namespace JidamVision.Grab
         {
             if (_capture == null)
                 return false;
-
-            //if (!_capture.Open(0))
-            //{
-            //    Console.WriteLine("Failed open the webcam!");
-            //    return false;
-            //}
 
             // BGR 포맷을 강제 설정 (산업용 카메라나 특정 드라이버에 따라 가능)
 

@@ -15,6 +15,7 @@ using JidamVision.Teach;
 using System.IO;
 using OpenCvSharp;
 using JidamVision.Util;
+using System.Diagnostics.Eventing.Reader;
 
 namespace JidamVision
 {
@@ -35,10 +36,12 @@ namespace JidamVision
 
         private void ImageViewer_DiagramEntityEvent(object sender, DiagramEntityEventArgs e)
         {
+            SLogger.Write($"ImageViewer Action {e.ActionType.ToString()}");
             switch (e.ActionType)
             {
                 case EntityActionType.Select:
                     Global.Inst.InspStage.SelectInspWindow(e.InspWindow);
+                    imageViewer.Focus();
                     break;
                 case EntityActionType.Inspect:
                     Global.Inst.InspStage.TryInspection(e.InspWindow);
@@ -64,6 +67,10 @@ namespace JidamVision
                 case EntityActionType.Break:
                     Global.Inst.InspStage.BreakGroupWindow(e.InspWindow);
                     break;
+                case EntityActionType.UpdateImage:
+                    Global.Inst.InspStage.SetTeachingImage(e.InspWindow);
+                    break;
+                    
             }
         }
 
@@ -192,7 +199,14 @@ namespace JidamVision
         //#INSP WORKER#8 CaearaForm에 검사 버튼을 추가하고, 전체 검사 함수 추가
         private void btnInspect_Click(object sender, EventArgs e)
         {
-            Global.Inst.InspStage.InspWorker.RunInspect();
+            if(chkCycle.Checked)
+            {
+                Global.Inst.InspStage.CycleInspect();
+            }
+            else
+            {
+                Global.Inst.InspStage.InspWorker.RunInspect();
+            }
         }
 
         public void AddRoi(InspWindowType inspWindowType)
@@ -221,7 +235,8 @@ namespace JidamVision
                             EntityROI = new Rectangle(
                                 member.WindowArea.X, member.WindowArea.Y,
                                 member.WindowArea.Width, member.WindowArea.Height),
-                            EntityColor = imageViewer.GetWindowColor(member.InspWindowType)
+                            EntityColor = imageViewer.GetWindowColor(member.InspWindowType),
+                            IsHold = member.IsTeach,
                         };
                         diagramEntityList.Add(entity);
                     }
@@ -234,7 +249,8 @@ namespace JidamVision
                         EntityROI = new Rectangle(
                             window.WindowArea.X, window.WindowArea.Y,
                                 window.WindowArea.Width, window.WindowArea.Height),
-                        EntityColor = imageViewer.GetWindowColor(window.InspWindowType)
+                        EntityColor = imageViewer.GetWindowColor(window.InspWindowType),
+                        IsHold = window.IsTeach
                     };
                     diagramEntityList.Add(entity);
                 }

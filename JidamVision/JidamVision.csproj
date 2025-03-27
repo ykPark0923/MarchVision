@@ -237,6 +237,8 @@
     <Compile Include="Teach\InspWindowFactory.cs" />
     <Compile Include="Teach\Model.cs" />
     <Compile Include="Util\BitmapExtension.cs" />
+    <Compile Include="Util\ImageFileSorter.cs" />
+    <Compile Include="Util\ImageLoader.cs" />
     <Compile Include="Util\SLogger.cs" />
     <Compile Include="Util\XmlHelper.cs" />
     <EmbeddedResource Include="CameraForm.resx">
