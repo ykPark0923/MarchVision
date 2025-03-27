@@ -1149,6 +1149,14 @@ namespace JidamVision
         {
             FitImageToScreen();
         }
+
+        public void ResetEntity()
+        {
+            _diagramEntityList.Clear();
+            _rectangles.Clear();
+            _selEntity = null;
+            Invalidate();
+        }
     }
 
     #region EventArgs

@@ -57,11 +57,27 @@ namespace JidamVision.Core
         private Mat _orinalImage = null;
         private Mat _previewImage = null;
         private InspWindow _inspWindow = null;
+        private bool _usePreview = false;
 
         public void SetImage(Mat image)
         {
             _orinalImage = image;
             _previewImage = new Mat();
+        }
+
+        public void SetPreview(bool usePreview)
+        {
+            _usePreview = usePreview;
+            if (usePreview == false)
+            {
+                var cameraForm = MainForm.GetDockForm<CameraForm>();
+                if (cameraForm == null)
+                    return;
+
+                Bitmap bmpImage = BitmapConverter.ToBitmap(_orinalImage);
+                cameraForm.UpdateDisplay(bmpImage);
+                return;
+            }
         }
 
         public void SetInspWindow(InspWindow inspwindow)
@@ -72,6 +88,9 @@ namespace JidamVision.Core
         //#BINARY FILTER#15 기존 이진화 프리뷰에, 배경없이 이진화 이미지만 보이는 모드 추가
         public void SetBinary(int lowerValue, int upperValue, bool invert, ShowBinaryMode showBinMode)
         {
+            if (_usePreview == false)
+                return;
+
             if (_orinalImage == null)
                 return;
 
@@ -87,7 +106,7 @@ namespace JidamVision.Core
                 return;
             }
 
-            Rect windowArea = new Rect(0,0,_orinalImage.Width, _orinalImage.Height);
+            Rect windowArea = new Rect(0, 0, _orinalImage.Width, _orinalImage.Height);
             if (_inspWindow != null)
             {
                 windowArea = _inspWindow.WindowArea;
@@ -130,7 +149,7 @@ namespace JidamVision.Core
                 cameraForm.UpdateDisplay(bmpImage);
                 return;
             }
-            
+
             // 원본 이미지 복사본을 만들어 이진화된 부분에만 색을 덧씌우기
             Mat overlayImage;
             if (_orinalImage.Type() == MatType.CV_8UC1)
@@ -317,7 +336,7 @@ namespace JidamVision.Core
         }
 
         //필터 효과 기능
-        public void ApplyFilter(String selected_filter1,int selected_filter2)
+        public void ApplyFilter(String selected_filter1, int selected_filter2)
         {
             if (_orinalImage == null)
                 return;
@@ -342,13 +361,13 @@ namespace JidamVision.Core
                     break;
                 case "블러링":
                     ImageFilter filter = (ImageFilter)selected_filter2;
-                    ApplyImageFiltering(filter,_orinalImage,out filteredImage);
+                    ApplyImageFiltering(filter, _orinalImage, out filteredImage);
                     break;
                 case "Edge":
                     ImageEdge edge = (ImageEdge)selected_filter2;
                     ApplyEdgeDetection(edge, _orinalImage, out filteredImage);
                     break;
-                
+
                 default:
                     return;
             }

@@ -133,6 +133,8 @@ namespace JidamVision
             btnInspect.Location = new System.Drawing.Point(xPos, btnInspect.Location.Y);
             btnStop.Location = new System.Drawing.Point(xPos, btnStop.Location.Y);
             chkCycle.Location = new System.Drawing.Point(xPos, chkCycle.Location.Y);
+            chkPreview.Location = new System.Drawing.Point(xPos, chkPreview.Location.Y);
+            chkShowROI.Location = new System.Drawing.Point(xPos, chkShowROI.Location.Y);
             groupBox1.Location = new System.Drawing.Point(xPos, groupBox1.Location.Y);
 
             imageViewer.Width = this.Width - btnGrab.Width - margin * 2;
@@ -278,6 +280,23 @@ namespace JidamVision
         private void btnStop_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void chkPreview_CheckedChanged(object sender, EventArgs e)
+        {
+            Global.Inst.InspStage.PreView.SetPreview(chkPreview.Checked);
+        }
+
+        private void chkShowROI_CheckedChanged(object sender, EventArgs e)
+        {
+            if(chkShowROI.Checked)
+            {
+                UpdateDiagramEntity();
+            }
+            else
+            {
+                imageViewer.ResetEntity();
+            }
         }
     }
 }
