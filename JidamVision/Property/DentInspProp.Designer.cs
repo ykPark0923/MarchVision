@@ -72,6 +72,8 @@
             this.txt_ThMax.Name = "txt_ThMax";
             this.txt_ThMax.Size = new System.Drawing.Size(113, 28);
             this.txt_ThMax.TabIndex = 22;
+            this.txt_ThMax.Text = "255";
+            this.txt_ThMax.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txt_ThMin
             // 
@@ -79,6 +81,8 @@
             this.txt_ThMin.Name = "txt_ThMin";
             this.txt_ThMin.Size = new System.Drawing.Size(113, 28);
             this.txt_ThMin.TabIndex = 21;
+            this.txt_ThMin.Text = "30";
+            this.txt_ThMin.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lbl_Threshold
             // 
@@ -104,6 +108,8 @@
             this.txt_ArMax.Name = "txt_ArMax";
             this.txt_ArMax.Size = new System.Drawing.Size(113, 28);
             this.txt_ArMax.TabIndex = 18;
+            this.txt_ArMax.Text = "2000";
+            this.txt_ArMax.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txt_ArMin
             // 
@@ -111,6 +117,8 @@
             this.txt_ArMin.Name = "txt_ArMin";
             this.txt_ArMin.Size = new System.Drawing.Size(113, 28);
             this.txt_ArMin.TabIndex = 17;
+            this.txt_ArMin.Text = "26";
+            this.txt_ArMin.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // lbl_Area
             // 

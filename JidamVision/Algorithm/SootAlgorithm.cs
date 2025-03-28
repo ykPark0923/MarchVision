@@ -3,6 +3,7 @@ using OpenCvSharp.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -82,9 +83,20 @@ namespace JidamVision.Algorithm
             Cv2.CvtColor(_srcImage, grayDiff, ColorConversionCodes.BGR2GRAY);
             Cv2.CvtColor(diffImage, grayDiff2, ColorConversionCodes.BGR2GRAY);
 
-            // 밝기 증가된 부분을 강조 (Soot 검출을 위해)
+            // 1. 히스토그램 균등화: 이미지를 균등화하여 대비를 개선
+            Cv2.EqualizeHist(grayDiff, grayDiff);
+            Cv2.EqualizeHist(grayDiff2, grayDiff2);
+
+            // 2. 블러 적용하여 노이즈 제거
+            Cv2.GaussianBlur(grayDiff, grayDiff, new OpenCvSharp.Size(5, 5), 0);
+            Cv2.GaussianBlur(grayDiff2, grayDiff2, new OpenCvSharp.Size(5, 5), 0);
+
+            Cv2.Subtract(grayDiff2, grayDiff, diffImage); // 밝아진 부분 강조
+
+            // 4. 연한 Soot도 잡을 수 있게 임계값을 낮추어 적용
             Mat sootMask = new Mat();
-            Cv2.Subtract(grayDiff2, grayDiff, sootMask); // 밝아진 부분을 강조
+            Cv2.Threshold(diffImage, sootMask, 10, 255, ThresholdTypes.Binary); // 10으로 낮춰서 연한 soot도 잡기
+
 
             // 이진화
             Mat binaryDiff = new Mat();
