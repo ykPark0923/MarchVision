@@ -193,11 +193,15 @@
     <Compile Include="Property\CrackInspProp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Property\CrackInspProp.Designer.cs" />
+    <Compile Include="Property\CrackInspProp.Designer.cs">
+      <DependentUpon>CrackInspProp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Property\DentInspProp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Property\DentInspProp.Designer.cs" />
+    <Compile Include="Property\DentInspProp.Designer.cs">
+      <DependentUpon>DentInspProp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Property\FilterInspProp.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -211,11 +215,15 @@
     <Compile Include="Property\ScratchInspProp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Property\ScratchInspProp.Designer.cs" />
+    <Compile Include="Property\ScratchInspProp.Designer.cs">
+      <DependentUpon>ScratchInspProp.cs</DependentUpon>
+    </Compile>
     <Compile Include="Property\SootInspProp.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Property\SootInspProp.Designer.cs" />
+    <Compile Include="Property\SootInspProp.Designer.cs">
+      <DependentUpon>SootInspProp.cs</DependentUpon>
+    </Compile>
     <Compile Include="ResultForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -299,16 +307,24 @@
     <EmbeddedResource Include="Property\BinaryInspProp.resx">
       <DependentUpon>BinaryInspProp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Property\CrackInspProp.resx" />
-    <EmbeddedResource Include="Property\DentInspProp.resx" />
+    <EmbeddedResource Include="Property\CrackInspProp.resx">
+      <DependentUpon>CrackInspProp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Property\DentInspProp.resx">
+      <DependentUpon>DentInspProp.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Property\FilterInspProp.resx">
       <DependentUpon>FilterInspProp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Property\MatchInspProp.resx">
       <DependentUpon>MatchInspProp.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Property\ScratchInspProp.resx" />
-    <EmbeddedResource Include="Property\SootInspProp.resx" />
+    <EmbeddedResource Include="Property\ScratchInspProp.resx">
+      <DependentUpon>ScratchInspProp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Property\SootInspProp.resx">
+      <DependentUpon>SootInspProp.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ResultForm.resx">
       <DependentUpon>ResultForm.cs</DependentUpon>
     </EmbeddedResource>

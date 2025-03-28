@@ -21,18 +21,6 @@ namespace JidamVision.Inspect
             if (window is null)
                 return false;
 
-            if (window.InspWindowType == Core.InspWindowType.Dent)
-            {
-                GroupWindow group = (GroupWindow)window;
-                if (!InspectWindowList(group.Members))
-                    return false;
-            }
-            else
-            {
-                if (!InspectWindow(window))
-                    return false;
-            }
-
             return true;
         }
 
@@ -41,8 +29,8 @@ namespace JidamVision.Inspect
             window.ResetInspResult();
             foreach (InspAlgorithm algo in window.AlgorithmList)
             {
-                //if (algo.IsUse == false)
-                //    continue;
+                if (algo.IsUse == false)
+                    continue;
 
                 if (!algo.DoInspect())
                     return false;
