@@ -172,7 +172,7 @@ namespace JidamVision.Inspect
 
             Rect windowArea = inspWindow.WindowArea;
 
-            inspWindow.PatternLearn();
+            //inspWindow.PatternLearn();
 
             foreach (var inspAlgo in inspWindow.AlgorithmList)
             {

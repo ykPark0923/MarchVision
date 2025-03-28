@@ -108,6 +108,12 @@ namespace JidamVision.Algorithm
             // 결과 이미지를 복사 (원본 이미지를 수정하지 않음)
             Mat resultImage = _srcImage.Clone();
 
+
+            if (_findArea is null)
+                _findArea = new List<Rect>();
+
+            _findArea.Clear();
+
             foreach (var contour in scratchContours)
             {
                 // 윤곽선의 면적 계산
@@ -139,8 +145,9 @@ namespace JidamVision.Algorithm
                             boundingBox.Height
                         );
 
+                        _findArea.Add(boundingBoxWithOffset);
                         // 결과 이미지에 파란색 사각형 그리기
-                        Cv2.Rectangle(resultImage, boundingBox, new Scalar(255, 0, 0), 2);
+                        //Cv2.Rectangle(resultImage, boundingBox, new Scalar(255, 0, 0), 2);
                         scratchDetected = true;
                     }
                 }

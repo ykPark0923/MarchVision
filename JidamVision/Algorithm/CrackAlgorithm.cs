@@ -53,8 +53,6 @@ namespace JidamVision.Algorithm
                 return false;
             }
 
-
-
             Mat diffImage = new Mat();
             Cv2.Absdiff(aligned1, aligned2, diffImage);
             Cv2.ImShow("diffImage", diffImage);
@@ -119,6 +117,11 @@ namespace JidamVision.Algorithm
             bool crackDetected = false;
             Mat resultImage = _srcImage.Clone();
 
+            if (_findArea is null)
+                _findArea = new List<Rect>();
+
+            _findArea.Clear();
+
             foreach (var contour in contours)
             {
                 double area = Cv2.ContourArea(contour);
@@ -140,8 +143,10 @@ namespace JidamVision.Algorithm
                         boundingBox.Height
                     );
 
+                    _findArea.Add(boundingBoxWithOffset);
+
                     // 원본 이미지에 사각형 그리기
-                    Cv2.Rectangle(resultImage, boundingBoxWithOffset, new Scalar(0, 100, 255), 2);  // 주황 박스 그리기
+                    //Cv2.Rectangle(resultImage, boundingBoxWithOffset, new Scalar(0, 100, 255), 2);  // 주황 박스 그리기
                     crackDetected = true;
                 }
             }

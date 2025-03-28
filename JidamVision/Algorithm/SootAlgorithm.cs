@@ -124,6 +124,12 @@ namespace JidamVision.Algorithm
 
             bool sootDetected = false;
 
+
+            if (_findArea is null)
+                _findArea = new List<Rect>();
+
+            _findArea.Clear();
+
             List<Rect> boundingBoxes = new List<Rect>();
             foreach (var contour in sootContours)
             {
@@ -137,11 +143,15 @@ namespace JidamVision.Algorithm
             // 가까운 영역 병합
             List<Rect> mergedBoxes = MergeBoundingBoxes(boundingBoxes, 100);
 
+
             // 결과 표시
             Mat resultImage = _srcImage.Clone(); // 원본 이미지를 복제
             foreach (var box in mergedBoxes)
             {
-                Cv2.Rectangle(resultImage, box, new Scalar(0, 0, 255), 2); // 병합된 박스를 빨간색으로 표시
+
+
+                _findArea.Add(box);
+                //Cv2.Rectangle(resultImage, box, new Scalar(0, 0, 255), 2); // 병합된 박스를 빨간색으로 표시
                 sootDetected = true;
             }
 

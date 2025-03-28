@@ -110,13 +110,20 @@ namespace JidamVision.Algorithm
             bool dentDetected = false;
             Mat resultImage = _srcImage.Clone();
 
+
+            if (_findArea is null)
+                _findArea = new List<Rect>();
+
+            _findArea.Clear();
+
             foreach (var contour in dentContours)
             {
                 double area = Cv2.ContourArea(contour);
                 if (area >= _areaMin && area <= _areaMax)  // 일정 크기 이상의 Dent만 감지
                 {
                     Rect boundingBox = Cv2.BoundingRect(contour);
-                    Cv2.Rectangle(resultImage, boundingBox, new Scalar(0, 255, 255), 2); // 노란색 박스 표시
+                    _findArea.Add(boundingBox);
+                    //Cv2.Rectangle(resultImage, boundingBox, new Scalar(0, 255, 255), 2); // 노란색 박스 표시
                     dentDetected = true;
                 }
             }
