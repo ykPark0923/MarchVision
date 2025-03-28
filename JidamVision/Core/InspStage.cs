@@ -143,6 +143,31 @@ namespace JidamVision.Core
         {
             //카메라 설정 타입 얻기
             _camType = SettingXml.Inst.CamType;
+
+            //_crackBinaryMin = SettingXml.Inst.CrackBinaryMin;
+            //_crackBinaryMax = SettingXml.Inst.CrackBinaryMax;
+            //_crackAreaMin = SettingXml.Inst.CrackAreaMin;
+            //_crackAreaMax = SettingXml.Inst.CrackAreaMax;
+
+
+            //_dentBinaryMin = SettingXml.Inst.DentBinaryMin;
+            //_dentBinaryMax = SettingXml.Inst.DentBinaryMax;
+            //_dentAreaMin = SettingXml.Inst.DentAreaMin;
+            //_dentAreaMax = SettingXml.Inst.DentAreaMax;
+
+
+            //_scratchBinaryMin = SettingXml.Inst.ScratchBinaryMin;
+            //_scratchBinaryMax = SettingXml.Inst.ScratchBinaryMax;
+            //_scratchAreaMin = SettingXml.Inst.ScratchAreaMin;
+            //_scratchAreaMax = SettingXml.Inst.ScratchAreaMax;
+            //_scratchRatioMin = SettingXml.Inst.ScratchRatioMin;
+            //_scratchRatioMax = SettingXml.Inst.ScratchRatioMax;
+
+
+            //_sootBinaryMin = SettingXml.Inst.SootBinaryMin;
+            //_sootBinaryMax = SettingXml.Inst.SootBinaryMax;
+            //_sootAreaMin = SettingXml.Inst.SootAreaMin;
+            //_sootAreaMax = SettingXml.Inst.SootAreaMax; ;
         }
 
         public void InitModelGrab(int bufferCount)

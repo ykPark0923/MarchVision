@@ -160,56 +160,56 @@ namespace JidamVision
 
             foreach (TabPage tabPage in tabPropControl.TabPages)
             {
-                    UserControl uc = tabPage.Controls[0] as UserControl;
+                UserControl uc = tabPage.Controls[0] as UserControl;
 
-                    //if (uc is MatchInspProp matchProp)
-                    //{
-                    //    MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
-                    //    if (matchAlgo is null)
-                    //        continue;
+                //if (uc is MatchInspProp matchProp)
+                //{
+                //    MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
+                //    if (matchAlgo is null)
+                //        continue;
 
-                    //    matchProp.SetAlgorithm(matchAlgo);
-                    //}
-                    //else if (uc is BinaryInspProp binaryProp)
-                    //{
-                    //    BlobAlgorithm blobAlgo = (BlobAlgorithm)window.FindInspAlgorithm(InspectType.InspBinary);
-                    //    if (blobAlgo is null)
-                    //        continue;
+                //    matchProp.SetAlgorithm(matchAlgo);
+                //}
+                //else if (uc is BinaryInspProp binaryProp)
+                //{
+                //    BlobAlgorithm blobAlgo = (BlobAlgorithm)window.FindInspAlgorithm(InspectType.InspBinary);
+                //    if (blobAlgo is null)
+                //        continue;
 
-                    //    binaryProp.SetAlgorithm(blobAlgo);
-                    //}
-                    if (uc is CrackInspProp crackProp)
-                    {
-                        CrackAlgorithm crackAlgo = (CrackAlgorithm)window.FindInspAlgorithm(InspectType.InspCrack);
-                        if (crackAlgo is null)
-                            continue;
+                //    binaryProp.SetAlgorithm(blobAlgo);
+                //}
+                if (uc is CrackInspProp crackProp)
+                {
+                    CrackAlgorithm crackAlgo = (CrackAlgorithm)window.FindInspAlgorithm(InspectType.InspCrack);
+                    if (crackAlgo is null)
+                    continue;
 
-                        crackProp.SetAlgorithm(crackAlgo);
-                    }
-                    else if (uc is DentInspProp dentProp)
-                    {
-                        DentAlgorithm dentAlgo = (DentAlgorithm)window.FindInspAlgorithm(InspectType.InspDent);
-                        if (dentAlgo is null)
-                            continue;
+                    crackProp.SetAlgorithm(crackAlgo);
+                }
+                else if (uc is DentInspProp dentProp)
+                {
+                    DentAlgorithm dentAlgo = (DentAlgorithm)window.FindInspAlgorithm(InspectType.InspDent);
+                    if (dentAlgo is null)
+                        continue;
 
-                        dentProp.SetAlgorithm(dentAlgo);
-                    }
-                    else if (uc is ScratchInspProp scratchProp)
-                    {
-                        ScratchAlgorithm scratchAlgo = (ScratchAlgorithm)window.FindInspAlgorithm(InspectType.InspScratch);
-                        if (scratchAlgo is null)
-                            continue;
+                    dentProp.SetAlgorithm(dentAlgo);
+                }
+                else if (uc is ScratchInspProp scratchProp)
+                {
+                    ScratchAlgorithm scratchAlgo = (ScratchAlgorithm)window.FindInspAlgorithm(InspectType.InspScratch);
+                    if (scratchAlgo is null)
+                        continue;
 
-                        scratchProp.SetAlgorithm(scratchAlgo);
-                    }
-                    else if (uc is SootInspProp sootProp)
-                    {
-                        SootAlgorithm sootAlgo = (SootAlgorithm)window.FindInspAlgorithm(InspectType.InspSoot);
-                        if (sootAlgo is null)
-                            continue;
+                    scratchProp.SetAlgorithm(scratchAlgo);
+                }
+                else if (uc is SootInspProp sootProp)
+                {
+                    SootAlgorithm sootAlgo = (SootAlgorithm)window.FindInspAlgorithm(InspectType.InspSoot);
+                    if (sootAlgo is null)
+                        continue;
 
-                        sootProp.SetAlgorithm(sootAlgo);
-                    }
+                    sootProp.SetAlgorithm(sootAlgo);
+                }
             }
         }
 
