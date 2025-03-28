@@ -144,6 +144,16 @@ namespace JidamVision.Algorithm
                         scratchDetected = true;
                     }
                 }
+
+
+                if (scratchDetected)
+                {
+                    Console.WriteLine("NG: scratchDetected");
+                }
+                else
+                {
+                    Console.WriteLine("OK: scratch Not Detected");
+                }
             }
         }
         private Point2f perspectiveInverseTransform(Point2f point, Mat inverseMatrix)

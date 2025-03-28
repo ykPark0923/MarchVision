@@ -121,11 +121,14 @@ namespace JidamVision.Algorithm
                 }
             }
 
-            //// 6️⃣ 결과 표시
-            //pictureBox1.Image = BitmapConverter.ToBitmap(resultImage);
-
-            //// Dent 검출 여부 출력
-            //txtBox1.Text = dentDetected ? "NG: Dent Detected" : "OK";
+            if (dentDetected)
+            {
+                Console.WriteLine("NG: Dent Detected" );
+            }
+            else
+            {
+                Console.WriteLine("OK: Dent Not Detected");
+            }
         }
     }
 }

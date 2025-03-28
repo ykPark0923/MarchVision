@@ -122,6 +122,8 @@ namespace JidamVision.Algorithm
             HierarchyIndex[] hierarchy;
             Cv2.FindContours(finalMask, out sootContours, out hierarchy, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
 
+            bool sootDetected = false;
+
             List<Rect> boundingBoxes = new List<Rect>();
             foreach (var contour in sootContours)
             {
@@ -140,8 +142,23 @@ namespace JidamVision.Algorithm
             foreach (var box in mergedBoxes)
             {
                 Cv2.Rectangle(resultImage, box, new Scalar(0, 0, 255), 2); // 병합된 박스를 빨간색으로 표시
+                sootDetected = true;
             }
+
+
+            if (sootDetected)
+            {
+                Console.WriteLine("NG: sootDetected");
+            }
+            else
+            {
+                Console.WriteLine("OK: soot Not Detected");
+            }
+
         }
+
+
+
         // 병합할 바운딩 박스가 가까운지 판단하는 함수 (중심점 거리 기준)
         public List<Rect> MergeBoundingBoxes(List<Rect> boxes, int threshold, int minArea = 50)
         {

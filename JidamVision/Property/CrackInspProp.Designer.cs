@@ -15,6 +15,15 @@
         {
             if (disposing && (components != null))
             {
+                if (txt_ArMin != null)
+                    txt_ArMin.Leave -= OnFilterChanged;
+                if (txt_ArMax != null)
+                    txt_ArMax.Leave -= OnFilterChanged;
+                if (txt_ThMin != null)
+                    txt_ThMin.Leave -= OnFilterChanged;
+                if (txt_ThMax != null)
+                    txt_ThMax.Leave -= OnFilterChanged;
+
                 components.Dispose();
             }
             base.Dispose(disposing);

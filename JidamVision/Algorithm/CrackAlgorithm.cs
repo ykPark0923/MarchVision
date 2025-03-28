@@ -145,12 +145,14 @@ namespace JidamVision.Algorithm
                     crackDetected = true;
                 }
             }
-
-            // 결과 표시
-            //pictureBox1.Image = BitmapConverter.ToBitmap(resultImage);
-
-            // 크랙이 감지되었다면 NG 처리
-            //textBox1.Text = crackDetected ? "NG: Crack" : "OK";
+            if (crackDetected)
+            {
+                Console.WriteLine("NG: crackDetected");
+            }
+            else
+            {
+                Console.WriteLine("OK: crack Not Detected");
+            }
         }
         private Point2f perspectiveInverseTransform(Point2f point, Mat inverseMatrix)
         {
