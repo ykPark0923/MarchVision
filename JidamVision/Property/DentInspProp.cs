@@ -17,7 +17,7 @@ namespace JidamVision.Property
     {
         public event EventHandler<EventArgs> PropertyChanged;
 
-        DentAlgorithm _dentAlgo = null;
+        DentAlgorithm _dentAlgo = new DentAlgorithm();
         public DentInspProp()
         {
             InitializeComponent();

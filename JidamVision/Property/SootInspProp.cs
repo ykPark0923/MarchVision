@@ -17,7 +17,7 @@ namespace JidamVision.Property
     {
         public event EventHandler<EventArgs> PropertyChanged;
 
-        SootAlgorithm _sootAlgo = null;
+        SootAlgorithm _sootAlgo = new SootAlgorithm();
         public SootInspProp()
         {
             InitializeComponent();

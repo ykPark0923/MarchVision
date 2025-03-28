@@ -160,8 +160,6 @@ namespace JidamVision
 
             foreach (TabPage tabPage in tabPropControl.TabPages)
             {
-                if (tabPage.Controls.Count > 0)
-                {
                     UserControl uc = tabPage.Controls[0] as UserControl;
 
                     //if (uc is MatchInspProp matchProp)
@@ -212,7 +210,6 @@ namespace JidamVision
 
                         sootProp.SetAlgorithm(sootAlgo);
                     }
-                }
             }
         }
 
