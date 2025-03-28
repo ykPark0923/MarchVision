@@ -51,19 +51,15 @@ namespace JidamVision
             foreach (TabPage tabPage in tabPropControl.TabPages)
             {
                 if (tabPage.Text == tabName)
+                {
+                    tabPropControl.SelectedTab = tabPage;
                     return;
-            }
-
-            // 딕셔너리에 있으면 추가
-            if (_allTabs.TryGetValue(tabName, out TabPage page))
-            {
-                tabPropControl.TabPages.Add(page);
-                return;
+                }
             }
 
             // 새로운 UserControl 생성
             UserControl _inspProp = CreateUserControl(inspType);
-            if (_inspProp == null) 
+            if (_inspProp == null)
                 return;
 
             // 새 탭 추가
@@ -72,11 +68,15 @@ namespace JidamVision
                 Dock = DockStyle.Fill
             };
             _inspProp.Dock = DockStyle.Fill;
+
+
+            //탭 크기 자동 조절
+            tabPropControl.Dock = DockStyle.Fill;
+
+
             newTab.Controls.Add(_inspProp);
             tabPropControl.TabPages.Add(newTab);
             tabPropControl.SelectedTab = newTab; // 새 탭 선택
-
-            _allTabs[tabName] = newTab;
         }
 
         //#PANEL TO TAB#2 속성탭 타입에 맞게 UseControl 생성하여 반환
@@ -107,7 +107,12 @@ namespace JidamVision
             }
             return _inspProp;
         }
-        
+
+        public void AddInspType(InspectType inspPropType)
+        {
+            LoadOptionControl(inspPropType);
+        }
+
         public void ShowProperty(InspWindow window)
         {
             foreach (InspAlgorithm algo in window.AlgorithmList)

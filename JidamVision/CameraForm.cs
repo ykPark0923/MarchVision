@@ -39,10 +39,6 @@ namespace JidamVision
             SLogger.Write($"ImageViewer Action {e.ActionType.ToString()}");
             switch (e.ActionType)
             {
-                case EntityActionType.Select:
-                    Global.Inst.InspStage.SelectInspWindow(e.InspWindow);
-                    imageViewer.Focus();
-                    break;
                 case EntityActionType.Inspect:
                     Global.Inst.InspStage.TryInspection(e.InspWindow);
                     break;
