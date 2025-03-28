@@ -434,7 +434,7 @@ namespace JidamVision.Core
                 return;
 
             GroupWindow group = null;
-            if (window.InspWindowType == InspWindowType.Group)
+            if (window.InspWindowType == InspWindowType.Dent)
             {
                 group = (GroupWindow)window;
             }
@@ -481,11 +481,11 @@ namespace JidamVision.Core
             Mat windowImage = curImage[inspWindow.WindowArea];
             inspWindow.WindowImage = windowImage;
 
-            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
-            if (matchAlgo != null)
-            {
-                matchAlgo.SetTemplateImage(windowImage);
-            }
+            //MatchAlgorithm matchAlgo = (MatchAlgorithm)inspWindow.FindInspAlgorithm(InspectType.InspMatch);
+            //if (matchAlgo != null)
+            //{
+            //    matchAlgo.SetTemplateImage(windowImage);
+            //}
         }
 
         //#MODEL#15 변경된 모델 정보 갱신하여, ImageViewer와 모델트리에 반영

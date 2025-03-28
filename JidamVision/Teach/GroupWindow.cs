@@ -25,7 +25,7 @@ namespace JidamVision.Teach
         public List<InspWindow> Members { get; private set; } = new List<InspWindow>();
 
         public GroupWindow(string groupName)
-            : base(Core.InspWindowType.Group, groupName)
+            : base(Core.InspWindowType.Dent, groupName)
         {
             Name = groupName;
         }

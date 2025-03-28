@@ -80,21 +80,21 @@ namespace JidamVision.Teach
 
             foreach (var algorithm in AlgorithmList)
             {
-                if (algorithm.InspectType != InspectType.InspMatch)
-                    continue;
+                //if (algorithm.InspectType != InspectType.InspMatch)
+                //    continue;
 
-                MatchAlgorithm matchAlgo = (MatchAlgorithm)algorithm;
+                //MatchAlgorithm matchAlgo = (MatchAlgorithm)algorithm;
 
-                if (WindowImage != null)
-                {
-                    Mat tempImage = new Mat();
-                    if (WindowImage.Type() == MatType.CV_8UC3)
-                        Cv2.CvtColor(WindowImage, tempImage, ColorConversionCodes.BGR2GRAY);
-                    else
-                        tempImage = WindowImage;
+                //if (WindowImage != null)
+                //{
+                //    Mat tempImage = new Mat();
+                //    if (WindowImage.Type() == MatType.CV_8UC3)
+                //        Cv2.CvtColor(WindowImage, tempImage, ColorConversionCodes.BGR2GRAY);
+                //    else
+                //        tempImage = WindowImage;
 
-                    matchAlgo.SetTemplateImage(tempImage);
-                }
+                //    matchAlgo.SetTemplateImage(tempImage);
+                //}
             }
 
             IsPatternLearn = true;
@@ -109,11 +109,23 @@ namespace JidamVision.Teach
 
             switch (inspType)
             {
-                case InspectType.InspBinary:
-                    inspAlgo = new BlobAlgorithm();
+                //case InspectType.InspBinary:
+                //    inspAlgo = new BlobAlgorithm();
+                //    break;
+                //case InspectType.InspMatch:
+                //    inspAlgo = new MatchAlgorithm();
+                //    break;
+                case InspectType.InspCrack:
+                    inspAlgo = new CrackAlgorithm();
                     break;
-                case InspectType.InspMatch:
-                    inspAlgo = new MatchAlgorithm();
+                case InspectType.InspDent:
+                    inspAlgo = new DentAlgorithm();
+                    break;
+                case InspectType.InspScratch:
+                    inspAlgo = new ScratchAlgorithm();
+                    break;
+                case InspectType.InspSoot:
+                    inspAlgo = new SootAlgorithm();
                     break;
             }
 
@@ -227,27 +239,27 @@ namespace JidamVision.Teach
                 if (algo is null)
                     continue;
 
-                if (algo.InspectType == InspectType.InspMatch)
-                {
-                    MatchAlgorithm matchAlgo = algo as MatchAlgorithm;
-                    string targetPath = Path.Combine(imgDir, UID + ".png");
-                    if (File.Exists(targetPath))
-                    {
-                        Mat windowImage = Cv2.ImRead(targetPath);
-                        if (windowImage != null)
-                        {
-                            WindowImage = windowImage;
+                //if (algo.InspectType == InspectType.InspMatch)
+                //{
+                //    MatchAlgorithm matchAlgo = algo as MatchAlgorithm;
+                //    string targetPath = Path.Combine(imgDir, UID + ".png");
+                //    if (File.Exists(targetPath))
+                //    {
+                //        Mat windowImage = Cv2.ImRead(targetPath);
+                //        if (windowImage != null)
+                //        {
+                //            WindowImage = windowImage;
 
-                            Mat tempImage = new Mat();
-                            if (windowImage.Type() == MatType.CV_8UC3)
-                                Cv2.CvtColor(windowImage, tempImage, ColorConversionCodes.BGR2GRAY);
-                            else
-                                tempImage = windowImage;
+                //            Mat tempImage = new Mat();
+                //            if (windowImage.Type() == MatType.CV_8UC3)
+                //                Cv2.CvtColor(windowImage, tempImage, ColorConversionCodes.BGR2GRAY);
+                //            else
+                //                tempImage = windowImage;
 
-                            matchAlgo.SetTemplateImage(tempImage);
-                        }
-                    }
-                }
+                //            matchAlgo.SetTemplateImage(tempImage);
+                //        }
+                //    }
+                //}
             }
 
             return true;

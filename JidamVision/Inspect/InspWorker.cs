@@ -184,21 +184,55 @@ namespace JidamVision.Inspect
 
                 switch (inspType)
                 {
-                    case InspectType.InspBinary:
-                        {
-                            BlobAlgorithm blobAlgo = (BlobAlgorithm)inspAlgo;
+                    //case InspectType.InspBinary:
+                    //    {
+                    //        BlobAlgorithm blobAlgo = (BlobAlgorithm)inspAlgo;
 
-                            Mat srcImage = Global.Inst.InspStage.GetMat(0, blobAlgo.ImageChannel);
-                            blobAlgo.SetInspData(srcImage);
+                    //        Mat srcImage = Global.Inst.InspStage.GetMat(0, blobAlgo.ImageChannel);
+                    //        blobAlgo.SetInspData(srcImage);
+                    //        break;
+                    //    }
+
+                    //case InspectType.InspMatch:
+                    //    {
+                    //        MatchAlgorithm matchAlgo = (MatchAlgorithm)inspAlgo;
+
+                    //        Mat srcImage = Global.Inst.InspStage.GetMat(0, matchAlgo.ImageChannel);
+                    //        matchAlgo.SetInspData(srcImage);
+                    //        break;
+                    //    }
+                    case InspectType.InspCrack:
+                        {
+                            CrackAlgorithm crackAlgo = (CrackAlgorithm)inspAlgo;
+
+                            Mat srcImage = Global.Inst.InspStage.GetMat(0, crackAlgo.ImageChannel);
+                            crackAlgo.SetInspData(srcImage);
                             break;
                         }
 
-                    case InspectType.InspMatch:
+                    case InspectType.InspDent:
                         {
-                            MatchAlgorithm matchAlgo = (MatchAlgorithm)inspAlgo;
+                            DentAlgorithm dentAlgo = (DentAlgorithm)inspAlgo;
 
-                            Mat srcImage = Global.Inst.InspStage.GetMat(0, matchAlgo.ImageChannel);
-                            matchAlgo.SetInspData(srcImage);
+                            Mat srcImage = Global.Inst.InspStage.GetMat(0, dentAlgo.ImageChannel);
+                            dentAlgo.SetInspData(srcImage);
+                            break;
+                        }
+                    case InspectType.InspScratch:
+                        {
+                            ScratchAlgorithm scatchAlgo = (ScratchAlgorithm)inspAlgo;
+
+                            Mat srcImage = Global.Inst.InspStage.GetMat(0, scatchAlgo.ImageChannel);
+                            scatchAlgo.SetInspData(srcImage);
+                            break;
+                        }
+
+                    case InspectType.InspSoot:
+                        {
+                            SootAlgorithm sootAlgo = (SootAlgorithm)inspAlgo;
+
+                            Mat srcImage = Global.Inst.InspStage.GetMat(0, sootAlgo.ImageChannel);
+                            sootAlgo.SetInspData(srcImage);
                             break;
                         }
                     default:

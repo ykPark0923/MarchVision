@@ -125,8 +125,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Algorithm\BlobAlgorithm.cs" />
+    <Compile Include="Algorithm\CrackAlgorithm.cs" />
+    <Compile Include="Algorithm\DentAlgorithm.cs" />
     <Compile Include="Algorithm\InspAlgorithm.cs" />
     <Compile Include="Algorithm\MatchAlgorithm.cs" />
+    <Compile Include="Algorithm\ScratchAlgorithm.cs" />
+    <Compile Include="Algorithm\SootAlgorithm.cs" />
     <Compile Include="CameraForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,24 +186,36 @@
       <DependentUpon>PropertiesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Property\BinaryInspProp.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Property\BinaryInspProp.cs" />
     <Compile Include="Property\BinaryInspProp.Designer.cs">
       <DependentUpon>BinaryInspProp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Property\CrackInspProp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Property\CrackInspProp.Designer.cs" />
+    <Compile Include="Property\DentInspProp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Property\DentInspProp.Designer.cs" />
     <Compile Include="Property\FilterInspProp.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Property\FilterInspProp.Designer.cs">
       <DependentUpon>FilterInspProp.cs</DependentUpon>
     </Compile>
-    <Compile Include="Property\MatchInspProp.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Property\MatchInspProp.cs" />
     <Compile Include="Property\MatchInspProp.Designer.cs">
       <DependentUpon>MatchInspProp.cs</DependentUpon>
     </Compile>
+    <Compile Include="Property\ScratchInspProp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Property\ScratchInspProp.Designer.cs" />
+    <Compile Include="Property\SootInspProp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Property\SootInspProp.Designer.cs" />
     <Compile Include="ResultForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -283,12 +299,16 @@
     <EmbeddedResource Include="Property\BinaryInspProp.resx">
       <DependentUpon>BinaryInspProp.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Property\CrackInspProp.resx" />
+    <EmbeddedResource Include="Property\DentInspProp.resx" />
     <EmbeddedResource Include="Property\FilterInspProp.resx">
       <DependentUpon>FilterInspProp.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Property\MatchInspProp.resx">
       <DependentUpon>MatchInspProp.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Property\ScratchInspProp.resx" />
+    <EmbeddedResource Include="Property\SootInspProp.resx" />
     <EmbeddedResource Include="ResultForm.resx">
       <DependentUpon>ResultForm.cs</DependentUpon>
     </EmbeddedResource>

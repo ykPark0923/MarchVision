@@ -18,15 +18,10 @@ namespace JidamVision.Core
     public enum InspWindowType
     {
         None = 0,
-        Global,
-        Group,
-        Base,
-        Body,
-        Sub,
-        ID,
-        Package,
-        Chip,
-        Pad
+        Scratch,
+        Dent,
+        Crack,
+        Soot
     }
 
     public static class Define

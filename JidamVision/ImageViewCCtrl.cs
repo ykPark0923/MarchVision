@@ -148,26 +148,17 @@ namespace JidamVision
 
             switch (inspWindowType)
             {
-                case InspWindowType.Base:
-                    color = Color.BurlyWood;
+                case InspWindowType.Crack:
+                    color = Color.Yellow;
                     break;
-                case InspWindowType.Sub:
+                case InspWindowType.Dent:
                     color = Color.Brown;
                     break;
-                case InspWindowType.ID:
+                case InspWindowType.Scratch:
                     color = Color.Cyan;
                     break;
-                case InspWindowType.Package:
+                case InspWindowType.Soot:
                     color = Color.LightBlue;
-                    break;
-                case InspWindowType.Body:
-                    color = Color.Chartreuse;
-                    break;
-                case InspWindowType.Chip:
-                    color = Color.Orange;
-                    break;
-                case InspWindowType.Pad:
-                    color = Color.Yellow;
                     break;
             }
 
@@ -465,22 +456,22 @@ namespace JidamVision
             if (window is null)
                 return;
 
-            MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
-            if (matchAlgo != null)
-            {
-                Rectangle extArea = new Rectangle(window.WindowArea.X - matchAlgo.ExtSize.Width,
-                    window.WindowArea.Y - matchAlgo.ExtSize.Height,
-                    window.WindowArea.Width + matchAlgo.ExtSize.Width * 2,
-                    window.WindowArea.Height + matchAlgo.ExtSize.Height * 2);
-                Rectangle screenRect = VirtualToScreen(extArea);
+            //MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
+            //if (matchAlgo != null)
+            //{
+            //    Rectangle extArea = new Rectangle(window.WindowArea.X - matchAlgo.ExtSize.Width,
+            //        window.WindowArea.Y - matchAlgo.ExtSize.Height,
+            //        window.WindowArea.Width + matchAlgo.ExtSize.Width * 2,
+            //        window.WindowArea.Height + matchAlgo.ExtSize.Height * 2);
+            //    Rectangle screenRect = VirtualToScreen(extArea);
 
-                using (Pen pen = new Pen(Color.White, 2))
-                {
-                    pen.DashStyle = DashStyle.Dot;
-                    pen.Width = 2;
-                    g.DrawRectangle(pen, screenRect);
-                }
-            }
+            //    using (Pen pen = new Pen(Color.White, 2))
+            //    {
+            //        pen.DashStyle = DashStyle.Dot;
+            //        pen.Width = 2;
+            //        g.DrawRectangle(pen, screenRect);
+            //    }
+            //}
         }
 
         private void ImageViewCCtrl_MouseDown(object sender, MouseEventArgs e)
@@ -1012,7 +1003,7 @@ namespace JidamVision
             if (selected.Count == 0)
                 return;
 
-            DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.AddGroup, selected, InspWindowType.Group));
+            DiagramEntityEvent?.Invoke(this, new DiagramEntityEventArgs(EntityActionType.AddGroup, selected, InspWindowType.Dent));
 
             // 선택 해제
             _multiSelectedEntities.Clear();

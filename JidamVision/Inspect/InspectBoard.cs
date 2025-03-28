@@ -21,7 +21,7 @@ namespace JidamVision.Inspect
             if (window is null)
                 return false;
 
-            if (window.InspWindowType == Core.InspWindowType.Group)
+            if (window.InspWindowType == Core.InspWindowType.Dent)
             {
                 GroupWindow group = (GroupWindow)window;
                 if (!InspectWindowList(group.Members))
@@ -58,14 +58,26 @@ namespace JidamVision.Inspect
                 };
 
                 switch (algo.InspectType)
-                {
-                    case InspectType.InspMatch:
-                        MatchAlgorithm matchAlgo = algo as MatchAlgorithm;
-                        inspResult.ResultValue = $"{matchAlgo.OutScore}";
+                {  //*************************************result 출력
+                    //case InspectType.InspMatch:
+                    //    MatchAlgorithm matchAlgo = algo as MatchAlgorithm;
+                    //    inspResult.ResultValue = $"{matchAlgo.OutScore}";
+                    //    break;
+                    //case InspectType.InspBinary:
+                    //    BlobAlgorithm blobAlgo = algo as BlobAlgorithm;
+                    //    inspResult.ResultValue = $"{blobAlgo.OutBlobCount}/{blobAlgo.BlobCount}";
+                    //    break;
+                    case InspectType.InspCrack:
+                        CrackAlgorithm crackAlgo = algo as CrackAlgorithm;
                         break;
-                    case InspectType.InspBinary:
-                        BlobAlgorithm blobAlgo = algo as BlobAlgorithm;
-                        inspResult.ResultValue = $"{blobAlgo.OutBlobCount}/{blobAlgo.BlobCount}";
+                    case InspectType.InspScratch:
+                        ScratchAlgorithm scatchAlgo = algo as ScratchAlgorithm;
+                        break;
+                    case InspectType.InspDent:
+                        DentAlgorithm dentAlgo = algo as DentAlgorithm;
+                        break;
+                    case InspectType.InspSoot:
+                        SootAlgorithm sootAlgo = algo as SootAlgorithm;
                         break;
                 }
 
@@ -86,22 +98,22 @@ namespace JidamVision.Inspect
 
             //ID 윈도우가 매칭알고리즘이 있고, 검사가 되었다면, 오프셋을 얻는다.
             Point alignOffset = new Point(0, 0);
-            InspWindow idWindow = windowList.Find(w => w.InspWindowType == Core.InspWindowType.ID);
-            if (idWindow != null)
-            {
-                MatchAlgorithm matchAlgo = (MatchAlgorithm)idWindow.FindInspAlgorithm(InspectType.InspMatch);
-                if (matchAlgo != null && matchAlgo.IsUse)
-                {
-                    if (!InspectWindow(idWindow))
-                        return false;
+            //InspWindow idWindow = windowList.Find(w => w.InspWindowType == Core.InspWindowType.ID);
+            //if (idWindow != null)
+            //{
+            //    MatchAlgorithm matchAlgo = (MatchAlgorithm)idWindow.FindInspAlgorithm(InspectType.InspMatch);
+            //    if (matchAlgo != null && matchAlgo.IsUse)
+            //    {
+            //        if (!InspectWindow(idWindow))
+            //            return false;
 
-                    if (matchAlgo.IsInspected)
-                    {
-                        alignOffset = matchAlgo.GetOffset();
-                        idWindow.InspArea = idWindow.WindowArea + alignOffset;
-                    }
-                }
-            }
+            //        if (matchAlgo.IsInspected)
+            //        {
+            //            alignOffset = matchAlgo.GetOffset();
+            //            idWindow.InspArea = idWindow.WindowArea + alignOffset;
+            //        }
+            //    }
+            //}
 
             foreach (InspWindow window in windowList)
             {

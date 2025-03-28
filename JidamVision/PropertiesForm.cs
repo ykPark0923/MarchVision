@@ -27,9 +27,13 @@ namespace JidamVision
     public enum InspectType
     {
         InspNone = -1,
-        InspBinary,
-        InspMatch,
-        InspFilter,
+        //InspBinary,
+        //InspMatch,
+        //InspFilter,
+        InspCrack,
+        InspDent,
+        InspScratch,
+        InspSoot,
         InspCount
     }
 
@@ -85,21 +89,42 @@ namespace JidamVision
             UserControl _inspProp = null;
             switch (inspPropType)
             {
-                case InspectType.InspBinary:
-                    BinaryInspProp blobProp = new BinaryInspProp();
-                    blobProp.RangeChanged += RangeSlider_RangeChanged;
-                    blobProp.PropertyChanged += PropertyChanged;
-                    _inspProp = blobProp;
+                //case InspectType.InspBinary:
+                //    BinaryInspProp blobProp = new BinaryInspProp();
+                //    blobProp.LoadInspParam();
+                //    blobProp.RangeChanged += RangeSlider_RangeChanged;
+                //    _inspProp = blobProp;
+                //    break;
+                //case InspectType.InspMatch:
+                //    MatchInspProp matchProp = new MatchInspProp();
+                //    matchProp.LoadInspParam();
+                //    _inspProp = matchProp;
+                //    break;
+                //case InspectType.InspFilter:
+                //    FilterInspProp filterProp = new FilterInspProp();
+                //    //filterProp.LoadInspParam();
+                //    filterProp.FilterSelected += FilterSelect_FilterChanged;
+                //    _inspProp = filterProp;
+                //    break;
+                case InspectType.InspCrack:
+                    CrackInspProp crackProp = new CrackInspProp();
+                    crackProp.PropertyChanged += PropertyChanged;
+                    _inspProp = crackProp;
                     break;
-                case InspectType.InspMatch:
-                    MatchInspProp matchProp = new MatchInspProp();
-                    matchProp.PropertyChanged += PropertyChanged;
-                    _inspProp = matchProp;
+                case InspectType.InspDent:
+                    DentInspProp dentProp = new DentInspProp();
+                    dentProp.PropertyChanged += PropertyChanged;
+                    _inspProp = dentProp;
                     break;
-                case InspectType.InspFilter:
-                    FilterInspProp filterProp = new FilterInspProp();
-                    filterProp.FilterSelected += FilterSelect_FilterChanged;
-                    _inspProp = filterProp;
+                case InspectType.InspScratch:
+                    ScratchInspProp scratchProp = new ScratchInspProp();
+                    scratchProp.PropertyChanged += PropertyChanged;
+                    _inspProp = scratchProp;
+                    break;
+                case InspectType.InspSoot:
+                    SootInspProp sootProp = new SootInspProp();
+                    sootProp.PropertyChanged += PropertyChanged;
+                    _inspProp = sootProp;
                     break;
                 default:
                     MessageBox.Show("유효하지 않은 옵션입니다.");
@@ -139,36 +164,68 @@ namespace JidamVision
                 {
                     UserControl uc = tabPage.Controls[0] as UserControl;
 
-                    if (uc is MatchInspProp matchProp)
+                    //if (uc is MatchInspProp matchProp)
+                    //{
+                    //    MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
+                    //    if (matchAlgo is null)
+                    //        continue;
+
+                    //    matchProp.SetAlgorithm(matchAlgo);
+                    //}
+                    //else if (uc is BinaryInspProp binaryProp)
+                    //{
+                    //    BlobAlgorithm blobAlgo = (BlobAlgorithm)window.FindInspAlgorithm(InspectType.InspBinary);
+                    //    if (blobAlgo is null)
+                    //        continue;
+
+                    //    binaryProp.SetAlgorithm(blobAlgo);
+                    //}
+                    if (uc is CrackInspProp crackProp)
                     {
-                        MatchAlgorithm matchAlgo = (MatchAlgorithm)window.FindInspAlgorithm(InspectType.InspMatch);
-                        if (matchAlgo is null)
+                        CrackAlgorithm crackAlgo = (CrackAlgorithm)window.FindInspAlgorithm(InspectType.InspCrack);
+                        if (crackAlgo is null)
                             continue;
 
-                        matchProp.SetAlgorithm(matchAlgo);
+                        crackProp.SetAlgorithm(crackAlgo);
                     }
-                    else if (uc is BinaryInspProp binaryProp)
+                    else if (uc is DentInspProp dentProp)
                     {
-                        BlobAlgorithm blobAlgo = (BlobAlgorithm)window.FindInspAlgorithm(InspectType.InspBinary);
-                        if (blobAlgo is null)
+                        DentAlgorithm dentAlgo = (DentAlgorithm)window.FindInspAlgorithm(InspectType.InspDent);
+                        if (dentAlgo is null)
                             continue;
 
-                        binaryProp.SetAlgorithm(blobAlgo);
+                        dentProp.SetAlgorithm(dentAlgo);
+                    }
+                    else if (uc is ScratchInspProp scratchProp)
+                    {
+                        ScratchAlgorithm scratchAlgo = (ScratchAlgorithm)window.FindInspAlgorithm(InspectType.InspScratch);
+                        if (scratchAlgo is null)
+                            continue;
+
+                        scratchProp.SetAlgorithm(scratchAlgo);
+                    }
+                    else if (uc is SootInspProp sootProp)
+                    {
+                        SootAlgorithm sootAlgo = (SootAlgorithm)window.FindInspAlgorithm(InspectType.InspSoot);
+                        if (sootAlgo is null)
+                            continue;
+
+                        sootProp.SetAlgorithm(sootAlgo);
                     }
                 }
             }
         }
 
         //#BINARY FILTER#16 이진화 속성 변경시 발생하는 이벤트 수정
-        private void RangeSlider_RangeChanged(object sender, RangeChangedEventArgs e)
-        {
-            // 속성값을 이용하여 이진화 임계값 설정
-            int lowerValue = e.LowerValue;
-            int upperValue = e.UpperValue;
-            bool invert = e.Invert;
-            ShowBinaryMode showBinMode = e.ShowBinMode;
-            Global.Inst.InspStage.PreView?.SetBinary(lowerValue, upperValue, invert, showBinMode);
-        }
+        //private void RangeSlider_RangeChanged(object sender, RangeChangedEventArgs e)
+        //{
+        //    // 속성값을 이용하여 이진화 임계값 설정
+        //    int lowerValue = e.LowerValue;
+        //    int upperValue = e.UpperValue;
+        //    bool invert = e.Invert;
+        //    ShowBinaryMode showBinMode = e.ShowBinMode;
+        //    Global.Inst.InspStage.PreView?.SetBinary(lowerValue, upperValue, invert, showBinMode);
+        //}
 
         private void FilterSelect_FilterChanged(object sender, FilterSelectedEventArgs e)
         {

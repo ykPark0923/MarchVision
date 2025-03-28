@@ -41,14 +41,20 @@ namespace JidamVision
             _contextMenu = new ContextMenuStrip();
 
             List<InspWindowType> windowTypeList;
-            if (MachineType.SMT == SettingXml.Inst.MachineType)
-            {
-                windowTypeList = new List<InspWindowType> { InspWindowType.Package, InspWindowType.Chip, InspWindowType.Pad, InspWindowType.ID };
-            }
-            else
-            {
-                windowTypeList = new List<InspWindowType> { InspWindowType.Base, InspWindowType.Body, InspWindowType.Sub, InspWindowType.ID };
-            }
+
+            windowTypeList = new List<InspWindowType> { InspWindowType.Crack, InspWindowType.Soot, InspWindowType.Dent, InspWindowType.Scratch };
+            
+            //if (MachineType.SMT == SettingXml.Inst.MachineType)
+            //{
+            //    windowTypeList = new List<InspWindowType> { InspWindowType.Package, InspWindowType.Chip, InspWindowType.Pad, InspWindowType.ID };
+            //}
+            //else
+            //{
+            //    windowTypeList = new List<InspWindowType> { InspWindowType.Crack, InspWindowType.Soot, InspWindowType.Sub, InspWindowType.ID };
+            //}
+
+
+
 
             foreach (InspWindowType windowType in windowTypeList)
                 _contextMenu.Items.Add(new ToolStripMenuItem(windowType.ToString(), null, AddNode_Click) { Tag = windowType });

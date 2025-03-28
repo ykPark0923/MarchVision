@@ -75,7 +75,7 @@ namespace JidamVision.Teach
                 return null;
             }
 
-            GroupWindow groupWindow = (GroupWindow)InspWindowFactory.Inst.Create(InspWindowType.Group);
+            GroupWindow groupWindow = (GroupWindow)InspWindowFactory.Inst.Create(InspWindowType.Dent);
             if (groupWindow is null)
                 return null;
 

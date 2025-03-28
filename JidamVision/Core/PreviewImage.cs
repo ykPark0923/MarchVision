@@ -86,97 +86,97 @@ namespace JidamVision.Core
         }
 
         //#BINARY FILTER#15 기존 이진화 프리뷰에, 배경없이 이진화 이미지만 보이는 모드 추가
-        public void SetBinary(int lowerValue, int upperValue, bool invert, ShowBinaryMode showBinMode)
-        {
-            if (_usePreview == false)
-                return;
+        //public void SetBinary(int lowerValue, int upperValue, bool invert, ShowBinaryMode showBinMode)
+        //{
+        //    if (_usePreview == false)
+        //        return;
 
-            if (_orinalImage == null)
-                return;
+        //    if (_orinalImage == null)
+        //        return;
 
-            var cameraForm = MainForm.GetDockForm<CameraForm>();
-            if (cameraForm == null)
-                return;
+        //    var cameraForm = MainForm.GetDockForm<CameraForm>();
+        //    if (cameraForm == null)
+        //        return;
 
-            Bitmap bmpImage;
-            if (showBinMode == ShowBinaryMode.ShowBinaryNone)
-            {
-                bmpImage = BitmapConverter.ToBitmap(_orinalImage);
-                cameraForm.UpdateDisplay(bmpImage);
-                return;
-            }
+        //    Bitmap bmpImage;
+        //    if (showBinMode == ShowBinaryMode.ShowBinaryNone)
+        //    {
+        //        bmpImage = BitmapConverter.ToBitmap(_orinalImage);
+        //        cameraForm.UpdateDisplay(bmpImage);
+        //        return;
+        //    }
 
-            Rect windowArea = new Rect(0, 0, _orinalImage.Width, _orinalImage.Height);
-            if (_inspWindow != null)
-            {
-                windowArea = _inspWindow.WindowArea;
-            }
+        //    Rect windowArea = new Rect(0, 0, _orinalImage.Width, _orinalImage.Height);
+        //    if (_inspWindow != null)
+        //    {
+        //        windowArea = _inspWindow.WindowArea;
+        //    }
 
-            Mat orgRoi = _orinalImage[windowArea];
+        //    Mat orgRoi = _orinalImage[windowArea];
 
-            Mat grayImage = new Mat();
-            if (orgRoi.Type() == MatType.CV_8UC3)
-                Cv2.CvtColor(orgRoi, grayImage, ColorConversionCodes.BGR2GRAY);
-            else
-                grayImage = orgRoi;
+        //    Mat grayImage = new Mat();
+        //    if (orgRoi.Type() == MatType.CV_8UC3)
+        //        Cv2.CvtColor(orgRoi, grayImage, ColorConversionCodes.BGR2GRAY);
+        //    else
+        //        grayImage = orgRoi;
 
-            Mat binaryMask = new Mat();
-            Cv2.InRange(grayImage, lowerValue, upperValue, binaryMask);
+        //    Mat binaryMask = new Mat();
+        //    Cv2.InRange(grayImage, lowerValue, upperValue, binaryMask);
 
-            if (invert)
-                binaryMask = ~binaryMask;
+        //    if (invert)
+        //        binaryMask = ~binaryMask;
 
-            // binaryMask는 ROI 사이즈이므로 fullBinaryMask로 확장
-            Mat fullBinaryMask = Mat.Zeros(_orinalImage.Size(), MatType.CV_8UC1);
-            binaryMask.CopyTo(new Mat(fullBinaryMask, windowArea));
+        //    // binaryMask는 ROI 사이즈이므로 fullBinaryMask로 확장
+        //    Mat fullBinaryMask = Mat.Zeros(_orinalImage.Size(), MatType.CV_8UC1);
+        //    binaryMask.CopyTo(new Mat(fullBinaryMask, windowArea));
 
-            if (showBinMode == ShowBinaryMode.ShowBinaryOnly)
-            {
-                if (orgRoi.Type() == MatType.CV_8UC3)
-                {
-                    Mat colorBinary = new Mat();
-                    Cv2.CvtColor(binaryMask, colorBinary, ColorConversionCodes.GRAY2BGR);
-                    _previewImage = _orinalImage.Clone();
-                    colorBinary.CopyTo(new Mat(_previewImage, windowArea));
-                }
-                else
-                {
-                    _previewImage = _orinalImage.Clone();
-                    binaryMask.CopyTo(new Mat(_previewImage, windowArea));
-                }
+        //    if (showBinMode == ShowBinaryMode.ShowBinaryOnly)
+        //    {
+        //        if (orgRoi.Type() == MatType.CV_8UC3)
+        //        {
+        //            Mat colorBinary = new Mat();
+        //            Cv2.CvtColor(binaryMask, colorBinary, ColorConversionCodes.GRAY2BGR);
+        //            _previewImage = _orinalImage.Clone();
+        //            colorBinary.CopyTo(new Mat(_previewImage, windowArea));
+        //        }
+        //        else
+        //        {
+        //            _previewImage = _orinalImage.Clone();
+        //            binaryMask.CopyTo(new Mat(_previewImage, windowArea));
+        //        }
 
-                bmpImage = BitmapConverter.ToBitmap(_previewImage);
-                cameraForm.UpdateDisplay(bmpImage);
-                return;
-            }
+        //        bmpImage = BitmapConverter.ToBitmap(_previewImage);
+        //        cameraForm.UpdateDisplay(bmpImage);
+        //        return;
+        //    }
 
-            // 원본 이미지 복사본을 만들어 이진화된 부분에만 색을 덧씌우기
-            Mat overlayImage;
-            if (_orinalImage.Type() == MatType.CV_8UC1)
-            {
-                overlayImage = new Mat();
-                Cv2.CvtColor(_orinalImage, overlayImage, ColorConversionCodes.GRAY2BGR);
+        //    // 원본 이미지 복사본을 만들어 이진화된 부분에만 색을 덧씌우기
+        //    Mat overlayImage;
+        //    if (_orinalImage.Type() == MatType.CV_8UC1)
+        //    {
+        //        overlayImage = new Mat();
+        //        Cv2.CvtColor(_orinalImage, overlayImage, ColorConversionCodes.GRAY2BGR);
 
-                Mat colorOrinal = overlayImage.Clone();
+        //        Mat colorOrinal = overlayImage.Clone();
 
-                overlayImage.SetTo(new Scalar(0, 0, 255), fullBinaryMask); // 빨간색으로 마스킹
+        //        overlayImage.SetTo(new Scalar(0, 0, 255), fullBinaryMask); // 빨간색으로 마스킹
 
-                // 원본과 합성 (투명도 적용)
-                Cv2.AddWeighted(colorOrinal, 0.7, overlayImage, 0.3, 0, _previewImage);
-            }
-            else
-            {
-                overlayImage = _orinalImage.Clone();
-                overlayImage.SetTo(new Scalar(0, 0, 255), fullBinaryMask); // 빨간색으로 마스킹
+        //        // 원본과 합성 (투명도 적용)
+        //        Cv2.AddWeighted(colorOrinal, 0.7, overlayImage, 0.3, 0, _previewImage);
+        //    }
+        //    else
+        //    {
+        //        overlayImage = _orinalImage.Clone();
+        //        overlayImage.SetTo(new Scalar(0, 0, 255), fullBinaryMask); // 빨간색으로 마스킹
 
-                // 원본과 합성 (투명도 적용)
-                Cv2.AddWeighted(_orinalImage, 0.7, overlayImage, 0.3, 0, _previewImage);
-            }
+        //        // 원본과 합성 (투명도 적용)
+        //        Cv2.AddWeighted(_orinalImage, 0.7, overlayImage, 0.3, 0, _previewImage);
+        //    }
 
 
-            bmpImage = BitmapConverter.ToBitmap(_previewImage);
-            cameraForm.UpdateDisplay(bmpImage);
-        }
+        //    bmpImage = BitmapConverter.ToBitmap(_previewImage);
+        //    cameraForm.UpdateDisplay(bmpImage);
+        //}
 
 
         static void ApplyImageOperation(ImageOperation operation, Mat src1, string op_value, out Mat resultImage) // 이미지 연산 코드
