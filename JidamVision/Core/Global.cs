@@ -38,14 +38,11 @@ namespace JidamVision.Core
         public void Initialize()
         {
             _stage.Initialize();
-
         }
 
         public void Dispose()
         {
-
-
-
+            _stage.Dispose();
         }
     }
 }

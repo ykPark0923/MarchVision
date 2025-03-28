@@ -36,6 +36,8 @@ namespace JidamVision
             LoadDockingWindows();
 
             Global.Inst.Initialize();
+
+            this.FormClosed += MainForm_FormClosed;
         }
 
         private void LoadDockingWindows()
@@ -171,6 +173,11 @@ namespace JidamVision
             SetupForm setupForm = new SetupForm();
             setupForm.ShowDialog();
         }
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Global.Inst.Dispose();
 
+            this.FormClosed -= MainForm_FormClosed;
+        }
     }
 }
